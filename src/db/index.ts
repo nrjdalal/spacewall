@@ -1,3 +1,10 @@
+import {
+  accounts,
+  authenticators,
+  sessions,
+  users,
+  verificationTokens,
+} from "@/db/v1/auth"
 import { drizzle, type PostgresJsDatabase } from "drizzle-orm/postgres-js"
 import postgres from "postgres"
 
@@ -35,4 +42,4 @@ if (process.env.NODE_ENV === "production") {
   db = global.db
 }
 
-export { db }
+export { db, accounts, authenticators, sessions, users, verificationTokens }
