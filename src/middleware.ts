@@ -8,7 +8,6 @@ export default auth(async function middleware(req) {
 
   const isAuthenticated = !!auth
 
-  // protect routes rules
   if (["/access", "/x"].some((route) => nextUrl.pathname.startsWith(route))) {
     if (isAuthenticated && nextUrl.pathname === "/access") {
       return Response.redirect(
