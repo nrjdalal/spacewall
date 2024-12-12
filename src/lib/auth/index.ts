@@ -1,10 +1,33 @@
-import { db } from "@/db"
+import { db, users } from "@/db"
 import authConfig from "@/lib/auth/config"
 import { DrizzleAdapter } from "@auth/drizzle-adapter"
+import { eq } from "drizzle-orm"
 import NextAuth from "next-auth"
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: DrizzleAdapter(db),
   session: { strategy: "jwt" },
   ...authConfig,
+  callbacks: {
+    async jwt({ token, user }) {
+      const [dbUser] = await db
+        .select({
+          id: users.id,
+        })
+        .from(users)
+        .where(eq(users.email, token.email!))
+        .limit(1)
+
+      return {
+        id: dbUser.id || user.id,
+        ...token,
+      }
+    },
+    async session({ session, token }) {
+      if (token) {
+        session.user.id = token.id as string
+      }
+      return session
+    },
+  },
 })

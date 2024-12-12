@@ -6,6 +6,7 @@
     "build": "next build",
     "dev": "next dev",
     "dev:db:push": "bun --env-file=.env.development drizzle-kit push",
+    "dev:db:studio": "bun --env-file=.env.development drizzle-kit studio",
     "prepare": "if [ \"$NODE_ENV\" != \"production\" ]; then simple-git-hooks; fi",
     "update": "ncu --interactive --format group"
   },
