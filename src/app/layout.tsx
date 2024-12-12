@@ -1,11 +1,11 @@
-import './globals.css'
-import { fontMono, fontSans } from '@/assets/fonts'
-import { cn } from '@/lib/utils'
-import type { Metadata } from 'next'
+import "./globals.css"
+import { fontMono, fontSans } from "@/assets/fonts"
+import { cn } from "@/lib/utils"
+import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: 'SpaceWall',
-  description: 'Launching soon.',
+  title: "SpaceWall",
+  description: "Launching soon.",
 }
 
 export default function RootLayout({
@@ -17,7 +17,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={cn(
-          'min-h-dvh select-none font-sans antialiased',
+          "min-h-dvh font-sans antialiased",
           fontSans.variable,
           fontMono.variable,
         )}
