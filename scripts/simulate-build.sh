@@ -11,6 +11,7 @@ rsync -a --delete \
   ./ ./out
 cd ./out
 bun i
+bun run next lint
 bun run next build
 cd ..
 bunx lint-staged --verbose
