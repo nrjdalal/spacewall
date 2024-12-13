@@ -1,0 +1,3 @@
+List of current overrides from the default configuration.
+
+1. Removed shadow-* from button and input.
