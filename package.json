@@ -5,8 +5,8 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
-    "dev:db:push": "bun --env-file=.env.development drizzle-kit push",
-    "dev:db:studio": "bun --env-file=.env.development drizzle-kit studio",
+    "db-push": "bun --env-file=.env.development drizzle-kit push",
+    "db-studio": "bun --env-file=.env.development drizzle-kit studio",
     "prepare": "if [ \"$NODE_ENV\" != \"production\" ]; then simple-git-hooks; fi",
     "update": "ncu --interactive --format group"
   },
@@ -19,8 +19,10 @@
     "@auth/drizzle-adapter": "^1.7.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
     "drizzle-orm": "^0.38.1",
     "lucide-react": "^0.468.0",
+    "nanoid": "^5.0.9",
     "next": "15.1.0",
     "next-auth": "^5.0.0-beta.25",
     "postgres": "^3.4.5",

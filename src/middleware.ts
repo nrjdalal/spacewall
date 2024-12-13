@@ -1,4 +1,5 @@
 import authConfig from "@/lib/auth/config"
+import { redirect } from "@/lib/utils"
 import NextAuth from "next-auth"
 
 const { auth } = NextAuth(authConfig)
@@ -20,9 +21,5 @@ export default auth(async function middleware(req) {
 })
 
 export const config = {
-  matcher: ["/access/:path*", "/x/:path*"],
-}
-
-function redirect(url: string, base: URL) {
-  return Response.redirect(new URL(url, base))
+  matcher: ["/access", "/x/:path*"],
 }

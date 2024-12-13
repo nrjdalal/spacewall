@@ -1,3 +1,4 @@
+import { generateId } from "@/lib/utils"
 import {
   boolean,
   integer,
@@ -11,7 +12,7 @@ import type { AdapterAccountType } from "next-auth/adapters"
 export const users = pgTable("user", {
   id: text("id")
     .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
+    .$defaultFn(() => generateId()),
   name: text("name"),
   email: text("email").unique(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
@@ -36,7 +37,7 @@ export const accounts = pgTable(
     session_state: text("session_state"),
   },
   (account) => ({
-    compoundKey: primaryKey({
+    compositePk: primaryKey({
       columns: [account.provider, account.providerAccountId],
     }),
   }),

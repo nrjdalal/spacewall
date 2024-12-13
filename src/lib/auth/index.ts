@@ -1,11 +1,24 @@
-import { db, users } from "@/db"
+import {
+  accounts,
+  authenticators,
+  db,
+  sessions,
+  users,
+  verificationTokens,
+} from "@/db"
 import authConfig from "@/lib/auth/config"
 import { DrizzleAdapter } from "@auth/drizzle-adapter"
 import { eq } from "drizzle-orm"
 import NextAuth from "next-auth"
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  adapter: DrizzleAdapter(db),
+  adapter: DrizzleAdapter(db, {
+    usersTable: users,
+    accountsTable: accounts,
+    sessionsTable: sessions,
+    verificationTokensTable: verificationTokens,
+    authenticatorsTable: authenticators,
+  }),
   session: { strategy: "jwt" },
   ...authConfig,
   callbacks: {
