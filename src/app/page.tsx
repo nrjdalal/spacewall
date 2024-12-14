@@ -1,20 +1,22 @@
-import { Icons } from "@/assets/icons"
 import { Button } from "@/components/ui/button"
+import { Crown } from "lucide-react"
 import Link from "next/link"
 
 export default function Page() {
   return (
-    <main className="grid min-h-dvh place-items-center px-6 py-24 sm:py-32 lg:px-8">
-      <div className="text-center">
-        <Icons.SpaceWall className="mx-auto size-16" />
-        <p className="mt-4 text-base font-semibold">Launching soon.</p>
-        <h1 className="mt-4 text-4xl font-medium text-balance sm:text-6xl">
-          SpaceWall
+    <main className="flex min-h-dvh items-center justify-center p-7.5">
+      <div className="max-w-sm space-y-6 text-center">
+        <h1 className="flex items-center justify-center text-6xl font-medium">
+          Space
+          <Crown className="size-12" />
+          all
         </h1>
-        <p className="mt-6 text-lg font-medium text-pretty sm:text-xl/8">
-          For now you can log in to test the app.
+
+        <p className="text-lg font-medium text-pretty">
+          Transforming the creators of tomorrow.
         </p>
-        <div className="mt-10 flex items-center justify-center gap-x-5 px-5">
+
+        <div className="flex items-center justify-center gap-x-5 px-5">
           <Button asChild>
             <Link href="/access" className="w-full">
               Log in <span aria-hidden="true">&rarr;</span>
@@ -27,6 +29,9 @@ export default function Page() {
           </Button>
         </div>
       </div>
+      <p className="text-primary/35 absolute bottom-4 text-center text-xs">
+        Current version is for demonstration purposes only.
+      </p>
     </main>
   )
 }
