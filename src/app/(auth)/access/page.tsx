@@ -51,7 +51,7 @@ export default function SignIn() {
                   <FormLabel>Email</FormLabel>
                   <FormControl>
                     <Input
-                      className="placeholder:text-foreground/35 mt-1.5 h-10 font-mono"
+                      className="mt-1.5 font-mono"
                       placeholder="hi@spacewall.me"
                       {...field}
                     />
@@ -69,7 +69,7 @@ export default function SignIn() {
                   <FormLabel>Password</FormLabel>
                   <FormControl>
                     <Input
-                      className="placeholder:text-foreground/35 mt-1.5 h-10 font-mono"
+                      className="mt-1.5 font-mono"
                       placeholder="••••••••"
                       type="password"
                       {...field}
@@ -80,7 +80,7 @@ export default function SignIn() {
               )}
             />
 
-            <Button className="mt-3 h-10 w-full cursor-pointer" type="submit">
+            <Button className="mt-3 h-10 w-full" type="submit">
               Access
             </Button>
           </form>
@@ -92,13 +92,13 @@ export default function SignIn() {
           <Separator className="w-3/7" />
         </div>
 
-        <Button className="h-10 w-full cursor-pointer" variant="outline">
+        <Button className="h-10 w-full" variant="outline">
           <Icons.Google className="text-foreground/50" />
           <span className="mt-px ml-1">Continue with Google</span>
         </Button>
 
         <Button
-          className="h-10 w-full cursor-pointer"
+          className="h-10 w-full"
           variant="outline"
           onClick={() => signIn("github")}
         >
