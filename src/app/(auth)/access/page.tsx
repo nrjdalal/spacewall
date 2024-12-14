@@ -45,7 +45,7 @@ export default function SignIn() {
       <Link href="/">
         <Button
           variant="ghost"
-          className="absolute top-5 left-5 flex items-center gap-x-2 text-base"
+          className="absolute top-5 left-1 flex items-center gap-x-2 text-base sm:left-5"
         >
           <ChevronLeft className="size-4" />
           Home
@@ -109,13 +109,13 @@ export default function SignIn() {
           </form>
         </Form>
 
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between py-1">
           <Separator className="w-3/7" />
-          <span className="text-foreground/50">or</span>
+          <span className="text-foreground/50 text-xs">OR</span>
           <Separator className="w-3/7" />
         </div>
 
-        <div className="space-y-5 space-x-4 sm:flex">
+        <div className="space-y-5 sm:flex sm:gap-x-4 sm:space-y-0">
           <Button
             className="h-10 w-full"
             variant="outline"
@@ -131,14 +131,10 @@ export default function SignIn() {
           </Button>
         </div>
 
-        <p className="text-primary/50 -mt-4 text-xs">
-          By signing in, you agree to our{" "}
+        <p className="text-primary/50 pt-1 text-center text-xs">
+          By continuing, you agree to our{" "}
           <Link href="/" className="border-b">
             terms
-          </Link>
-          ,{" "}
-          <Link href="/" className="border-b">
-            acceptable use
           </Link>{" "}
           and{" "}
           <Link href="/" className="border-b">
