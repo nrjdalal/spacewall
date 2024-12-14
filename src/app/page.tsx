@@ -1,12 +1,14 @@
+import { Icons } from "@/assets/icons"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
-export default function Example() {
+export default function Page() {
   return (
     <main className="grid min-h-dvh place-items-center px-6 py-24 sm:py-32 lg:px-8">
       <div className="text-center">
-        <p className="text-base font-semibold">Launching soon.</p>
-        <h1 className="mt-4 text-5xl font-semibold text-balance sm:text-7xl">
+        <Icons.SpaceWall className="mx-auto size-16" />
+        <p className="mt-4 text-base font-semibold">Launching soon.</p>
+        <h1 className="mt-4 text-4xl font-medium text-balance sm:text-6xl">
           SpaceWall
         </h1>
         <p className="mt-6 text-lg font-medium text-pretty sm:text-xl/8">
