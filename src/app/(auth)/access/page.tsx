@@ -131,7 +131,7 @@ export default function SignIn() {
           </Button>
         </div>
 
-        <p className="text-primary/50 text-xs">
+        <p className="text-primary/50 -mt-4 text-xs">
           By signing in, you agree to our{" "}
           <Link href="/" className="border-b">
             terms
