@@ -1,3 +1,0 @@
-List of current overrides from the default configuration.
-
-- removed className shadow-* -> button and input
