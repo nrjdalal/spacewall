@@ -13,7 +13,9 @@ import {
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { ChevronLeft, Crown } from "lucide-react"
 import { signIn } from "next-auth/react"
+import Link from "next/link"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
@@ -40,7 +42,28 @@ export default function SignIn() {
 
   return (
     <div className="flex min-h-dvh items-center justify-center p-7.5">
+      <Link href="/">
+        <Button
+          variant="ghost"
+          className="absolute top-5 left-5 flex items-center gap-x-2 text-base"
+        >
+          <ChevronLeft className="size-4" />
+          Home
+        </Button>
+      </Link>
+
       <div className="w-full max-w-md space-y-5">
+        <div className="space-y-1 pb-5">
+          <p className="flex items-center text-3xl font-medium">
+            Space
+            <Crown className="size-6" />
+            all
+          </p>
+          <p className="text-primary/50 text-lg font-medium">
+            Welcome, it&apos;s gonna be amazing!
+          </p>
+        </div>
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
             <FormField
@@ -81,7 +104,7 @@ export default function SignIn() {
             />
 
             <Button className="mt-3 h-10 w-full" type="submit">
-              Access
+              Continue <span aria-hidden="true">&rarr;</span>
             </Button>
           </form>
         </Form>
@@ -92,19 +115,37 @@ export default function SignIn() {
           <Separator className="w-3/7" />
         </div>
 
-        <Button className="h-10 w-full" variant="outline">
-          <Icons.Google className="text-foreground/50" />
-          <span className="mt-px ml-1">Continue with Google</span>
-        </Button>
+        <div className="space-y-5 space-x-4 sm:flex">
+          <Button
+            className="h-10 w-full"
+            variant="outline"
+            onClick={() => signIn("github")}
+          >
+            <Icons.Github className="text-foreground/50" />
+            <span className="mt-px ml-1">Continue with Github</span>
+          </Button>
 
-        <Button
-          className="h-10 w-full"
-          variant="outline"
-          onClick={() => signIn("github")}
-        >
-          <Icons.Github className="text-foreground/50" />
-          <span className="mt-px ml-1">Continue with Github</span>
-        </Button>
+          <Button className="h-10 w-full" variant="outline">
+            <Icons.Google className="text-foreground/50" />
+            <span className="mt-px ml-1">Continue with Google</span>
+          </Button>
+        </div>
+
+        <p className="text-primary/50 text-xs">
+          By signing in, you agree to our{" "}
+          <Link href="/" className="border-b">
+            terms
+          </Link>
+          ,{" "}
+          <Link href="/" className="border-b">
+            acceptable use
+          </Link>{" "}
+          and{" "}
+          <Link href="/" className="border-b">
+            privacy policy
+          </Link>
+          .
+        </p>
       </div>
     </div>
   )

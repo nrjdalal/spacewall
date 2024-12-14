@@ -17,7 +17,7 @@ export default function Page() {
         </p>
 
         <div className="flex items-center justify-center gap-x-5 px-5">
-          <Button asChild>
+          <Button>
             <Link href="/access" className="w-full">
               Log in <span aria-hidden="true">&rarr;</span>
             </Link>
