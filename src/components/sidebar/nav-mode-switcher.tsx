@@ -17,16 +17,16 @@ import { ChevronsUpDown } from "lucide-react"
 import * as React from "react"
 
 export function NavModeSwitcher({
-  teams,
+  modes,
 }: {
-  teams: {
+  modes: {
     name: string
     logo: React.ElementType
     plan: string
   }[]
 }) {
   const { isMobile, open } = useSidebar()
-  const [activeTeam, setActiveTeam] = React.useState(teams[0])
+  const [activeTeam, setActiveTeam] = React.useState(modes[0])
 
   return (
     <SidebarMenu>
@@ -37,7 +37,7 @@ export function NavModeSwitcher({
               size="lg"
               className={cn(
                 "data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground border",
-                !open && "mt-1",
+                !open && "mt-0.75",
               )}
             >
               <div
@@ -60,22 +60,22 @@ export function NavModeSwitcher({
           <DropdownMenuContent
             className={cn(
               "w-[--radix-dropdown-menu-trigger-width] min-w-59.5 rounded-lg",
-              isMobile && "min-w-68",
+              isMobile && "min-w-67.5",
             )}
             align={open ? "center" : "start"}
             side="bottom"
             sideOffset={7}
           >
-            {teams.map((team) => (
+            {modes.map((mode) => (
               <DropdownMenuItem
-                key={team.name}
-                onClick={() => setActiveTeam(team)}
+                key={mode.name}
+                onClick={() => setActiveTeam(mode)}
                 className="cursor-pointer gap-2 p-2"
               >
                 <div className="flex size-6 items-center justify-center rounded-sm border">
-                  <team.logo className="size-4 shrink-0" />
+                  <mode.logo className="size-4 shrink-0" />
                 </div>
-                {team.name}
+                {mode.name}
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>

@@ -8,7 +8,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { LayoutDashboard, Lock, type LucideIcon } from "lucide-react"
+import { Home, Lock, type LucideIcon } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
@@ -38,7 +38,7 @@ export function NavApplications() {
               asChild
             >
               <Link href={"/x"}>
-                <LayoutDashboard />
+                <Home />
                 <span>Dashboard</span>
               </Link>
             </SidebarMenuButton>

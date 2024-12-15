@@ -18,6 +18,7 @@ import {
 import { cn } from "@/lib/utils"
 import { ChevronsUpDown, LogOut } from "lucide-react"
 import { signOut } from "next-auth/react"
+import { ModeToggle } from "../ui/mode-toggle"
 
 export function NavUser({
   user,
@@ -55,7 +56,7 @@ export function NavUser({
           <DropdownMenuContent
             className={cn(
               "w-[--radix-dropdown-menu-trigger-width] min-w-59.5 rounded-lg",
-              isMobile && "min-w-68",
+              isMobile && "min-w-67.5",
             )}
             side={isMobile ? "top" : "right"}
             align={isMobile ? "center" : "end"}
@@ -73,6 +74,10 @@ export function NavUser({
                 </div>
               </div>
             </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="flex justify-between focus:bg-inherit">
+              <ModeToggle />
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className="cursor-pointer"
