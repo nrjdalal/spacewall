@@ -1,4 +1,5 @@
 import "./globals.css"
+import Providers from "@/app/providers"
 import { fontMono, fontSans } from "@/assets/fonts"
 import { cn } from "@/lib/utils"
 import type { Metadata } from "next"
@@ -22,7 +23,7 @@ export default function RootLayout({
           fontMono.variable,
         )}
       >
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   )
