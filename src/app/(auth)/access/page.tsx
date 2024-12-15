@@ -18,6 +18,7 @@ import { signIn } from "next-auth/react"
 import Link from "next/link"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
+import { toast } from "sonner"
 import { z } from "zod"
 
 const formSchema = z.object({
@@ -41,7 +42,7 @@ export default function SignIn() {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     if (submitting) return
-    setSubmitting(true)
+    toast.info("Please use the social login options for now.")
     console.log(values)
   }
 
