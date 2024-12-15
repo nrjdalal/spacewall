@@ -35,9 +35,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       const session = await getSession()
       if (session && session.user) {
         setUser({
-          name: session.user.name ?? "",
-          email: session.user.email ?? "",
-          avatar: session.user.image ?? "",
+          name: session.user.name || user.name,
+          email: session.user.email || user.email,
+          avatar: session.user.image || user.avatar,
         })
       }
     }
