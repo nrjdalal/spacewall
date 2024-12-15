@@ -7,6 +7,7 @@ import {
   verificationTokens,
 } from "@/db"
 import authConfig from "@/lib/auth/config"
+import { Email } from "@/lib/auth/providers/email"
 import { DrizzleAdapter } from "@auth/drizzle-adapter"
 import { eq } from "drizzle-orm"
 import NextAuth from "next-auth"
@@ -19,10 +20,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     verificationTokensTable: verificationTokens,
     authenticatorsTable: authenticators,
   }),
+  providers: [...authConfig.providers, Email],
   session: { strategy: "jwt" },
-  ...authConfig,
   pages: {
     signIn: "/access",
+    signOut: "/access",
+    error: "/access",
+    verifyRequest: "/access",
+    newUser: "/access",
   },
   callbacks: {
     async jwt({ token, user }) {
