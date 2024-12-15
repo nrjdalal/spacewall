@@ -18,12 +18,16 @@ export function humanTime(date: DateArg<Date> & {}) {
 }
 
 export function generateId({
-  length = 12,
   chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+  length = 12,
+  type = "id",
 }: {
   length?: number
   chars?: string
+  type?: "id" | "otp"
 } = {}) {
+  chars = type === "id" ? chars : "0123456789"
+  length = type === "id" ? length : 6
   const nanoid = customAlphabet(chars, length)
   return nanoid()
 }

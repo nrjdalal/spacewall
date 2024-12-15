@@ -2,16 +2,16 @@
 
 set -e
 
-rm -rf ./out
-excludes=(
+ignore=(
   '.git'
   '.next'
   'node_modules'
   'test'
 )
 
+rm -rf ./out
 rsync -a --delete \
-  "${excludes[@]/#/--exclude=}" \
+  "${ignore[@]/#/--exclude=}" \
   ./ ./out
 cd ./out
 bun i

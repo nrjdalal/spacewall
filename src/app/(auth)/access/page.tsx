@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { ChevronLeft, ChevronRight, Crown } from "lucide-react"
+import { ChevronLeft, ChevronRight, Crown, Loader2 } from "lucide-react"
 import { signIn } from "next-auth/react"
 import Link from "next/link"
 import { useState } from "react"
@@ -23,27 +23,40 @@ import { z } from "zod"
 
 const formSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
-  password: z
-    .string()
-    .min(8, "Password must contain at least 8 characters")
-    .max(32, "Password must contain at most 32 characters"),
 })
 
 export default function SignIn() {
-  const [submitting, setSubmitting] = useState(false)
+  const [provider, setProvider] = useState<
+    "email" | "github" | "google" | null
+  >(null)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
-      password: "",
     },
   })
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    if (submitting) return
-    toast.info("Please use the social login options for now.")
-    console.log(values)
+    if (provider) return
+    handleSignIn("email", { email: values.email })
+  }
+
+  function handleSignIn(
+    type: "email" | "github" | "google",
+    options?: { email?: string },
+  ) {
+    if (provider) return
+    setProvider(type)
+    signIn(type, { ...options, redirect: false }).then((res) => {
+      if (res?.error) {
+        toast.error("An error occurred, please try different method.")
+        return setProvider(null)
+      } else if (type === "email") {
+        toast.success("Check your email for the magic link.")
+        return setProvider(null)
+      }
+    })
   }
 
   return (
@@ -90,29 +103,10 @@ export default function SignIn() {
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem className="relative">
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="mt-1.5 font-mono not-placeholder-shown:font-sans not-placeholder-shown:tracking-widest"
-                      placeholder="••••••••"
-                      type="password"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage className="absolute -bottom-5 text-xs" />
-                </FormItem>
-              )}
-            />
-
             <Button
               type="submit"
               className="mt-3 h-10 w-full"
-              disabled={submitting}
+              disabled={!!provider}
             >
               <span className="mt-0.75">Continue</span>
               <ChevronRight />
@@ -129,35 +123,23 @@ export default function SignIn() {
         <div className="space-y-5 sm:flex sm:gap-x-4 sm:space-y-0">
           <Button
             className="h-10 w-full"
-            disabled={submitting}
+            disabled={!!provider}
             variant="outline"
-            onClick={() => {
-              if (submitting) return
-              setSubmitting(true)
-              signIn("github").then((res) => {
-                if (res?.error) {
-                  setSubmitting(false)
-                }
-              })
-            }}
+            onClick={() => handleSignIn("github")}
           >
-            <Icons.Github className="text-foreground/50" />
+            {provider === "github" ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              <Icons.Github className="text-foreground/50" />
+            )}
             <span className="mt-0.75 ml-1">Continue with Github</span>
           </Button>
 
           <Button
             className="h-10 w-full"
-            disabled={submitting}
+            disabled={!!provider}
             variant="outline"
-            onClick={() => {
-              if (submitting) return
-              setSubmitting(true)
-              signIn("google").then((res) => {
-                if (res?.error) {
-                  setSubmitting(false)
-                }
-              })
-            }}
+            onClick={() => handleSignIn("google")}
           >
             <Icons.Google className="text-foreground/50" />
             <span className="mt-0.75 ml-1">Continue with Google</span>
