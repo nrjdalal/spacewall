@@ -21,6 +21,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   }),
   session: { strategy: "jwt" },
   ...authConfig,
+  pages: {
+    signIn: "/access",
+  },
   callbacks: {
     async jwt({ token, user }) {
       const [dbUser] = await db

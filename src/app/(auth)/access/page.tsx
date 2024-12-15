@@ -16,6 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { ChevronLeft, ChevronRight, Crown } from "lucide-react"
 import { signIn } from "next-auth/react"
 import Link from "next/link"
+import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
@@ -28,6 +29,8 @@ const formSchema = z.object({
 })
 
 export default function SignIn() {
+  const [submitting, setSubmitting] = useState(false)
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -37,6 +40,8 @@ export default function SignIn() {
   })
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    if (submitting) return
+    setSubmitting(true)
     console.log(values)
   }
 
@@ -103,8 +108,13 @@ export default function SignIn() {
               )}
             />
 
-            <Button className="mt-3 h-10 w-full" type="submit">
-              <span className="mt-0.5 ml-1">Continue</span> <ChevronRight />
+            <Button
+              type="submit"
+              className="mt-3 h-10 w-full"
+              disabled={submitting}
+            >
+              <span className="mt-0.75">Continue</span>
+              <ChevronRight />
             </Button>
           </form>
         </Form>
@@ -118,16 +128,38 @@ export default function SignIn() {
         <div className="space-y-5 sm:flex sm:gap-x-4 sm:space-y-0">
           <Button
             className="h-10 w-full"
+            disabled={submitting}
             variant="outline"
-            onClick={() => signIn("github")}
+            onClick={() => {
+              if (submitting) return
+              setSubmitting(true)
+              signIn("github").then((res) => {
+                if (res?.error) {
+                  setSubmitting(false)
+                }
+              })
+            }}
           >
             <Icons.Github className="text-foreground/50" />
-            <span className="mt-0.5 ml-1">Continue with Github</span>
+            <span className="mt-0.75 ml-1">Continue with Github</span>
           </Button>
 
-          <Button className="h-10 w-full" variant="outline">
+          <Button
+            className="h-10 w-full"
+            disabled={submitting}
+            variant="outline"
+            onClick={() => {
+              if (submitting) return
+              setSubmitting(true)
+              signIn("google").then((res) => {
+                if (res?.error) {
+                  setSubmitting(false)
+                }
+              })
+            }}
+          >
             <Icons.Google className="text-foreground/50" />
-            <span className="mt-0.5 ml-1">Continue with Google</span>
+            <span className="mt-0.75 ml-1">Continue with Google</span>
           </Button>
         </div>
 
