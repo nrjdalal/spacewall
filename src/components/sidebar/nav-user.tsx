@@ -75,7 +75,10 @@ export function NavUser({
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="flex justify-between focus:bg-inherit">
+            <DropdownMenuItem
+              className="flex justify-between focus:bg-inherit"
+              onSelect={(e) => e.preventDefault()}
+            >
               <ModeToggle />
             </DropdownMenuItem>
             <DropdownMenuSeparator />
