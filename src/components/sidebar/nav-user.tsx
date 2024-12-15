@@ -55,7 +55,7 @@ export function NavUser({
           <DropdownMenuContent
             className={cn(
               "w-[--radix-dropdown-menu-trigger-width] min-w-59.5 rounded-lg",
-              isMobile && "min-w-68",
+              isMobile && "min-w-67.5",
             )}
             side={isMobile ? "top" : "right"}
             align={isMobile ? "center" : "end"}

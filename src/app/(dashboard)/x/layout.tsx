@@ -15,6 +15,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
+import { cn } from "@/lib/utils"
 import { getSession } from "next-auth/react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -49,28 +50,47 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <SidebarInset>
         <header className="sticky top-0 flex h-14 shrink-0 items-center gap-2 border-b bg-inherit transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-14 md:h-16">
           <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 h-4" />
+            <SidebarTrigger className="fixed right-5 bottom-5 size-10 border bg-inherit md:static md:-ml-2" />
+            <Separator
+              orientation="vertical"
+              className="mr-2 hidden h-4 md:block"
+            />
             <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem key="/x" className="hidden md:block">
-                  <BreadcrumbLink asChild>
-                    <Link href={"/x"}>Dashboard</Link>
-                  </BreadcrumbLink>
+              <BreadcrumbList className="text-base">
+                <BreadcrumbItem
+                  key="/x"
+                  className={cn(
+                    "hidden md:block",
+                    pathname.split("/").length === 2 && "block font-medium",
+                  )}
+                >
+                  {pathname.split("/").length === 2 ? (
+                    <BreadcrumbPage className="font-medium">
+                      Dashboard
+                    </BreadcrumbPage>
+                  ) : (
+                    <BreadcrumbLink asChild>
+                      <Link href={"/x"}>Dashboard</Link>
+                    </BreadcrumbLink>
+                  )}
                 </BreadcrumbItem>
                 {pathname.split("/")[2] && (
-                  <>
-                    <BreadcrumbSeparator />
-                    <BreadcrumbPage className="capitalize">
+                  <BreadcrumbSeparator className="hidden md:block" />
+                )}
+                {pathname.split("/")[2] && (
+                  <BreadcrumbItem>
+                    <BreadcrumbPage className="font-medium capitalize">
                       {pathname.split("/")[2].replace(/-/g, " ")}
                     </BreadcrumbPage>
-                  </>
+                  </BreadcrumbItem>
                 )}
               </BreadcrumbList>
             </Breadcrumb>
           </div>
         </header>
-        <div className="flex min-h-dvh flex-1 p-5 pt-4">{children}</div>
+        <div className="flex min-h-[calc(100dvh-(--spacing)*14))] flex-1 p-5 pt-4">
+          {children}
+        </div>
       </SidebarInset>
     </SidebarProvider>
   )

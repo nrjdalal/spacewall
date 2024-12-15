@@ -13,8 +13,8 @@ import {
 import { GalleryVerticalEnd } from "lucide-react"
 import * as React from "react"
 
-const data = {
-  teams: [
+const mode = {
+  available: [
     {
       name: "Creator Mode",
       logo: GalleryVerticalEnd,
@@ -35,7 +35,7 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <NavModeSwitcher teams={data.teams} />
+        <NavModeSwitcher modes={mode.available} />
       </SidebarHeader>
       <SidebarContent>
         <NavApplications />
