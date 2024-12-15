@@ -63,10 +63,10 @@ export function NavUser() {
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+            className="w-[--radix-dropdown-menu-trigger-width] min-w-59.5 rounded-lg"
             side={isMobile ? "top" : "right"}
-            align="end"
-            sideOffset={isMobile ? 4 : 16}
+            align={isMobile ? "center" : "end"}
+            sideOffset={isMobile ? 7 : 17}
           >
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
