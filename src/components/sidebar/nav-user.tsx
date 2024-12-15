@@ -15,12 +15,13 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { cn } from "@/lib/utils"
 import { ChevronsUpDown, LogOut } from "lucide-react"
 import { getSession, signOut } from "next-auth/react"
 import { useEffect, useState } from "react"
 
 export function NavUser() {
-  const { isMobile } = useSidebar()
+  const { isMobile, open } = useSidebar()
 
   const [user, setUser] = useState({
     name: "",
@@ -51,7 +52,9 @@ export function NavUser() {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground border"
             >
-              <Avatar className="h-8 w-8 rounded-md">
+              <Avatar
+                className={cn("h-8 w-8 rounded-lg", !open && "absolute left-0")}
+              >
                 <AvatarImage src={user.avatar} alt={user.name} />
                 <AvatarFallback className="rounded-lg">SW</AvatarFallback>
               </Avatar>
@@ -63,10 +66,10 @@ export function NavUser() {
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+            className="w-[--radix-dropdown-menu-trigger-width] min-w-59.5 rounded-lg"
             side={isMobile ? "top" : "right"}
-            align="end"
-            sideOffset={isMobile ? 4 : 16}
+            align={isMobile ? "center" : "end"}
+            sideOffset={isMobile ? 7 : 17}
           >
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
