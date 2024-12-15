@@ -17,31 +17,18 @@ import {
 } from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils"
 import { ChevronsUpDown, LogOut } from "lucide-react"
-import { getSession, signOut } from "next-auth/react"
-import { useEffect, useState } from "react"
+import { signOut } from "next-auth/react"
 
-export function NavUser() {
+export function NavUser({
+  user,
+}: {
+  user: {
+    name: string
+    email: string
+    avatar: string
+  }
+}) {
   const { isMobile, open } = useSidebar()
-
-  const [user, setUser] = useState({
-    name: "",
-    email: "",
-    avatar: "",
-  })
-
-  useEffect(() => {
-    async function fetchData() {
-      const session = await getSession()
-      if (session && session.user) {
-        setUser({
-          name: session.user.name ?? "",
-          email: session.user.email ?? "",
-          avatar: session.user.image ?? "",
-        })
-      }
-    }
-    fetchData()
-  }, [])
 
   return (
     <SidebarMenu>
@@ -66,7 +53,10 @@ export function NavUser() {
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-[--radix-dropdown-menu-trigger-width] min-w-59.5 rounded-lg"
+            className={cn(
+              "w-[--radix-dropdown-menu-trigger-width] min-w-59.5 rounded-lg",
+              isMobile && "min-w-68",
+            )}
             side={isMobile ? "top" : "right"}
             align={isMobile ? "center" : "end"}
             sideOffset={isMobile ? 7 : 17}
