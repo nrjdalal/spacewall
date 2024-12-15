@@ -18,6 +18,7 @@ import {
 import { cn } from "@/lib/utils"
 import { ChevronsUpDown, LogOut } from "lucide-react"
 import { signOut } from "next-auth/react"
+import { ModeToggle } from "../ui/mode-toggle"
 
 export function NavUser({
   user,
@@ -73,6 +74,10 @@ export function NavUser({
                 </div>
               </div>
             </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="flex justify-between focus:bg-inherit">
+              <ModeToggle />
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className="cursor-pointer"
