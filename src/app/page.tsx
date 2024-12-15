@@ -18,14 +18,14 @@ export default function Page() {
 
         <div className="flex items-center justify-center gap-x-5 px-5">
           <Link href="/access" className="w-full">
-            <Button className="w-full">
-              <span className="mt-0.5 ml-1">Log in</span>
+            <Button className="h-10 w-full">
+              <span className="mt-0.75">Log in</span>
               <ChevronRight />
             </Button>
           </Link>
           <Link href="mailto:admin@nrjdalal.com" className="w-full">
-            <Button variant="outline" className="w-full">
-              <span className="mt-0.5">Contact</span>
+            <Button variant="outline" className="h-10 w-full">
+              <span className="mt-0.75">Contact</span>
             </Button>
           </Link>
         </div>
