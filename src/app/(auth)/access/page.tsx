@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { ChevronLeft, Crown } from "lucide-react"
+import { ChevronLeft, ChevronRight, Crown } from "lucide-react"
 import { signIn } from "next-auth/react"
 import Link from "next/link"
 import { useForm } from "react-hook-form"
@@ -104,7 +104,7 @@ export default function SignIn() {
             />
 
             <Button className="mt-3 h-10 w-full" type="submit">
-              Continue <span aria-hidden="true">&rarr;</span>
+              <span className="mt-0.5 ml-1">Continue</span> <ChevronRight />
             </Button>
           </form>
         </Form>
@@ -122,12 +122,12 @@ export default function SignIn() {
             onClick={() => signIn("github")}
           >
             <Icons.Github className="text-foreground/50" />
-            <span className="mt-px ml-1">Continue with Github</span>
+            <span className="mt-0.5 ml-1">Continue with Github</span>
           </Button>
 
           <Button className="h-10 w-full" variant="outline">
             <Icons.Google className="text-foreground/50" />
-            <span className="mt-px ml-1">Continue with Google</span>
+            <span className="mt-0.5 ml-1">Continue with Google</span>
           </Button>
         </div>
 

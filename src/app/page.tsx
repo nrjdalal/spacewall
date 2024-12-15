@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button"
-import { Crown } from "lucide-react"
+import { ChevronRight, Crown } from "lucide-react"
 import Link from "next/link"
 
 export default function Page() {
@@ -17,16 +17,17 @@ export default function Page() {
         </p>
 
         <div className="flex items-center justify-center gap-x-5 px-5">
-          <Button>
-            <Link href="/access" className="w-full">
-              Log in <span aria-hidden="true">&rarr;</span>
-            </Link>
-          </Button>
-          <Button variant="outline" asChild>
-            <Link href="mailto:admin@nrjdalal.com" className="w-full">
-              Contact
-            </Link>
-          </Button>
+          <Link href="/access" className="w-full">
+            <Button className="w-full">
+              <span className="mt-0.5 ml-1">Log in</span>
+              <ChevronRight />
+            </Button>
+          </Link>
+          <Link href="mailto:admin@nrjdalal.com" className="w-full">
+            <Button variant="outline" className="w-full">
+              <span className="mt-0.5">Contact</span>
+            </Button>
+          </Link>
         </div>
       </div>
       <p className="text-primary/35 absolute bottom-4 text-center text-xs">
