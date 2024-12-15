@@ -13,7 +13,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar"
+import { cn } from "@/lib/utils"
 import { ChevronsUpDown, Plus } from "lucide-react"
 import * as React from "react"
 
@@ -26,6 +28,7 @@ export function TeamSwitcher({
     plan: string
   }[]
 }) {
+  const { open } = useSidebar()
   const [activeTeam, setActiveTeam] = React.useState(teams[0])
 
   return (
@@ -35,9 +38,17 @@ export function TeamSwitcher({
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground border"
+              className={cn(
+                "data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground border",
+                !open && "mt-1",
+              )}
             >
-              <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+              <div
+                className={cn(
+                  "bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg",
+                  !open && "absolute left-0",
+                )}
+              >
                 <activeTeam.logo className="size-4" />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
@@ -51,7 +62,7 @@ export function TeamSwitcher({
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className="w-[--radix-dropdown-menu-trigger-width] min-w-59.5 rounded-lg"
-            align="center"
+            align={open ? "center" : "start"}
             side="bottom"
             sideOffset={7}
           >

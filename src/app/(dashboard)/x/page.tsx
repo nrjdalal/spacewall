@@ -1,7 +1,3 @@
-"use client"
-
-import { signOut } from "next-auth/react"
-
-export default function SignIn() {
-  return <button onClick={() => signOut()}>signOut</button>
+export default function Page() {
+  return <div className="p-5">Dashboard</div>
 }
