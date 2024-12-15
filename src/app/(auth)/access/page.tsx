@@ -98,7 +98,7 @@ export default function SignIn() {
                   <FormLabel>Password</FormLabel>
                   <FormControl>
                     <Input
-                      className="mt-1.5 font-mono"
+                      className="mt-1.5 font-mono not-placeholder-shown:font-sans not-placeholder-shown:tracking-widest"
                       placeholder="••••••••"
                       type="password"
                       {...field}
