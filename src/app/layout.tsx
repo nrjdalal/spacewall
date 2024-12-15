@@ -6,7 +6,7 @@ import type { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "SpaceWall",
-  description: "Launching soon.",
+  description: " Transforming the creators of tomorrow.",
 }
 
 export default function RootLayout({
