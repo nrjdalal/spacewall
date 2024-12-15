@@ -3,6 +3,7 @@ import { type EmailConfig } from "next-auth/providers/email"
 
 export const Email = {
   id: "email",
+  // https://zeptomail.zoho.com/
   name: "ZeptoMail",
   type: "email",
   maxAge: 5 * 60,
