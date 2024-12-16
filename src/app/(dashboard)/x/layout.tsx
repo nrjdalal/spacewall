@@ -57,8 +57,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <BreadcrumbItem
                   key="/x"
                   className={cn(
-                    "hidden md:block",
-                    pathname.split("/").length === 2 && "block font-medium",
+                    pathname.split("/").length === 2 && "font-medium",
                   )}
                 >
                   {pathname.split("/").length === 2 ? (
@@ -71,9 +70,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     </BreadcrumbLink>
                   )}
                 </BreadcrumbItem>
-                {pathname.split("/")[2] && (
-                  <BreadcrumbSeparator className="hidden md:block" />
-                )}
+                {pathname.split("/")[2] && <BreadcrumbSeparator />}
                 {pathname.split("/")[2] && (
                   <BreadcrumbItem>
                     <BreadcrumbPage className="font-medium">
