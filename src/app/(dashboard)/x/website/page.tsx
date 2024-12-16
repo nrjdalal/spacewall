@@ -10,8 +10,8 @@ export default async function Page() {
         title="Website"
         description="Think link in bio, one link, etc but for professionals."
       />
-      <XContent className="grid max-w-screen-lg lg:grid-cols-5">
-        <div className="col-span-3">
+      <XContent className="lg:grid lg:grid-cols-5">
+        <div className="lg:col-span-3">
           <div className="flex items-center space-x-3">
             <div className="size-24 rounded-full border"></div>
             <div>
@@ -36,7 +36,7 @@ export default async function Page() {
             </div>
           </div>
         </div>
-        <div className="col-span-2"></div>
+        <div className="hidden lg:col-span-2"></div>
       </XContent>
     </>
   )
