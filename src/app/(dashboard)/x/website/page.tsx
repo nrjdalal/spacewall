@@ -1,7 +1,9 @@
 import XContent from "@/components/common/x-content"
 import XHeader from "@/components/common/x-header"
 import { Button } from "@/components/ui/button"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import { Plus } from "lucide-react"
+import Image from "next/image"
 
 export default async function Page() {
   return (
@@ -38,8 +40,17 @@ export default async function Page() {
             </div>
           </div>
         </div>
-        <div className="text-foreground/60 hidden aspect-[9/16] max-w-sm items-center justify-center rounded-lg border lg:col-span-2 lg:flex">
-          Preview
+        <div className="text-foreground/60 relative -m-5 hidden max-w-sm items-center justify-center rounded-lg lg:col-span-2 lg:flex">
+          <Image
+            className="pointer-events-none z-5 h-full w-full"
+            src="/iphone.png"
+            alt="preview"
+            width={384}
+            height={742.5}
+          />
+          <div className="absolute bottom-[6%] z-10 h-[84%] w-[79.75%] overflow-hidden rounded-b-3xl">
+            <ScrollArea className="h-full w-full"></ScrollArea>
+          </div>
         </div>
       </XContent>
     </>
