@@ -48,12 +48,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <SidebarProvider>
       <AppSidebar user={user} />
       <SidebarInset>
-        <header className="sticky top-0 flex h-14 shrink-0 items-center gap-2 border-b bg-inherit transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-14 md:h-16">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="fixed right-5 bottom-5 size-10 border bg-inherit md:static md:-ml-2" />
-            <Separator orientation="vertical" className="hidden h-4 md:block" />
-            <Breadcrumb className="ml-1 md:ml-0">
-              <BreadcrumbList className="gap-1 text-xs sm:gap-1">
+        <SidebarTrigger className="fixed right-5 bottom-5 size-10 border bg-inherit md:hidden" />
+        <header className="sticky top-0 hidden h-16 shrink-0 items-center gap-2 border-b bg-inherit transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-14 md:flex">
+          <SidebarTrigger className="ml-2 size-10 border" />
+          <Separator className="h-4" orientation="vertical" />
+          <div className="-ml-1 flex items-center gap-2">
+            <Breadcrumb className="ml-1">
+              <BreadcrumbList className="text-xs sm:gap-0.5">
                 <BreadcrumbItem
                   key="/x"
                   className={cn(
