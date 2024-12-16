@@ -35,9 +35,7 @@ if (process.env.NODE_ENV === "production") {
         max: 20,
       }),
       logger: {
-        logQuery: (query) =>
-          // console.log(` - \x1b[33m${query.replace(/\"/g, "")}\x1b[0m`),
-          console.log(`- ${humanLogger(query)}`),
+        logQuery: (query) => console.log(humanLogger(query)),
       },
     })
   }
