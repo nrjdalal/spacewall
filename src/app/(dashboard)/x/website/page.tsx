@@ -21,7 +21,7 @@ export default async function Page() {
           </div>
 
           <Button className="mt-8 h-12 w-full rounded-full">
-            <Plus /> Add links and more
+            <Plus /> Add widget
           </Button>
 
           <div>
