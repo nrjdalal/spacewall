@@ -15,8 +15,10 @@ export default async function Page() {
           <div className="flex items-center space-x-3">
             <div className="size-24 rounded-full border"></div>
             <div>
-              <h1 className="font-medium">Name</h1>
-              <p className="text-foreground/60 text-sm">Add your amazing bio</p>
+              <h1 className="font-medium">Display Name</h1>
+              <p className="text-foreground/60 text-sm">
+                Your amazing bio (optional)
+              </p>
             </div>
           </div>
 
