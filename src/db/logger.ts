@@ -32,11 +32,12 @@ export function humanLogger(input: string) {
   })
 
   return (
-    " --- " +
+    " --- \n " +
     result
       .join(" ")
       .replace(/(\w+)\[/g, "\x1b[33m$1\x1b[0m\x1b[32m[")
       .replace(/,]/g, "]")
-      .replace(/\]/g, "]\x1b[0m")
+      .replace(/\]/g, "]\x1b[0m") +
+    " \n"
   )
 }
