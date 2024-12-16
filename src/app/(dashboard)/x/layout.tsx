@@ -88,7 +88,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </Breadcrumb>
           </div>
         </header>
-        <div className="flex min-h-[calc(100dvh-(--spacing)*14))] flex-1 p-5 pt-4">
+        <div className="flex min-h-[calc(100dvh-(--spacing)*14))] flex-1 flex-col">
           {children}
         </div>
       </SidebarInset>

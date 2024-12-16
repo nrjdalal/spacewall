@@ -10,14 +10,14 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { GalleryVerticalEnd } from "lucide-react"
+import { Box } from "lucide-react"
 import * as React from "react"
 
 const mode = {
   available: [
     {
       name: "Creator Mode",
-      logo: GalleryVerticalEnd,
+      logo: Box,
       plan: "Free",
     },
   ],
