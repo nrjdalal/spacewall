@@ -5,7 +5,7 @@ import Stats from "@/components/dashboard/stats"
 export default async function Page() {
   return (
     <>
-      <XHeader title="Dashboard" description="Welcome back, John Doe!" />
+      <XHeader title="Dashboard" description="Welcome to the dashboard." />
       <XContent>
         <Stats />
       </XContent>

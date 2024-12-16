@@ -4,7 +4,7 @@ export default function XContent({
   children,
   className,
 }: {
-  children: React.ReactNode
+  children?: React.ReactNode
   className?: string
 }) {
   return (
