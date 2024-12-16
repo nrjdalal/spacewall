@@ -8,20 +8,15 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { Home, Lock, Sparkle, type LucideIcon } from "lucide-react"
+import { Home, Sparkle, type LucideIcon } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
 const applications = [
   {
-    title: "Link in Bio",
-    url: "/x/link-in-bio",
+    title: "Website",
+    url: "/x/website",
     icon: Sparkle,
-  },
-  {
-    title: "Locked Content",
-    url: "/x/locked-content",
-    icon: Lock,
   },
 ] as {
   title: string
