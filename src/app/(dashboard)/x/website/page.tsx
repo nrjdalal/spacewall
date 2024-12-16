@@ -10,8 +10,8 @@ export default async function Page() {
         title="Website"
         description="Think link in bio, one link, etc but for professionals."
       />
-      <XContent className="lg:grid lg:grid-cols-5">
-        <div className="lg:col-span-3">
+      <XContent className="lg:grid lg:grid-cols-5 lg:gap-5">
+        <div className="max-w-xl lg:col-span-3">
           <div className="flex items-center space-x-3">
             <div className="size-24 rounded-full border"></div>
             <div>
@@ -36,7 +36,9 @@ export default async function Page() {
             </div>
           </div>
         </div>
-        <div className="hidden lg:col-span-2"></div>
+        <div className="text-foreground/60 hidden aspect-[9/16] max-w-sm items-center justify-center rounded-lg border lg:col-span-2 lg:flex">
+          Preview
+        </div>
       </XContent>
     </>
   )
