@@ -1,4 +1,4 @@
-import { humanLogger } from "@/db/logger"
+import { devLogger } from "@/db/dev-logger"
 import {
   accounts,
   authenticators,
@@ -35,7 +35,7 @@ if (process.env.NODE_ENV === "production") {
         max: 20,
       }),
       logger: {
-        logQuery: (query) => console.log(humanLogger(query)),
+        logQuery: (query) => devLogger(query),
       },
     })
   }

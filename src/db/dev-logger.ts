@@ -1,4 +1,6 @@
-export function humanLogger(input: string) {
+// AI generated logger for the database
+
+export function devLogger(input: string) {
   const words = input.replace(/\"/g, "").split(" ")
   const result: string[] = []
   const suffixMap = new Map() // Tracks suffixes for current groups
@@ -31,8 +33,8 @@ export function humanLogger(input: string) {
     }
   })
 
-  return (
+  console.log(
     " \x1b[36m▲\x1b[0m " +
-    result.join(" ").replace(/(\w+)\[/g, "\x1b[4m$1\x1b[0m[")
+      result.join(" ").replace(/(\w+)\[/g, "\x1b[4m$1\x1b[0m["),
   )
 }
