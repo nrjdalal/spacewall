@@ -1,3 +1,7 @@
+## link in bio refs
+
+- bio.link
+
 ## shadcn UI overrides
 
 - removed className shadow-\* -> button, dropdown menu, input
