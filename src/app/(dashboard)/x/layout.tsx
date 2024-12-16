@@ -56,7 +56,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               className="mr-2 hidden h-4 md:block"
             />
             <Breadcrumb>
-              <BreadcrumbList className="text-base">
+              <BreadcrumbList className="text-xs">
                 <BreadcrumbItem
                   key="/x"
                   className={cn(
@@ -66,11 +66,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 >
                   {pathname.split("/").length === 2 ? (
                     <BreadcrumbPage className="font-medium">
-                      Dashboard
+                      dashboard
                     </BreadcrumbPage>
                   ) : (
                     <BreadcrumbLink asChild>
-                      <Link href={"/x"}>Dashboard</Link>
+                      <Link href={"/x"}>dashboard</Link>
                     </BreadcrumbLink>
                   )}
                 </BreadcrumbItem>
@@ -79,7 +79,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 )}
                 {pathname.split("/")[2] && (
                   <BreadcrumbItem>
-                    <BreadcrumbPage className="font-medium capitalize">
+                    <BreadcrumbPage className="font-medium">
                       {pathname.split("/")[2].replace(/-/g, " ")}
                     </BreadcrumbPage>
                   </BreadcrumbItem>
