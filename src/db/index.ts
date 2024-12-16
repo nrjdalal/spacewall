@@ -1,3 +1,4 @@
+import { humanLogger } from "@/db/logger"
 import {
   accounts,
   authenticators,
@@ -35,7 +36,8 @@ if (process.env.NODE_ENV === "production") {
       }),
       logger: {
         logQuery: (query) =>
-          console.log(` - \x1b[33m${query.replace(/\"/g, "")}\x1b[0m`),
+          // console.log(` - \x1b[33m${query.replace(/\"/g, "")}\x1b[0m`),
+          console.log(`- ${humanLogger(query)}`),
       },
     })
   }
