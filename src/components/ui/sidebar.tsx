@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils"
 import { Slot } from "@radix-ui/react-slot"
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 import { cva, VariantProps } from "class-variance-authority"
-import { PanelLeft } from "lucide-react"
+import { Menu, PanelLeft } from "lucide-react"
 import * as React from "react"
 
 const SIDEBAR_COOKIE_NAME = "sidebar:state"
@@ -289,7 +289,8 @@ const SidebarTrigger = React.forwardRef<
       }}
       {...props}
     >
-      <PanelLeft />
+      <PanelLeft className="hidden md:block" />
+      <Menu className="md:hidden" />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   )
