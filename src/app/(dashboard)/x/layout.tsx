@@ -51,35 +51,29 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <header className="sticky top-0 flex h-14 shrink-0 items-center gap-2 border-b bg-inherit transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-14 md:h-16">
           <div className="flex items-center gap-2 px-4">
             <SidebarTrigger className="fixed right-5 bottom-5 size-10 border bg-inherit md:static md:-ml-2" />
-            <Separator
-              orientation="vertical"
-              className="mr-2 hidden h-4 md:block"
-            />
-            <Breadcrumb>
-              <BreadcrumbList className="text-base">
+            <Separator orientation="vertical" className="hidden h-4 md:block" />
+            <Breadcrumb className="ml-1 md:ml-0">
+              <BreadcrumbList className="gap-1 text-xs sm:gap-1">
                 <BreadcrumbItem
                   key="/x"
                   className={cn(
-                    "hidden md:block",
-                    pathname.split("/").length === 2 && "block font-medium",
+                    pathname.split("/").length === 2 && "font-medium",
                   )}
                 >
                   {pathname.split("/").length === 2 ? (
                     <BreadcrumbPage className="font-medium">
-                      Dashboard
+                      dashboard
                     </BreadcrumbPage>
                   ) : (
                     <BreadcrumbLink asChild>
-                      <Link href={"/x"}>Dashboard</Link>
+                      <Link href={"/x"}>dashboard</Link>
                     </BreadcrumbLink>
                   )}
                 </BreadcrumbItem>
-                {pathname.split("/")[2] && (
-                  <BreadcrumbSeparator className="hidden md:block" />
-                )}
+                {pathname.split("/")[2] && <BreadcrumbSeparator />}
                 {pathname.split("/")[2] && (
                   <BreadcrumbItem>
-                    <BreadcrumbPage className="font-medium capitalize">
+                    <BreadcrumbPage className="font-medium">
                       {pathname.split("/")[2].replace(/-/g, " ")}
                     </BreadcrumbPage>
                   </BreadcrumbItem>
