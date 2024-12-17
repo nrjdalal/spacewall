@@ -45,10 +45,10 @@ export default function Page() {
       />
       <XContent className="lg:grid lg:grid-cols-5 lg:gap-5">
         <div className="max-w-xl lg:col-span-3">
-          <div className="mb-5 flex justify-end rounded-lg border p-5">
+          <div className="mb-5 flex justify-between border-b pb-5">
             <Dialog>
               <DialogTrigger asChild>
-                <Button>
+                <Button className="w-40" variant="outline">
                   <span className="lg:hidden">Preview</span>
                   <span className="hidden lg:block">Desktop Preview</span>
                 </Button>
@@ -58,6 +58,7 @@ export default function Page() {
                 {data && <WebsiteView data={data.json} />}
               </DialogContent>
             </Dialog>
+            <Button className="w-40">Share</Button>
           </div>
 
           <div className="flex items-center space-x-3">
