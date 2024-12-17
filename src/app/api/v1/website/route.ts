@@ -36,7 +36,7 @@ export async function GET() {
 
   return Response.json({
     status: 200,
-    json: res[0],
+    data: res[0],
   })
 }
 
@@ -70,6 +70,6 @@ export async function POST(request: Request) {
 
   return Response.json({
     status: 200,
-    json: res[0],
+    data: res[0],
   })
 }

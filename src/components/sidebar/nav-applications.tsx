@@ -53,7 +53,11 @@ export function NavApplications() {
           queryKey: [application.prefetch!.queryKey],
           queryFn: async () => {
             const response = await fetch(application.prefetch!.apiRoute)
-            return response.json()
+            if (!response.ok)
+              return Promise.reject({
+                message: "Something went wrong!",
+              })
+            return (await response.json()).data
           },
         })
       }

@@ -35,7 +35,11 @@ export default function Page() {
     queryKey: ["website"],
     queryFn: async () => {
       const response = await fetch("/api/v1/website")
-      return response.json()
+      if (!response.ok)
+        return Promise.reject({
+          message: "Something went wrong!",
+        })
+      return (await response.json()).data
     },
     staleTime: Infinity,
   })
@@ -61,7 +65,7 @@ export default function Page() {
                   Preview
                 </DialogTitle>
                 <div className="-mx-5 -mt-4">
-                  {data && <WebsiteView data={data.json} />}
+                  {data && <WebsiteView data={data} />}
                 </div>
               </DialogContent>
             </Dialog>
@@ -74,16 +78,16 @@ export default function Page() {
                 <ImageIcon />
               </div>
             </div>
-            {data?.json?.id && (
+            {data?.id && (
               <div className="relative w-full">
                 <EditWebsiteHeader
-                  id={data?.json?.id}
-                  title={data?.json?.title}
-                  description={data?.json?.description}
+                  id={data?.id}
+                  title={data?.title}
+                  description={data?.description}
                 />
-                <h1 className="font-medium">{data?.json?.title || "Title"}</h1>
+                <h1 className="font-medium">{data?.title || "Title"}</h1>
                 <p className="text-foreground/70 text-sm">
-                  {data?.json?.description || "Description"}
+                  {data?.description || "Description"}
                 </p>
               </div>
             )}
@@ -115,7 +119,7 @@ export default function Page() {
           />
           <div className="absolute bottom-[6%] h-[84%] w-[79.75%] overflow-hidden rounded-b-3xl">
             <ScrollArea className="mt-0.5 h-full w-full border-t">
-              {data && <WebsiteView data={data.json} mobile={true} />}
+              {data && <WebsiteView data={data} mobile={true} />}
             </ScrollArea>
           </div>
         </div>
@@ -161,14 +165,31 @@ const EditWebsiteHeader = ({
           id,
         }),
       })
-      return response.json()
+      if (!response.ok)
+        return Promise.reject({
+          message: "Something went wrong!",
+        })
+      return (await response.json()).data
     },
-    onSuccess: (context) => {
-      queryClient.setQueryData(["website"], context)
+    onMutate: async (newData) => {
+      await queryClient.cancelQueries({
+        queryKey: ["website"],
+      })
+      const prev = queryClient.getQueryData(["website"])
+      queryClient.setQueryData(["website"], {
+        ...(prev || {}),
+        ...newData,
+      })
       setIsOpen(false)
-      setSubmitting(false)
+      return { prev }
     },
-    onError: () => {
+    onError: (err, newData, context) => {
+      queryClient.setQueryData(["website"], context?.prev)
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["website"],
+      })
       setSubmitting(false)
     },
   })
