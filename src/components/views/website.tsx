@@ -12,7 +12,7 @@ export default function WebsiteView({
         <h1 className="text-center font-medium">{data.title}</h1>
       )}
       {data.description !== "" && (
-        <p className="text-foreground/70 mt-1 text-center text-xs">
+        <p className="mt-1 text-center text-sm text-zinc-700 dark:text-zinc-300">
           {data.description}
         </p>
       )}
