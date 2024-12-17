@@ -8,26 +8,59 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { useQueryClient } from "@tanstack/react-query"
 import { Home, Sparkle, type LucideIcon } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useEffect } from "react"
 
 const applications = [
   {
     title: "Website",
     url: "/x/website",
     icon: Sparkle,
-    prefetch: true,
+    prefetch: {
+      priority: 1,
+      queryKey: "website",
+      apiRoute: "/api/v1/website",
+    },
   },
 ] as {
   title: string
   url: string
   icon: LucideIcon
-  prefetch?: true | null
+  prefetch?:
+    | {
+        priority: number
+        queryKey: string
+        apiRoute: string
+      }
+    | undefined
 }[]
 
 export function NavApplications() {
+  const queryClient = useQueryClient()
   const pathname = usePathname()
+
+  useEffect(() => {
+    const prefetchApplications = async () => {
+      const sortedApplications = applications
+        .filter((app) => app.prefetch)
+        .sort((a, b) => a.prefetch!.priority - b.prefetch!.priority)
+
+      for (const application of sortedApplications) {
+        await queryClient.prefetchQuery({
+          queryKey: [application.prefetch!.queryKey],
+          queryFn: async () => {
+            const response = await fetch(application.prefetch!.apiRoute)
+            return response.json()
+          },
+        })
+      }
+    }
+
+    prefetchApplications()
+  }, [queryClient])
 
   return (
     <>
@@ -59,10 +92,7 @@ export function NavApplications() {
                   pathname.split("/")[2] === application.url.split("/")[2]
                 }
               >
-                <Link
-                  href={application.url}
-                  prefetch={application.prefetch ?? null}
-                >
+                <Link href={application.url}>
                   {application.icon && <application.icon />}
                   <span>{application.title}</span>
                 </Link>
