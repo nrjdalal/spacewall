@@ -54,7 +54,7 @@ export async function POST(request: Request) {
     })
   }
 
-  await db
+  const res = await db
     .update(websites)
     .set({
       title: body.title,
@@ -66,9 +66,10 @@ export async function POST(request: Request) {
         eq(websites.id, body.id),
       ),
     )
+    .returning()
 
   return Response.json({
     status: 200,
-    message: "Success",
+    json: res[0],
   })
 }
