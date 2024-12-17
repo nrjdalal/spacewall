@@ -20,8 +20,8 @@ import {
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useQuery } from "@tanstack/react-query"
-import { Edit, Image as ImageIcon, Plus } from "lucide-react"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { Edit, Image as ImageIcon } from "lucide-react"
 import Image from "next/image"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -50,19 +50,23 @@ export default function Page() {
               </div>
             </div>
             <div className="relative w-full">
-              <EditWebsiteHeader />
+              <EditWebsiteHeader
+                id={data?.json?.id}
+                title={data?.json?.title}
+                description={data?.json?.description}
+              />
               <h1 className="font-medium">{data?.json?.title || "Title"}</h1>
-              <p className="text-foreground/60 text-sm">
+              <p className="text-foreground/70 text-sm">
                 {data?.json?.description || "Description"}
               </p>
             </div>
           </div>
 
-          <Button className="mt-8 h-10 w-full rounded-full">
+          {/* <Button className="mt-8 h-10 w-full rounded-full">
             <Plus /> Add widget
-          </Button>
+          </Button> */}
 
-          <div>
+          {/* <div>
             <div className="mt-8 flex items-center space-x-3 rounded-lg border p-3">
               <div className="aspect-square size-18 rounded-lg border"></div>
               <div>
@@ -72,7 +76,7 @@ export default function Page() {
                 </p>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
         <div className="text-foreground/60 relative -m-5 hidden max-w-sm items-center justify-center rounded-lg lg:col-span-2 lg:flex">
           <Image
@@ -92,12 +96,16 @@ export default function Page() {
 }
 
 const EditWebsiteHeader = ({
+  id,
   title,
   description,
 }: {
+  id: string
   title?: string
   description?: string
 }) => {
+  const queryClient = useQueryClient()
+
   const formSchema = z.object({
     title: z.string().max(64).optional(),
     description: z.string().optional(),
@@ -111,8 +119,26 @@ const EditWebsiteHeader = ({
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
+  const mutation = useMutation({
+    mutationFn: async (values: z.infer<typeof formSchema>) => {
+      const response = await fetch("/api/v1/website", {
+        method: "POST",
+        body: JSON.stringify({
+          ...values,
+          id,
+        }),
+      })
+      return response.json()
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["website"],
+      })
+    },
+  })
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    await mutation.mutateAsync(values)
   }
 
   return (
@@ -121,7 +147,7 @@ const EditWebsiteHeader = ({
         <Edit className="bg-foreground/5 absolute -top-0.5 right-0 size-6.5 cursor-pointer rounded-md p-1" />
       </DialogTrigger>
       <DialogContent>
-        <DialogTitle>Let&apos;s go</DialogTitle>
+        <DialogTitle>Managing #{id}</DialogTitle>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
             <FormField
