@@ -23,3 +23,5 @@ export default auth(async function middleware(req) {
 export const config = {
   matcher: ["/access", "/x/:path*"],
 }
+
+// Path: src/middleware.ts
