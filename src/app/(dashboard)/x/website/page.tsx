@@ -53,7 +53,7 @@ export default function Page() {
                   <span className="hidden lg:block">Desktop Preview</span>
                 </Button>
               </DialogTrigger>
-              <DialogContent className="flex h-full max-h-dvh w-full max-w-screen flex-col rounded-none">
+              <DialogContent className="flex h-full max-h-dvh w-full max-w-screen flex-col rounded-none border-none">
                 <DialogTitle className="border-b pb-2">Preview</DialogTitle>
                 {data && <WebsiteView data={data.json} />}
               </DialogContent>
