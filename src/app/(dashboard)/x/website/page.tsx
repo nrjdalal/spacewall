@@ -19,7 +19,9 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { Textarea } from "@/components/ui/textarea"
 import WebsiteView from "@/components/views/website"
+import { cn } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { Edit, Image as ImageIcon, Loader2 } from "lucide-react"
@@ -111,7 +113,7 @@ export default function Page() {
             height={742.5}
           />
           <div className="absolute bottom-[6%] h-[84%] w-[79.75%] overflow-hidden rounded-b-3xl">
-            <ScrollArea className="h-full w-full">
+            <ScrollArea className="mt-0.5 h-full w-full border-t">
               {data && <WebsiteView data={data.json} mobile={true} />}
             </ScrollArea>
           </div>
@@ -182,7 +184,14 @@ const EditWebsiteHeader = ({
         <Edit className="bg-foreground/5 absolute -top-0.5 right-0 size-6.5 cursor-pointer rounded-md p-1" />
       </DialogTrigger>
       <DialogContent>
-        <DialogTitle>Managing #{id}</DialogTitle>
+        <DialogTitle
+          className={cn(
+            "invisible",
+            process.env.NODE_ENV === "development" && "visible",
+          )}
+        >
+          ID: {id}
+        </DialogTitle>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
             <FormField
@@ -206,7 +215,7 @@ const EditWebsiteHeader = ({
                 <FormItem className="relative">
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Input
+                    <Textarea
                       className="mt-1.5"
                       placeholder={description}
                       {...field}
