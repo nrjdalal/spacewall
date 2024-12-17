@@ -81,7 +81,7 @@ export default function Page() {
             </div>
           </div> */}
         </div>
-        <div className="text-foreground/60 relative -m-5 hidden max-w-sm items-center justify-center rounded-lg lg:col-span-2 lg:flex">
+        <div className="relative -m-5 hidden max-w-sm items-center justify-center rounded-lg lg:col-span-2 lg:flex">
           <Image
             className="pointer-events-none z-5 h-full w-full"
             src="/iphone.png"
@@ -89,7 +89,7 @@ export default function Page() {
             width={384}
             height={742.5}
           />
-          <div className="absolute bottom-[6%] z-10 h-[84%] w-[79.75%] overflow-hidden rounded-b-3xl">
+          <div className="absolute bottom-[6%] h-[84%] w-[79.75%] overflow-hidden rounded-b-3xl">
             <ScrollArea className="h-full w-full">
               {data && <WebsiteView data={data.json} />}
             </ScrollArea>
