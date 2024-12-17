@@ -112,7 +112,7 @@ export default function Page() {
           />
           <div className="absolute bottom-[6%] h-[84%] w-[79.75%] overflow-hidden rounded-b-3xl">
             <ScrollArea className="h-full w-full">
-              {data && <WebsiteView data={data.json} />}
+              {data && <WebsiteView data={data.json} mobile={true} />}
             </ScrollArea>
           </div>
         </div>
