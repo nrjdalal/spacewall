@@ -37,7 +37,7 @@ export default function Page() {
       const response = await fetch("/api/v1/website")
       return response.json()
     },
-    staleTime: 1000 * 60 * 5,
+    staleTime: Infinity,
   })
 
   return (
@@ -163,10 +163,8 @@ const EditWebsiteHeader = ({
       })
       return response.json()
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["website"],
-      })
+    onSuccess: (context) => {
+      queryClient.setQueryData(["website"], context)
       setIsOpen(false)
       setSubmitting(false)
     },
