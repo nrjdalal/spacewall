@@ -22,8 +22,9 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import WebsiteView from "@/components/views/website"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { Edit, Image as ImageIcon } from "lucide-react"
+import { Edit, Image as ImageIcon, Loader2 } from "lucide-react"
 import Image from "next/image"
+import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
@@ -109,6 +110,9 @@ const EditWebsiteHeader = ({
   title?: string
   description?: string
 }) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+
   const queryClient = useQueryClient()
 
   const formSchema = z.object({
@@ -126,6 +130,7 @@ const EditWebsiteHeader = ({
 
   const mutation = useMutation({
     mutationFn: async (values: z.infer<typeof formSchema>) => {
+      setSubmitting(true)
       const response = await fetch("/api/v1/website", {
         method: "POST",
         body: JSON.stringify({
@@ -139,6 +144,11 @@ const EditWebsiteHeader = ({
       queryClient.invalidateQueries({
         queryKey: ["website"],
       })
+      setIsOpen(false)
+      setSubmitting(false)
+    },
+    onError: () => {
+      setSubmitting(false)
     },
   })
 
@@ -147,7 +157,7 @@ const EditWebsiteHeader = ({
   }
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Edit className="bg-foreground/5 absolute -top-0.5 right-0 size-6.5 cursor-pointer rounded-md p-1" />
       </DialogTrigger>
@@ -187,8 +197,12 @@ const EditWebsiteHeader = ({
               )}
             />
 
-            <Button type="submit" className="mt-3 h-10 w-full">
-              <span>Save Changes</span>
+            <Button
+              type="submit"
+              className="mt-3 h-10 w-full"
+              disabled={submitting}
+            >
+              {submitting ? <Loader2 className="animate-spin" /> : "Submit"}
             </Button>
           </form>
         </Form>
