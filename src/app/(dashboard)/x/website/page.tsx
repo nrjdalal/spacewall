@@ -54,8 +54,12 @@ export default function Page() {
                 </Button>
               </DialogTrigger>
               <DialogContent className="flex h-full max-h-dvh w-full max-w-screen flex-col rounded-none border-none">
-                <DialogTitle className="border-b pb-2">Preview</DialogTitle>
-                {data && <WebsiteView data={data.json} />}
+                <DialogTitle className="-mx-5 border-b px-5 pb-3">
+                  Preview
+                </DialogTitle>
+                <div className="-mx-5 -mt-4">
+                  {data && <WebsiteView data={data.json} />}
+                </div>
               </DialogContent>
             </Dialog>
             <Button className="w-40">Share</Button>
