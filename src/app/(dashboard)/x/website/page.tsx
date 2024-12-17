@@ -159,11 +159,7 @@ const EditWebsiteHeader = ({
                 <FormItem className="relative">
                   <FormLabel>Title</FormLabel>
                   <FormControl>
-                    <Input
-                      className="mt-1.5 font-mono"
-                      placeholder={title}
-                      {...field}
-                    />
+                    <Input className="mt-1.5" placeholder={title} {...field} />
                   </FormControl>
                   <FormMessage className="absolute -bottom-5 text-xs" />
                 </FormItem>
@@ -178,7 +174,7 @@ const EditWebsiteHeader = ({
                   <FormLabel>Description</FormLabel>
                   <FormControl>
                     <Input
-                      className="mt-1.5 font-mono"
+                      className="mt-1.5"
                       placeholder={description}
                       {...field}
                     />
