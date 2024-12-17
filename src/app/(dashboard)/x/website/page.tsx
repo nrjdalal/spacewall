@@ -1,11 +1,42 @@
+"use client"
+
 import XContent from "@/components/common/x-content"
 import XHeader from "@/components/common/x-header"
 import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Plus } from "lucide-react"
+import WebsiteView from "@/components/views/website"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { Edit, Image as ImageIcon, Loader2 } from "lucide-react"
 import Image from "next/image"
+import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
 
-export default async function Page() {
+export default function Page() {
+  const { data } = useQuery({
+    queryKey: ["website"],
+    queryFn: async () => {
+      const response = await fetch("/api/v1/website")
+      return response.json()
+    },
+  })
+
   return (
     <>
       <XHeader
@@ -15,20 +46,31 @@ export default async function Page() {
       <XContent className="lg:grid lg:grid-cols-5 lg:gap-5">
         <div className="max-w-xl lg:col-span-3">
           <div className="flex items-center space-x-3">
-            <div className="size-24 rounded-full border"></div>
-            <div>
-              <h1 className="font-medium">Display Name</h1>
-              <p className="text-foreground/60 text-sm">
-                Your amazing bio (optional)
-              </p>
+            <div className="bg-foreground/5 aspect-square size-24 rounded-full border">
+              <div className="text-foreground/60 grid h-full w-full place-content-center">
+                <ImageIcon />
+              </div>
             </div>
+            {data?.json?.id && (
+              <div className="relative w-full">
+                <EditWebsiteHeader
+                  id={data?.json?.id}
+                  title={data?.json?.title}
+                  description={data?.json?.description}
+                />
+                <h1 className="font-medium">{data?.json?.title || "Title"}</h1>
+                <p className="text-foreground/70 text-sm">
+                  {data?.json?.description || "Description"}
+                </p>
+              </div>
+            )}
           </div>
 
-          <Button className="mt-8 h-10 w-full rounded-full">
+          {/* <Button className="mt-8 h-10 w-full rounded-full">
             <Plus /> Add widget
-          </Button>
+          </Button> */}
 
-          <div>
+          {/* <div>
             <div className="mt-8 flex items-center space-x-3 rounded-lg border p-3">
               <div className="aspect-square size-18 rounded-lg border"></div>
               <div>
@@ -38,9 +80,9 @@ export default async function Page() {
                 </p>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
-        <div className="text-foreground/60 relative -m-5 hidden max-w-sm items-center justify-center rounded-lg lg:col-span-2 lg:flex">
+        <div className="relative -m-5 hidden max-w-sm items-center justify-center rounded-lg lg:col-span-2 lg:flex">
           <Image
             className="pointer-events-none z-5 h-full w-full"
             src="/iphone.png"
@@ -48,11 +90,123 @@ export default async function Page() {
             width={384}
             height={742.5}
           />
-          <div className="absolute bottom-[6%] z-10 h-[84%] w-[79.75%] overflow-hidden rounded-b-3xl">
-            <ScrollArea className="h-full w-full"></ScrollArea>
+          <div className="absolute bottom-[6%] h-[84%] w-[79.75%] overflow-hidden rounded-b-3xl">
+            <ScrollArea className="h-full w-full">
+              {data && <WebsiteView data={data.json} />}
+            </ScrollArea>
           </div>
         </div>
       </XContent>
     </>
+  )
+}
+
+const EditWebsiteHeader = ({
+  id,
+  title,
+  description,
+}: {
+  id: string
+  title?: string
+  description?: string
+}) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+
+  const queryClient = useQueryClient()
+
+  const formSchema = z.object({
+    title: z.string().max(64).optional(),
+    description: z.string().optional(),
+  })
+
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      title: title || "",
+      description: description || "",
+    },
+  })
+
+  const mutation = useMutation({
+    mutationFn: async (values: z.infer<typeof formSchema>) => {
+      setSubmitting(true)
+      const response = await fetch("/api/v1/website", {
+        method: "POST",
+        body: JSON.stringify({
+          ...values,
+          id,
+        }),
+      })
+      return response.json()
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["website"],
+      })
+      setIsOpen(false)
+      setSubmitting(false)
+    },
+    onError: () => {
+      setSubmitting(false)
+    },
+  })
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    await mutation.mutateAsync(values)
+  }
+
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <Edit className="bg-foreground/5 absolute -top-0.5 right-0 size-6.5 cursor-pointer rounded-md p-1" />
+      </DialogTrigger>
+      <DialogContent>
+        <DialogTitle>Managing #{id}</DialogTitle>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem className="relative">
+                  <FormLabel>Title</FormLabel>
+                  <FormControl>
+                    <Input className="mt-1.5" placeholder={title} {...field} />
+                  </FormControl>
+                  <FormMessage className="absolute -bottom-5 text-xs" />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem className="relative">
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Input
+                      className="mt-1.5"
+                      placeholder={description}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage className="absolute -bottom-5 text-xs" />
+                </FormItem>
+              )}
+            />
+
+            <Button
+              type="submit"
+              className="mt-3 h-10 w-full"
+              disabled={submitting}
+            >
+              {submitting ? <Loader2 className="animate-spin" /> : "Submit"}
+            </Button>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
   )
 }
