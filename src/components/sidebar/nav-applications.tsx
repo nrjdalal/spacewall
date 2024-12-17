@@ -23,7 +23,7 @@ const applications = [
   title: string
   url: string
   icon: LucideIcon
-  prefetch?: boolean
+  prefetch?: true | null
 }[]
 
 export function NavApplications() {
@@ -59,7 +59,10 @@ export function NavApplications() {
                   pathname.split("/")[2] === application.url.split("/")[2]
                 }
               >
-                <Link href={application.url} prefetch={application.prefetch}>
+                <Link
+                  href={application.url}
+                  prefetch={application.prefetch ?? null}
+                >
                   {application.icon && <application.icon />}
                   <span>{application.title}</span>
                 </Link>
