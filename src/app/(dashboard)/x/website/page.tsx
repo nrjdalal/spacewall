@@ -3,10 +3,28 @@
 import XContent from "@/components/common/x-content"
 import XHeader from "@/components/common/x-header"
 import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { useQuery } from "@tanstack/react-query"
 import { Edit, Image as ImageIcon, Plus } from "lucide-react"
 import Image from "next/image"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
 
 export default function Page() {
   const { data } = useQuery({
@@ -32,7 +50,7 @@ export default function Page() {
               </div>
             </div>
             <div className="relative w-full">
-              <Edit className="bg-foreground/5 absolute -top-0.5 right-0 size-6.5 cursor-pointer rounded-md p-1" />
+              <EditWebsiteHeader />
               <h1 className="font-medium">{data?.json?.title || "Title"}</h1>
               <p className="text-foreground/60 text-sm">
                 {data?.json?.description || "Description"}
@@ -70,5 +88,84 @@ export default function Page() {
         </div>
       </XContent>
     </>
+  )
+}
+
+const EditWebsiteHeader = ({
+  title,
+  description,
+}: {
+  title?: string
+  description?: string
+}) => {
+  const formSchema = z.object({
+    title: z.string().max(64).optional(),
+    description: z.string().optional(),
+  })
+
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      title: title || "",
+      description: description || "",
+    },
+  })
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log(values)
+  }
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Edit className="bg-foreground/5 absolute -top-0.5 right-0 size-6.5 cursor-pointer rounded-md p-1" />
+      </DialogTrigger>
+      <DialogContent>
+        <DialogTitle>Let&apos;s go</DialogTitle>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem className="relative">
+                  <FormLabel>Title</FormLabel>
+                  <FormControl>
+                    <Input
+                      className="mt-1.5 font-mono"
+                      placeholder={title}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage className="absolute -bottom-5 text-xs" />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem className="relative">
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Input
+                      className="mt-1.5 font-mono"
+                      placeholder={description}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage className="absolute -bottom-5 text-xs" />
+                </FormItem>
+              )}
+            />
+
+            <Button type="submit" className="mt-3 h-10 w-full">
+              <span>Save Changes</span>
+            </Button>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
   )
 }
