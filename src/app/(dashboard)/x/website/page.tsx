@@ -37,7 +37,7 @@ export default function Page() {
       const response = await fetch("/api/v1/website")
       return response.json()
     },
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 1000 * 60 * 5,
   })
 
   return (
