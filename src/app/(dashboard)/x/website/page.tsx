@@ -45,7 +45,7 @@ export default function Page() {
       />
       <XContent className="lg:grid lg:grid-cols-5 lg:gap-5">
         <div className="max-w-xl lg:col-span-3">
-          <div className="mb-5 flex justify-between border-b pb-5">
+          <div className="-mx-5 mb-5 flex justify-between border-b px-5 pb-5 sm:mx-0 sm:px-0">
             <Dialog>
               <DialogTrigger asChild>
                 <Button className="w-40" variant="outline">
