@@ -17,11 +17,13 @@ const applications = [
     title: "Website",
     url: "/x/website",
     icon: Sparkle,
+    prefetch: true,
   },
 ] as {
   title: string
   url: string
   icon: LucideIcon
+  prefetch?: boolean
 }[]
 
 export function NavApplications() {
@@ -57,7 +59,7 @@ export function NavApplications() {
                   pathname.split("/")[2] === application.url.split("/")[2]
                 }
               >
-                <Link href={application.url}>
+                <Link href={application.url} prefetch={application.prefetch}>
                   {application.icon && <application.icon />}
                   <span>{application.title}</span>
                 </Link>
