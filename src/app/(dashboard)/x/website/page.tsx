@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import WebsiteView from "@/components/views/website"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { Edit, Image as ImageIcon } from "lucide-react"
@@ -89,7 +90,9 @@ export default function Page() {
             height={742.5}
           />
           <div className="absolute bottom-[6%] z-10 h-[84%] w-[79.75%] overflow-hidden rounded-b-3xl">
-            <ScrollArea className="h-full w-full"></ScrollArea>
+            <ScrollArea className="h-full w-full">
+              {data && <WebsiteView data={data.json} />}
+            </ScrollArea>
           </div>
         </div>
       </XContent>
