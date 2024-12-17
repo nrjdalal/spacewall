@@ -9,4 +9,6 @@ export const website = pgTable("website", {
   userId: text("userId")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
+  title: text("title"),
+  description: text("description"),
 })

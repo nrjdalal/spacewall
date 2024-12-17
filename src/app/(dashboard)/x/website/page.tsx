@@ -1,11 +1,22 @@
+"use client"
+
 import XContent from "@/components/common/x-content"
 import XHeader from "@/components/common/x-header"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Plus } from "lucide-react"
+import { useQuery } from "@tanstack/react-query"
+import { Edit, Image as ImageIcon, Plus } from "lucide-react"
 import Image from "next/image"
 
-export default async function Page() {
+export default function Page() {
+  const { data } = useQuery({
+    queryKey: ["website"],
+    queryFn: async () => {
+      const response = await fetch("/api/v1/website")
+      return response.json()
+    },
+  })
+
   return (
     <>
       <XHeader
@@ -15,11 +26,16 @@ export default async function Page() {
       <XContent className="lg:grid lg:grid-cols-5 lg:gap-5">
         <div className="max-w-xl lg:col-span-3">
           <div className="flex items-center space-x-3">
-            <div className="size-24 rounded-full border"></div>
-            <div>
-              <h1 className="font-medium">Display Name</h1>
+            <div className="bg-foreground/5 aspect-square size-24 rounded-full border">
+              <div className="text-foreground/60 grid h-full w-full place-content-center">
+                <ImageIcon />
+              </div>
+            </div>
+            <div className="relative w-full">
+              <Edit className="bg-foreground/5 absolute -top-0.5 right-0 size-6.5 cursor-pointer rounded-md p-1" />
+              <h1 className="font-medium">{data?.json?.title || "Title"}</h1>
               <p className="text-foreground/60 text-sm">
-                Your amazing bio (optional)
+                {data?.json?.description || "Description"}
               </p>
             </div>
           </div>
