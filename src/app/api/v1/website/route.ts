@@ -17,13 +17,19 @@ export async function GET() {
   let res = await db
     .select()
     .from(websites)
-    .where(eq(websites.userId, session.user?.id as string))
+    .where(
+      and(
+        eq(websites.userId, session.user?.id as string),
+        eq(websites.primary, true),
+      ),
+    )
 
   if (!res.length) {
     res = await db
       .insert(websites)
       .values({
         userId: session.user?.id as string,
+        primary: true,
       })
       .returning()
   }
@@ -48,21 +54,18 @@ export async function POST(request: Request) {
     })
   }
 
-  console.log(
-    await db
-      .update(websites)
-      .set({
-        title: body.title,
-        description: body.description,
-      })
-      .where(
-        and(
-          eq(websites.userId, session.user?.id as string),
-          eq(websites.id, body.id),
-        ),
-      )
-      .returning(),
-  )
+  await db
+    .update(websites)
+    .set({
+      title: body.title,
+      description: body.description,
+    })
+    .where(
+      and(
+        eq(websites.userId, session.user?.id as string),
+        eq(websites.id, body.id),
+      ),
+    )
 
   return Response.json({
     status: 200,

@@ -49,17 +49,19 @@ export default function Page() {
                 <ImageIcon />
               </div>
             </div>
-            <div className="relative w-full">
-              <EditWebsiteHeader
-                id={data?.json?.id}
-                title={data?.json?.title}
-                description={data?.json?.description}
-              />
-              <h1 className="font-medium">{data?.json?.title || "Title"}</h1>
-              <p className="text-foreground/70 text-sm">
-                {data?.json?.description || "Description"}
-              </p>
-            </div>
+            {data?.json?.id && (
+              <div className="relative w-full">
+                <EditWebsiteHeader
+                  id={data?.json?.id}
+                  title={data?.json?.title}
+                  description={data?.json?.description}
+                />
+                <h1 className="font-medium">{data?.json?.title || "Title"}</h1>
+                <p className="text-foreground/70 text-sm">
+                  {data?.json?.description || "Description"}
+                </p>
+              </div>
+            )}
           </div>
 
           {/* <Button className="mt-8 h-10 w-full rounded-full">
