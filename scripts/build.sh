@@ -17,6 +17,7 @@ notify_failure() {
     -H "Priority: high" \
     -H "Tags: red_circle" \
     -H "Click: $DEPLOYMENT_URL" \
+    -d "Build failed" \
     ntfy.sh/nrjdalal
 }
 
