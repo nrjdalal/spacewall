@@ -4,8 +4,10 @@ set -e
 
 ignore=(
   '.git'
-  '.next'
+  '.next',
+  '.sst'
   'node_modules'
+  'sst.config.ts'
   'test'
 )
 
