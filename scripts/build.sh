@@ -8,12 +8,14 @@ notify_failure() {
   curl -s \
     --form-string "token=$PUSHOVER_TOKEN" \
     --form-string "user=$PUSHOVER_USER" \
-    --form-string "title=Error building $VERCEL_ENV" \
+    --form-string "title=error building $VERCEL_ENV" \
     --form-string "message=Your last $VERCEL_ENV build failed." \
     https://api.pushover.net/1/messages.json
 }
 
 trap 'notify_failure' ERR
+
+echo "$VERCEL_DEPLOYMENT_ID"
 
 # Record the start time
 start_time=$(date +%s)
