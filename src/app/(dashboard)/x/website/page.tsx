@@ -123,12 +123,70 @@ const EditWebsiteImage = ({ id, image }: { id: string; image: string }) => {
   const queryClient = useQueryClient()
 
   const formSchema = z.object({
-    image: z
-      .union([z.string().optional(), z.instanceof(File).array()])
-      .refine(
-        (value) => typeof value === "string" || value instanceof FileList,
-      ),
+    image: z.union([
+      z.string(),
+      typeof window === "undefined" ? z.any() : z.instanceof(FileList),
+    ]),
   })
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setSubmitting(true)
+
+    // FileList {
+    //   0: File {
+    //     name: 'Pan.jpg',
+    //     lastModified: 1655413795000,
+    //     lastModifiedDate: new Date('2022-06-16T21:09:55.000Z'),
+    //     webkitRelativePath: '',
+    //     size: 222880,
+    //     type: 'image/jpeg'
+    //   },
+    //   length: 1
+    // }
+
+    if (values.image instanceof FileList) {
+      const file = values.image[0] as File
+
+      const ChecksumSHA256 = async () => {
+        const buffer = await file.arrayBuffer()
+        const hash = await crypto.subtle.digest("SHA-256", buffer)
+        const hashArray = Array.from(new Uint8Array(hash))
+        const hashHex = hashArray
+          .map((b) => b.toString(16).padStart(2, "0"))
+          .join("")
+        return hashHex
+      }
+
+      const signedUrl = await fetch("/api/v1/s3/upload", {
+        method: "PUT",
+        body: JSON.stringify({
+          ContentType: file.type,
+          ContentLength: file.size,
+          ChecksumSHA256: await ChecksumSHA256(),
+        }),
+      })
+
+      const { url, key } = await signedUrl.json()
+
+      const res = await fetch(url, {
+        method: "PUT",
+
+        headers: {
+          "Content-Type": file.type,
+        },
+        body: file,
+      })
+
+      if (!res.ok)
+        return Promise.reject({
+          message: "Something went wrong!",
+        })
+
+      await mutation.mutateAsync({
+        image: key,
+      })
+    }
+  }
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -175,53 +233,6 @@ const EditWebsiteImage = ({ id, image }: { id: string; image: string }) => {
       setSubmitting(false)
     },
   })
-
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    setSubmitting(true)
-
-    if (values.image instanceof FileList) {
-      const file = values.image[0] as File
-
-      const ChecksumSHA256 = async () => {
-        const buffer = await file.arrayBuffer()
-        const hash = await crypto.subtle.digest("SHA-256", buffer)
-        const hashArray = Array.from(new Uint8Array(hash))
-        const hashHex = hashArray
-          .map((b) => b.toString(16).padStart(2, "0"))
-          .join("")
-        return hashHex
-      }
-
-      const signedUrl = await fetch("/api/v1/s3/upload", {
-        method: "PUT",
-        body: JSON.stringify({
-          ContentType: file.type,
-          ContentLength: file.size,
-          ChecksumSHA256: await ChecksumSHA256(),
-        }),
-      })
-
-      const { url, key } = await signedUrl.json()
-
-      const res = await fetch(url, {
-        method: "PUT",
-
-        headers: {
-          "Content-Type": file.type,
-        },
-        body: file,
-      })
-
-      if (!res.ok)
-        return Promise.reject({
-          message: "Something went wrong!",
-        })
-
-      await mutation.mutateAsync({
-        image: key,
-      })
-    }
-  }
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
