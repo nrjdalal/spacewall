@@ -11,8 +11,8 @@ notify_failure() {
     --form-string "user=$PUSHOVER_USER" \
     --form-string "html=1" \
     --form-string "title=error building $VERCEL_ENV" \
-    --form-string "message=your $VERCEL_ENV deployment failed" \
-    --form-string "url_title=check out logs" \
+    --form-string "message=<font color=\"#ef4444\">your last $VERCEL_ENV deployment failed</font>" \
+    --form-string "url_title=deployment logs" \
     --form-string "url=$DEPLOYMENT_URL" \
     https://api.pushover.net/1/messages.json
 }
