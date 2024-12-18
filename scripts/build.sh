@@ -33,5 +33,7 @@ seconds=$((elapsed_time % 60))
 curl \
   -H "Title: Vercel" \
   -H "Priority: low" \
+  -H "Click: $DEPLOYMENT_URL" \
+  -H "Actions: view, deployment logs, $DEPLOYMENT_URL" \
   -d "🟢 $VERCEL_ENV build completed in ${minutes}m ${seconds}s" \
   ntfy.sh/nrjdalal
