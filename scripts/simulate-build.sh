@@ -6,6 +6,7 @@ ignore=(
   '.git'
   '.next'
   '.sst'
+  'node_modules'
   'sst.config.ts'
   'test'
 )
