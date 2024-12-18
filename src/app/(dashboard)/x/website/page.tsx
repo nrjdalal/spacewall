@@ -247,7 +247,7 @@ const EditWebsiteImage = ({ id, image }: { id: string; image: string }) => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Edit className="bg-muted text-foreground/60 absolute -top-1 right-0 size-6.5 cursor-pointer rounded-md border p-1" />
+        <Edit className="bg-muted text-foreground/60 absolute top-px right-px size-6.5 cursor-pointer rounded-md border p-1" />
       </DialogTrigger>
       <DialogContent>
         <DialogTitle
