@@ -281,8 +281,8 @@ const EditWebsiteImage = ({ id, image }: { id: string; image: string }) => {
                   <FormControl>
                     <Input
                       type="file"
-                      accept="image/*"
-                      className="mt-1.5"
+                      accept="image/jpeg,image/png"
+                      className="mt-1.5 pt-1.5"
                       {...form.register("image")}
                     />
                   </FormControl>
