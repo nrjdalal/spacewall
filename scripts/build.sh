@@ -14,7 +14,7 @@ notify_failure() {
 
 trap 'notify_failure' ERR
 
-exit 1
+false
 
 if [ "$DB_PUSH" = true ]; then
   bun run drizzle-kit push
