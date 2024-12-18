@@ -2,7 +2,7 @@
 
 set -e
 
-DB_PUSH=false
+DB_PUSH=true
 DEPLOYMENT_URL="https://vercel.com/nrjdalals-projects/spacewall/${VERCEL_DEPLOYMENT_ID#dpl_}"
 
 notify_failure() {
