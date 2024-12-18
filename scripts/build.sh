@@ -2,19 +2,27 @@
 
 set -e
 
-DB_PUSH=true
+DB_PUSH=false
 DEPLOYMENT_URL="https://vercel.com/nrjdalals-projects/spacewall/${VERCEL_DEPLOYMENT_ID#dpl_}"
 
 notify_failure() {
-  curl -s \
-    --form-string "token=$PUSHOVER_TOKEN" \
-    --form-string "user=$PUSHOVER_USER" \
-    --form-string "html=1" \
-    --form-string "message=🔴 $VERCEL_ENV build failed, <a href=\"$DEPLOYMENT_URL\">check logs</a>" \
-    https://api.pushover.net/1/messages.json
+  # curl -s \
+  #   --form-string "token=$PUSHOVER_TOKEN" \
+  #   --form-string "user=$PUSHOVER_USER" \
+  #   --form-string "html=1" \
+  #   --form-string "message=🔴 $VERCEL_ENV build failed, <a href=\"$DEPLOYMENT_URL\">check logs</a>" \
+  #   https://api.pushover.net/1/messages.json
+  curl \
+    -H "Title: 🔴 $VERCEL_ENV build failed" \
+    -H "Priority: high" \
+    -H "Tags: red_circle" \
+    -d "$VERCEL_ENV build failed, <a href=\"$DEPLOYMENT_URL\">check logs</a>" \
+    ntfy.sh/nrjdalal
 }
 
 trap 'notify_failure' ERR
+
+false
 
 start_time=$(date +%s)
 
