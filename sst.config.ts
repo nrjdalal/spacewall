@@ -22,6 +22,7 @@ export default $config({
     const fileBucket = new sst.aws.Bucket(
       `spacewall-${schema.PULUMI_NODEJS_STACK}`,
       {
+        access: "public",
         cors: {
           allowHeaders: ["*"],
           allowMethods: ["DELETE", "GET", "PUT"],

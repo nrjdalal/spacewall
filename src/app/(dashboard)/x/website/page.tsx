@@ -1,3 +1,5 @@
+/* eslint-disable @next/next/no-img-element */
+
 "use client"
 
 import XHeader from "@/components/common/x-header"
@@ -23,6 +25,7 @@ import { Content, ContentPreview, ContentRoot } from "@/components/x/content"
 import { cn } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import Compressor from "compressorjs"
 import { Edit, Image as ImageIcon, Loader2 } from "lucide-react"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
@@ -73,9 +76,17 @@ export default function Page() {
           <div className="flex items-center space-x-3">
             <div className="bg-foreground/5 relative aspect-square size-24 rounded-full border">
               <EditWebsiteImage id={data?.id || ""} image={data?.image || ""} />
-              <div className="text-foreground/60 grid h-full w-full place-content-center">
-                <ImageIcon />
-              </div>
+              {data?.image ? (
+                <img
+                  src={`https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/${data.image}`}
+                  alt="Website Image"
+                  className="h-full w-full rounded-full object-cover"
+                />
+              ) : (
+                <div className="text-foreground/60 grid h-full w-full place-content-center">
+                  <ImageIcon />
+                </div>
+              )}
             </div>
             {data?.id && (
               <div className="relative w-full">
@@ -132,29 +143,37 @@ const EditWebsiteImage = ({ id, image }: { id: string; image: string }) => {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setSubmitting(true)
 
-    // FileList {
-    //   0: File {
-    //     name: 'Pan.jpg',
-    //     lastModified: 1655413795000,
-    //     lastModifiedDate: new Date('2022-06-16T21:09:55.000Z'),
-    //     webkitRelativePath: '',
-    //     size: 222880,
-    //     type: 'image/jpeg'
-    //   },
-    //   length: 1
-    // }
-
     if (values.image instanceof FileList) {
-      const file = values.image[0] as File
+      const orignalFile = values.image[0] as File
+      let file = orignalFile
+
+      console.log("Original image", file)
+
+      try {
+        file = await new Promise((resolve, reject) => {
+          new Compressor(file, {
+            width: 256,
+            height: 256,
+            resize: "cover",
+            success(result) {
+              resolve(result as File)
+            },
+            error(err) {
+              reject(err)
+            },
+          })
+        })
+        if (orignalFile.size < file.size) file = orignalFile
+      } catch {
+        file = orignalFile
+      }
 
       const ChecksumSHA256 = async () => {
-        const buffer = await file.arrayBuffer()
-        const hash = await crypto.subtle.digest("SHA-256", buffer)
-        const hashArray = Array.from(new Uint8Array(hash))
-        const hashHex = hashArray
-          .map((b) => b.toString(16).padStart(2, "0"))
-          .join("")
-        return hashHex
+        const arrayBuffer = await file.arrayBuffer()
+        const hashBuffer = await crypto.subtle.digest("SHA-256", arrayBuffer)
+        const hashArray = Array.from(new Uint8Array(hashBuffer))
+        const hashBase64 = btoa(String.fromCharCode(...hashArray))
+        return hashBase64
       }
 
       const signedUrl = await fetch("/api/v1/s3/upload", {
@@ -170,7 +189,6 @@ const EditWebsiteImage = ({ id, image }: { id: string; image: string }) => {
 
       const res = await fetch(url, {
         method: "PUT",
-
         headers: {
           "Content-Type": file.type,
         },
@@ -259,6 +277,7 @@ const EditWebsiteImage = ({ id, image }: { id: string; image: string }) => {
                   <FormControl>
                     <Input
                       type="file"
+                      accept="image/*"
                       className="mt-1.5"
                       {...form.register("image")}
                     />
