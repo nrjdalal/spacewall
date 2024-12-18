@@ -9,13 +9,13 @@ notify_failure() {
     --form-string "token=$PUSHOVER_TOKEN" \
     --form-string "user=$PUSHOVER_USER" \
     --form-string "title=error building $VERCEL_ENV" \
-    --form-string "message=Your last $VERCEL_ENV build failed." \
+    --form-string "message=check out logs at https://vercel.com/nrjdalals-projects/spacewall/${VERCEL_DEPLOYMENT_ID#dpl_}" \
     https://api.pushover.net/1/messages.json
 }
 
 trap 'notify_failure' ERR
 
-echo "$VERCEL_DEPLOYMENT_ID"
+false
 
 # Record the start time
 start_time=$(date +%s)
