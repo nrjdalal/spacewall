@@ -49,7 +49,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <AppSidebar user={user} />
       <SidebarInset>
         <SidebarTrigger className="fixed right-5 bottom-5 size-10 border bg-inherit md:hidden" />
-        <header className="sticky top-0 hidden h-16 shrink-0 items-center gap-2 border-b bg-inherit transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-14 md:flex">
+        <header className="sticky top-0 z-50 hidden h-16 shrink-0 items-center gap-2 border-b bg-inherit transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-14 md:flex">
           <SidebarTrigger className="ml-2 size-10 border" />
           <Separator className="h-4" orientation="vertical" />
           <div className="-ml-1 flex items-center gap-2">
