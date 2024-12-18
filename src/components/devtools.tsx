@@ -7,7 +7,7 @@ import { useEffect, useState } from "react"
 const Links = [
   {
     title: "AWS",
-    url: "https://console.aws.amazon.com",
+    url: "https://console.aws.amazon.com/s3",
   },
   {
     title: "Github",
@@ -42,7 +42,7 @@ export const DevTools = () => {
   const { width, height } = dimensions
 
   return (
-    <div className="bg-background text-primary fixed right-5 bottom-5 z-[100] flex items-center gap-1.5 rounded-full border font-mono text-xs font-medium select-none">
+    <div className="bg-background text-primary fixed right-5 bottom-5 z-100 flex items-center gap-1.5 rounded-full border font-mono text-xs font-medium select-none">
       {expandDevtools && (
         <>
           <ReactQueryDevtools buttonPosition="top-right" />
