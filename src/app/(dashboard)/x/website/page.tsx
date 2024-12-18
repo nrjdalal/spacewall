@@ -251,7 +251,7 @@ const EditWebsiteHeader = ({
               className="mt-3 h-10 w-full"
               disabled={submitting}
             >
-              {submitting ? <Loader2 className="animate-spin" /> : "Submit"}
+              {submitting ? <Loader2 className="animate-spin" /> : "Save"}
             </Button>
           </form>
         </Form>
