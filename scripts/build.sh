@@ -13,11 +13,13 @@ notify_failure() {
   #   --form-string "message=🔴 $VERCEL_ENV build failed, <a href=\"$DEPLOYMENT_URL\">check logs</a>" \
   #   https://api.pushover.net/1/messages.json
   curl \
+    -H "Icon: https://cdn.brandfetch.io/idBzZU5Uno/w/200/h/200/theme/dark/icon.jpeg?c=1bfwsmEH20zzEfSNTed" \
     -H "Title: $VERCEL_ENV build failed" \
     -H "Priority: high" \
     -H "Tags: red_circle" \
-    -H "Actions: view, Deployment logs, $DEPLOYMENT_URL" \
-    -d "Your last build failed" \
+    -H "Click: $DEPLOYMENT_URL" \
+    -H "Actions: view, deployment logs, $DEPLOYMENT_URL" \
+    -d "Vercel" \
     ntfy.sh/nrjdalal
 }
 
