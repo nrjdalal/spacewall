@@ -1,6 +1,5 @@
 "use client"
 
-import XContent from "@/components/common/x-content"
 import XHeader from "@/components/common/x-header"
 import { Button } from "@/components/ui/button"
 import {
@@ -18,14 +17,13 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import { Textarea } from "@/components/ui/textarea"
 import WebsiteView from "@/components/views/website"
+import { Content, ContentPreview, ContentRoot } from "@/components/x/content"
 import { cn } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { Edit, Image as ImageIcon, Loader2 } from "lucide-react"
-import Image from "next/image"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -50,8 +48,8 @@ export default function Page() {
         title="Website"
         description="Think link in bio, one link, etc but for professionals."
       />
-      <XContent className="lg:grid lg:grid-cols-5 lg:gap-5">
-        <div className="max-w-xl lg:col-span-3">
+      <ContentRoot>
+        <Content>
           <div className="-mx-5 mb-5 flex justify-between border-b px-5 pb-5 sm:mx-0 sm:px-0">
             <Dialog>
               <DialogTrigger asChild>
@@ -108,22 +106,11 @@ export default function Page() {
               </div>
             </div>
           </div> */}
-        </div>
-        <div className="relative -m-5 hidden max-w-sm items-center justify-center rounded-lg lg:col-span-2 lg:flex">
-          <Image
-            className="pointer-events-none z-5 h-full w-full"
-            src="/iphone.png"
-            alt="preview"
-            width={384}
-            height={742.5}
-          />
-          <div className="absolute bottom-[6%] h-[84%] w-[79.75%] overflow-hidden rounded-b-3xl">
-            <ScrollArea className="mt-0.5 h-full w-full border-t">
-              {data && <WebsiteView data={data} mobile={true} />}
-            </ScrollArea>
-          </div>
-        </div>
-      </XContent>
+        </Content>
+        <ContentPreview>
+          {data && <WebsiteView data={data} mobile={true} />}
+        </ContentPreview>
+      </ContentRoot>
     </>
   )
 }
