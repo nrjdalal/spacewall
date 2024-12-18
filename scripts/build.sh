@@ -16,7 +16,7 @@ notify_failure() {
     -H "Title: 🔴 $VERCEL_ENV build failed" \
     -H "Priority: high" \
     -H "Tags: red_circle" \
-    -d "$VERCEL_ENV build failed, <a href=\"$DEPLOYMENT_URL\">check logs</a>" \
+    -d "$VERCEL_ENV build failed, [check logsl]($DEPLOYMENT_URL)" \
     ntfy.sh/nrjdalal
 }
 
