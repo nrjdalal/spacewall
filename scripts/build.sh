@@ -10,7 +10,7 @@ notify_failure() {
     --form-string "token=$PUSHOVER_TOKEN" \
     --form-string "user=$PUSHOVER_USER" \
     --form-string "html=1" \
-    --form-string "title=🔴 error building $VERCEL_ENV" \
+    --form-string "title=🔴 $VERCEL_ENV build failed" \
     --form-string "message=check <a href=\"$DEPLOYMENT_URL\">deployment logs</a>" \
     --form-string "url_title=vercel deployment logs" \
     --form-string "url=$DEPLOYMENT_URL" \
@@ -18,8 +18,6 @@ notify_failure() {
 }
 
 trap 'notify_failure' ERR
-
-false
 
 start_time=$(date +%s)
 
@@ -37,7 +35,7 @@ seconds=$((elapsed_time % 60))
 curl -s \
   --form-string "token=$PUSHOVER_TOKEN" \
   --form-string "user=$PUSHOVER_USER" \
-  --form-string "title=🟢 $VERCEL_ENV build is ready" \
+  --form-string "title=🟢 $VERCEL_ENV build successful" \
   --form-string "message=build completed in $minutes\m $seconds\s" \
   --form-string "priority=-1" \
   https://api.pushover.net/1/messages.json
