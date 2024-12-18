@@ -16,8 +16,6 @@ notify_failure() {
 
 trap 'notify_failure' ERR
 
-false
-
 start_time=$(date +%s)
 
 if [ "$DB_PUSH" = true ]; then
