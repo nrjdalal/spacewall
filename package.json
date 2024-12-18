@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "bash scripts/prebuild.sh && next build",
+    "build": "bash scripts/build.sh",
     "dev": "next dev",
     "db-push": "bun --env-file=.env.development drizzle-kit push",
     "db-studio": "bun --env-file=.env.development drizzle-kit studio",
