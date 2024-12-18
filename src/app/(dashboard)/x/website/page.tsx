@@ -143,11 +143,11 @@ const EditWebsiteImage = ({ id, image }: { id: string; image: string }) => {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setSubmitting(true)
 
+    let key
+
     if (values.image instanceof FileList) {
       const orignalFile = values.image[0] as File
       let file = orignalFile
-
-      console.log("Original image", file)
 
       try {
         file = await new Promise((resolve, reject) => {
@@ -163,6 +163,7 @@ const EditWebsiteImage = ({ id, image }: { id: string; image: string }) => {
             },
           })
         })
+
         if (orignalFile.size < file.size) file = orignalFile
       } catch {
         file = orignalFile
@@ -185,7 +186,9 @@ const EditWebsiteImage = ({ id, image }: { id: string; image: string }) => {
         }),
       })
 
-      const { url, key } = await signedUrl.json()
+      const { url, key: imageKey } = await signedUrl.json()
+
+      key = imageKey
 
       const res = await fetch(url, {
         method: "PUT",
@@ -195,15 +198,16 @@ const EditWebsiteImage = ({ id, image }: { id: string; image: string }) => {
         body: file,
       })
 
-      if (!res.ok)
+      if (!res.ok) {
         return Promise.reject({
           message: "Something went wrong!",
         })
-
-      await mutation.mutateAsync({
-        image: key,
-      })
+      }
     }
+
+    await mutation.mutateAsync({
+      image: key,
+    })
   }
 
   const form = useForm({
@@ -330,7 +334,6 @@ const EditWebsiteHeader = ({
 
   const mutation = useMutation({
     mutationFn: async (values: z.infer<typeof formSchema>) => {
-      setSubmitting(true)
       const response = await fetch("/api/v1/website", {
         method: "POST",
         body: JSON.stringify({
@@ -368,6 +371,8 @@ const EditWebsiteHeader = ({
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setSubmitting(true)
+
     await mutation.mutateAsync(values)
   }
 
