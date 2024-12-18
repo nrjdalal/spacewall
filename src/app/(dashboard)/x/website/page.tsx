@@ -71,7 +71,8 @@ export default function Page() {
           </div>
 
           <div className="flex items-center space-x-3">
-            <div className="bg-foreground/5 aspect-square size-24 rounded-full border">
+            <div className="bg-foreground/5 relative aspect-square size-24 rounded-full border">
+              <EditWebsiteImage id={data?.id || ""} image={data?.image || ""} />
               <div className="text-foreground/60 grid h-full w-full place-content-center">
                 <ImageIcon />
               </div>
@@ -112,6 +113,157 @@ export default function Page() {
         </ContentPreview>
       </ContentRoot>
     </>
+  )
+}
+
+const EditWebsiteImage = ({ id, image }: { id: string; image: string }) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+
+  const queryClient = useQueryClient()
+
+  const formSchema = z.object({
+    image: z
+      .union([z.string().optional(), z.instanceof(File)])
+      .refine((value) => value instanceof File || typeof value === "string"),
+  })
+
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      image,
+    },
+  })
+
+  const mutation = useMutation({
+    mutationFn: async (values: z.infer<typeof formSchema>) => {
+      setSubmitting(true)
+      const response = await fetch("/api/v1/website", {
+        method: "POST",
+        body: JSON.stringify({
+          ...values,
+          id,
+        }),
+      })
+      if (!response.ok)
+        return Promise.reject({
+          message: "Something went wrong!",
+        })
+      return (await response.json()).data
+    },
+    onMutate: async (newData) => {
+      await queryClient.cancelQueries({
+        queryKey: ["website"],
+      })
+      const prev = queryClient.getQueryData(["website"])
+      queryClient.setQueryData(["website"], {
+        ...(prev || {}),
+        ...newData,
+      })
+      setIsOpen(false)
+      return { prev }
+    },
+    onError: (_err, _newData, context) => {
+      queryClient.setQueryData(["website"], context?.prev)
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["website"],
+      })
+      setSubmitting(false)
+    },
+  })
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (values.image instanceof FileList) {
+      const file = values.image[0] as File
+
+      const ChecksumSHA256 = async () => {
+        const buffer = await file.arrayBuffer()
+        const hash = await crypto.subtle.digest("SHA-256", buffer)
+        const hashArray = Array.from(new Uint8Array(hash))
+        const hashHex = hashArray
+          .map((b) => b.toString(16).padStart(2, "0"))
+          .join("")
+        return hashHex
+      }
+
+      const signedUrl = await fetch("/api/v1/s3/upload", {
+        method: "PUT",
+        body: JSON.stringify({
+          ContentType: file.type,
+          ContentLength: file.size,
+          ChecksumSHA256: await ChecksumSHA256(),
+        }),
+      })
+
+      const { url, key } = await signedUrl.json()
+
+      const res = await fetch(url, {
+        method: "PUT",
+
+        headers: {
+          "Content-Type": file.type,
+        },
+        body: file,
+      })
+
+      if (!res.ok)
+        return Promise.reject({
+          message: "Something went wrong!",
+        })
+
+      await mutation.mutateAsync({
+        image: key,
+      })
+    }
+  }
+
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <Edit className="bg-foreground/5 text-foreground/60 absolute -top-1 right-0 size-6.5 cursor-pointer rounded-md p-1" />
+      </DialogTrigger>
+      <DialogContent>
+        <DialogTitle
+          className={cn(
+            "invisible",
+            process.env.NODE_ENV === "development" && "visible",
+          )}
+        >
+          ID: {id}
+        </DialogTitle>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+            <FormField
+              control={form.control}
+              name="image"
+              render={() => (
+                <FormItem className="relative">
+                  <FormLabel>Image</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="file"
+                      className="mt-1.5"
+                      {...form.register("image")}
+                    />
+                  </FormControl>
+                  <FormMessage className="absolute -bottom-5 text-xs" />
+                </FormItem>
+              )}
+            />
+
+            <Button
+              type="submit"
+              className="mt-3 h-10 w-full"
+              disabled={submitting}
+            >
+              {submitting ? <Loader2 className="animate-spin" /> : "Save"}
+            </Button>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
   )
 }
 

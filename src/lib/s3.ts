@@ -3,7 +3,7 @@ import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3"
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
 
 const s3 = new S3Client({
-  region: "auto",
+  region: process.env.S3_REGION as string,
   endpoint: process.env.S3_ENDPOINT as string,
   credentials: {
     accessKeyId: process.env.S3_ACCESS_KEY_ID as string,

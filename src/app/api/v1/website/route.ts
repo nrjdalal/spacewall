@@ -56,10 +56,7 @@ export async function POST(request: Request) {
 
   const res = await db
     .update(websites)
-    .set({
-      title: body.title,
-      description: body.description,
-    })
+    .set(body)
     .where(
       and(
         eq(websites.userId, session.user?.id as string),

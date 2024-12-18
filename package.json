@@ -51,6 +51,7 @@
     "@eslint/eslintrc": "^3",
     "@ianvs/prettier-plugin-sort-imports": "^4.4.0",
     "@tailwindcss/postcss": "^4.0.0-beta.8",
+    "@tanstack/react-query-devtools": "^5.62.8",
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
