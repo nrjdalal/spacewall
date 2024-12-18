@@ -2,4 +2,4 @@
 
 set -e
 
-echo "Running prebuild script"
+echo "$VERCEL_ENV"
