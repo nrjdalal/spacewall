@@ -22,7 +22,7 @@ const Content = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
-  <main ref={ref} className={cn("col-span-3", className)} {...props} />
+  <main ref={ref} className={cn("col-span-3 max-w-xl", className)} {...props} />
 ))
 Content.displayName = "Content"
 
