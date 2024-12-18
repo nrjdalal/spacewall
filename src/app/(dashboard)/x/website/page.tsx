@@ -124,8 +124,10 @@ const EditWebsiteImage = ({ id, image }: { id: string; image: string }) => {
 
   const formSchema = z.object({
     image: z
-      .union([z.string().optional(), z.instanceof(File)])
-      .refine((value) => value instanceof File || typeof value === "string"),
+      .union([z.string().optional(), z.instanceof(File).array()])
+      .refine(
+        (value) => typeof value === "string" || value instanceof FileList,
+      ),
   })
 
   const form = useForm({
@@ -137,7 +139,6 @@ const EditWebsiteImage = ({ id, image }: { id: string; image: string }) => {
 
   const mutation = useMutation({
     mutationFn: async (values: z.infer<typeof formSchema>) => {
-      setSubmitting(true)
       const response = await fetch("/api/v1/website", {
         method: "POST",
         body: JSON.stringify({
@@ -165,6 +166,7 @@ const EditWebsiteImage = ({ id, image }: { id: string; image: string }) => {
     },
     onError: (_err, _newData, context) => {
       queryClient.setQueryData(["website"], context?.prev)
+      setSubmitting(false)
     },
     onSettled: () => {
       queryClient.invalidateQueries({
@@ -175,6 +177,8 @@ const EditWebsiteImage = ({ id, image }: { id: string; image: string }) => {
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setSubmitting(true)
+
     if (values.image instanceof FileList) {
       const file = values.image[0] as File
 
