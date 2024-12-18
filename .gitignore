@@ -40,5 +40,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# sst
+.open-next
+.sst
+sst-env.d.ts
+
 #custom
 /test

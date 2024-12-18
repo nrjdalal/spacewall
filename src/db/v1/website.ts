@@ -10,6 +10,7 @@ export const websites = pgTable("website", {
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   primary: boolean("primary"),
+  image: text("image").notNull().default(""),
   title: text("title").notNull().default(""),
   description: text("description").notNull().default(""),
 })

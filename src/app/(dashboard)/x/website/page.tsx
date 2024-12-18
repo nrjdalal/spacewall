@@ -1,6 +1,7 @@
+/* eslint-disable @next/next/no-img-element */
+
 "use client"
 
-import XContent from "@/components/common/x-content"
 import XHeader from "@/components/common/x-header"
 import { Button } from "@/components/ui/button"
 import {
@@ -18,14 +19,14 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import { Textarea } from "@/components/ui/textarea"
 import WebsiteView from "@/components/views/website"
+import { Content, ContentPreview, ContentRoot } from "@/components/x/content"
 import { cn } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import Compressor from "compressorjs"
 import { Edit, Image as ImageIcon, Loader2 } from "lucide-react"
-import Image from "next/image"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -50,8 +51,8 @@ export default function Page() {
         title="Website"
         description="Think link in bio, one link, etc but for professionals."
       />
-      <XContent className="lg:grid lg:grid-cols-5 lg:gap-5">
-        <div className="max-w-xl lg:col-span-3">
+      <ContentRoot>
+        <Content>
           <div className="-mx-5 mb-5 flex justify-between border-b px-5 pb-5 sm:mx-0 sm:px-0">
             <Dialog>
               <DialogTrigger asChild>
@@ -73,10 +74,19 @@ export default function Page() {
           </div>
 
           <div className="flex items-center space-x-3">
-            <div className="bg-foreground/5 aspect-square size-24 rounded-full border">
-              <div className="text-foreground/60 grid h-full w-full place-content-center">
-                <ImageIcon />
-              </div>
+            <div className="bg-foreground/5 relative aspect-square size-24 rounded-full border">
+              <EditWebsiteImage id={data?.id || ""} image={data?.image || ""} />
+              {data?.image ? (
+                <img
+                  src={`https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/${data.image}`}
+                  alt="Website Image"
+                  className="h-full w-full rounded-full object-cover"
+                />
+              ) : (
+                <div className="text-foreground/60 grid h-full w-full place-content-center">
+                  <ImageIcon />
+                </div>
+              )}
             </div>
             {data?.id && (
               <div className="relative w-full">
@@ -108,23 +118,186 @@ export default function Page() {
               </div>
             </div>
           </div> */}
-        </div>
-        <div className="relative -m-5 hidden max-w-sm items-center justify-center rounded-lg lg:col-span-2 lg:flex">
-          <Image
-            className="pointer-events-none z-5 h-full w-full"
-            src="/iphone.png"
-            alt="preview"
-            width={384}
-            height={742.5}
-          />
-          <div className="absolute bottom-[6%] h-[84%] w-[79.75%] overflow-hidden rounded-b-3xl">
-            <ScrollArea className="mt-0.5 h-full w-full border-t">
-              {data && <WebsiteView data={data} mobile={true} />}
-            </ScrollArea>
-          </div>
-        </div>
-      </XContent>
+        </Content>
+        <ContentPreview>
+          {data && <WebsiteView data={data} mobile={true} />}
+        </ContentPreview>
+      </ContentRoot>
     </>
+  )
+}
+
+const EditWebsiteImage = ({ id, image }: { id: string; image: string }) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+
+  const queryClient = useQueryClient()
+
+  const formSchema = z.object({
+    image: z.union([
+      z.string(),
+      typeof window === "undefined" ? z.any() : z.instanceof(FileList),
+    ]),
+  })
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setSubmitting(true)
+
+    if (values.image instanceof FileList) {
+      const orignalFile = values.image[0] as File
+      let file = orignalFile
+
+      console.log("Original image", file)
+
+      try {
+        file = await new Promise((resolve, reject) => {
+          new Compressor(file, {
+            width: 256,
+            height: 256,
+            resize: "cover",
+            success(result) {
+              resolve(result as File)
+            },
+            error(err) {
+              reject(err)
+            },
+          })
+        })
+        if (orignalFile.size < file.size) file = orignalFile
+      } catch {
+        file = orignalFile
+      }
+
+      const ChecksumSHA256 = async () => {
+        const arrayBuffer = await file.arrayBuffer()
+        const hashBuffer = await crypto.subtle.digest("SHA-256", arrayBuffer)
+        const hashArray = Array.from(new Uint8Array(hashBuffer))
+        const hashBase64 = btoa(String.fromCharCode(...hashArray))
+        return hashBase64
+      }
+
+      const signedUrl = await fetch("/api/v1/s3/upload", {
+        method: "PUT",
+        body: JSON.stringify({
+          ContentType: file.type,
+          ContentLength: file.size,
+          ChecksumSHA256: await ChecksumSHA256(),
+        }),
+      })
+
+      const { url, key } = await signedUrl.json()
+
+      const res = await fetch(url, {
+        method: "PUT",
+        headers: {
+          "Content-Type": file.type,
+        },
+        body: file,
+      })
+
+      if (!res.ok)
+        return Promise.reject({
+          message: "Something went wrong!",
+        })
+
+      await mutation.mutateAsync({
+        image: key,
+      })
+    }
+  }
+
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      image,
+    },
+  })
+
+  const mutation = useMutation({
+    mutationFn: async (values: z.infer<typeof formSchema>) => {
+      const response = await fetch("/api/v1/website", {
+        method: "POST",
+        body: JSON.stringify({
+          ...values,
+          id,
+        }),
+      })
+      if (!response.ok)
+        return Promise.reject({
+          message: "Something went wrong!",
+        })
+      return (await response.json()).data
+    },
+    onMutate: async (newData) => {
+      await queryClient.cancelQueries({
+        queryKey: ["website"],
+      })
+      const prev = queryClient.getQueryData(["website"])
+      queryClient.setQueryData(["website"], {
+        ...(prev || {}),
+        ...newData,
+      })
+      setIsOpen(false)
+      return { prev }
+    },
+    onError: (_err, _newData, context) => {
+      queryClient.setQueryData(["website"], context?.prev)
+      setSubmitting(false)
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["website"],
+      })
+      setSubmitting(false)
+    },
+  })
+
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <Edit className="bg-foreground/5 text-foreground/60 absolute -top-1 right-0 size-6.5 cursor-pointer rounded-md p-1" />
+      </DialogTrigger>
+      <DialogContent>
+        <DialogTitle
+          className={cn(
+            "invisible",
+            process.env.NODE_ENV === "development" && "visible",
+          )}
+        >
+          ID: {id}
+        </DialogTitle>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+            <FormField
+              control={form.control}
+              name="image"
+              render={() => (
+                <FormItem className="relative">
+                  <FormLabel>Image</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      className="mt-1.5"
+                      {...form.register("image")}
+                    />
+                  </FormControl>
+                  <FormMessage className="absolute -bottom-5 text-xs" />
+                </FormItem>
+              )}
+            />
+
+            <Button
+              type="submit"
+              className="mt-3 h-10 w-full"
+              disabled={submitting}
+            >
+              {submitting ? <Loader2 className="animate-spin" /> : "Save"}
+            </Button>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
   )
 }
 
@@ -251,7 +424,7 @@ const EditWebsiteHeader = ({
               className="mt-3 h-10 w-full"
               disabled={submitting}
             >
-              {submitting ? <Loader2 className="animate-spin" /> : "Submit"}
+              {submitting ? <Loader2 className="animate-spin" /> : "Save"}
             </Button>
           </form>
         </Form>
