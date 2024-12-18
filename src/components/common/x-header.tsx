@@ -10,11 +10,11 @@ export default function XHeader({
   className?: string
 }) {
   return (
-    <section className="border-b py-4">
-      <div className={cn("mx-auto max-w-screen-lg space-y-1 px-5", className)}>
-        <h1 className="text-lg font-medium lg:text-xl">{title}</h1>
+    <section className="border-b py-3">
+      <div className={cn("mx-auto max-w-screen-lg px-5", className)}>
+        <h1 className="font-medium lg:text-lg">{title}</h1>
         {description && (
-          <p className="text-foreground/60 text-sm">{description}</p>
+          <p className="text-foreground/60 text-xs lg:text-sm">{description}</p>
         )}
       </div>
     </section>
