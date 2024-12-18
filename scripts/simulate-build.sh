@@ -7,6 +7,7 @@ ignore=(
   '.next'
   '.sst'
   'node_modules'
+  'scripts'
   'sst.config.ts'
   'test'
 )
