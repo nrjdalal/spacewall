@@ -22,7 +22,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import WebsiteView from "@/components/views/website"
 import { Content, ContentPreview, ContentRoot } from "@/components/x/content"
-import { cn } from "@/lib/utils"
+import { cn, createChecksum } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import Compressor from "compressorjs"
@@ -143,8 +143,6 @@ const EditWebsiteImage = ({ id, image }: { id: string; image: string }) => {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setSubmitting(true)
 
-    let key
-
     if (values.image instanceof FileList) {
       const orignalFile = values.image[0] as File
       let file = orignalFile
@@ -169,26 +167,16 @@ const EditWebsiteImage = ({ id, image }: { id: string; image: string }) => {
         file = orignalFile
       }
 
-      const ChecksumSHA256 = async () => {
-        const arrayBuffer = await file.arrayBuffer()
-        const hashBuffer = await crypto.subtle.digest("SHA-256", arrayBuffer)
-        const hashArray = Array.from(new Uint8Array(hashBuffer))
-        const hashBase64 = btoa(String.fromCharCode(...hashArray))
-        return hashBase64
-      }
-
       const signedUrl = await fetch("/api/v1/s3/upload", {
         method: "PUT",
         body: JSON.stringify({
           ContentType: file.type,
           ContentLength: file.size,
-          ChecksumSHA256: await ChecksumSHA256(),
+          ChecksumSHA256: await createChecksum(file),
         }),
       })
 
-      const { url, key: imageKey } = await signedUrl.json()
-
-      key = imageKey
+      const { url, key } = await signedUrl.json()
 
       const res = await fetch(url, {
         method: "PUT",
@@ -203,11 +191,11 @@ const EditWebsiteImage = ({ id, image }: { id: string; image: string }) => {
           message: "Something went wrong!",
         })
       }
-    }
 
-    await mutation.mutateAsync({
-      image: key,
-    })
+      await mutation.mutateAsync({
+        image: key,
+      })
+    }
   }
 
   const form = useForm({

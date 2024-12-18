@@ -7,6 +7,14 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+export async function createChecksum(data: Blob | File) {
+  const arrayBuffer = await data.arrayBuffer()
+  const hashBuffer = await crypto.subtle.digest("SHA-256", arrayBuffer)
+  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  const hashBase64 = btoa(String.fromCharCode(...hashArray))
+  return hashBase64
+}
+
 export function humanNumbers(number: number | string): string {
   if (typeof number === "string") number = parseInt(number)
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
