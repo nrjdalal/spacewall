@@ -8,7 +8,7 @@
     "db-push": "bun --env-file=.env.development drizzle-kit push",
     "db-studio": "bun --env-file=.env.development drizzle-kit studio",
     "deploy:dev": "sst deploy --stage dev",
-    "prepare": "if [ \"$NODE_ENV\" != \"production\" ]; then simple-git-hooks; fi",
+    "prepare": "if [ \"$VERCEL_ENV\" != \"production\" ]; then simple-git-hooks; fi",
     "update": "ncu --interactive --format group"
   },
   "packageManager": "bun@1.1.39",
