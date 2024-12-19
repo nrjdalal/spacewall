@@ -103,6 +103,8 @@ export default function Page() {
             )}
           </div>
 
+          <AddWidget id={data?.id || ""} />
+
           {/* <Button className="mt-8 h-10 w-full rounded-full">
             <Plus /> Add widget
           </Button> */}
@@ -349,6 +351,7 @@ const EditWebsiteHeader = ({
     },
     onError: (err, newData, context) => {
       queryClient.setQueryData(["website"], context?.prev)
+      setSubmitting(false)
     },
     onSettled: () => {
       queryClient.invalidateQueries({
@@ -411,6 +414,184 @@ const EditWebsiteHeader = ({
                 </FormItem>
               )}
             />
+
+            <Button
+              type="submit"
+              className="mt-3 h-10 w-full"
+              disabled={submitting}
+            >
+              {submitting ? <Loader2 className="animate-spin" /> : "Save"}
+            </Button>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+const AddWidget = ({ id }: { id: string }) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+
+  const queryClient = useQueryClient()
+
+  const formSchema = z.object({
+    type: z.enum(["link"]),
+    data: z.object({
+      title: z.string(),
+      url: z.string(),
+      description: z.string().optional(),
+      image: z.string().optional(),
+    }),
+  })
+
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      type: "link" as const,
+      data: {
+        title: "",
+        url: "",
+        description: "",
+        image: "",
+      },
+    },
+  })
+
+  const mutation = useMutation({
+    mutationFn: async (values: z.infer<typeof formSchema>) => {
+      const response = await fetch("/api/v1/website", {
+        method: "POST",
+        body: JSON.stringify({
+          id,
+          widget: values,
+        }),
+      })
+      if (!response.ok)
+        return Promise.reject({
+          message: "Something went wrong!",
+        })
+      return (await response.json()).data
+    },
+    onSuccess: (context) => {
+      queryClient.setQueryData(["website"], context)
+      setIsOpen(false)
+      form.reset()
+      setSubmitting(false)
+    },
+    onError: () => {
+      setSubmitting(false)
+    },
+  })
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setSubmitting(true)
+
+    await mutation.mutateAsync(values)
+  }
+
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <Button className="mt-5 w-full rounded-full">Add widget</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+            <DialogTitle>
+              <FormField
+                control={form.control}
+                name="type"
+                render={({ field }) => (
+                  <FormItem className="relative hidden">
+                    <FormLabel>Type</FormLabel>
+                    <FormControl>
+                      <Input
+                        className="mt-1.5"
+                        placeholder={form.getValues("type")}
+                        {...field}
+                        readOnly
+                      />
+                    </FormControl>
+                    <FormMessage className="absolute -bottom-5 text-xs" />
+                  </FormItem>
+                )}
+              />
+            </DialogTitle>
+
+            {form.getValues("type") === "link" && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="data.image"
+                  render={({ field }) => (
+                    <FormItem className="relative hidden">
+                      <FormLabel>Image</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="file"
+                          accept="image/jpeg,image/png"
+                          className="mt-1.5 pt-1.5"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="absolute -bottom-5 text-xs" />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="data.title"
+                  render={({ field }) => (
+                    <FormItem className="relative">
+                      <FormLabel>Title</FormLabel>
+                      <FormControl>
+                        <Input
+                          className="mt-1.5"
+                          placeholder="Title"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="absolute -bottom-5 text-xs" />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="data.description"
+                  render={({ field }) => (
+                    <FormItem className="relative">
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          className="mt-1.5"
+                          placeholder="Description"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="absolute -bottom-5 text-xs" />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="data.url"
+                  render={({ field }) => (
+                    <FormItem className="relative">
+                      <FormLabel>URL</FormLabel>
+                      <FormControl>
+                        <Input
+                          className="mt-1.5"
+                          placeholder="URL"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="absolute -bottom-5 text-xs" />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
 
             <Button
               type="submit"
