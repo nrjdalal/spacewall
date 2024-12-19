@@ -107,7 +107,7 @@ export default function Page() {
 
           <div className="mt-5 space-y-2">
             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-            {data?.widgets.toReversed().map((widget: any) => (
+            {data?.widgets?.toReversed().map((widget: any) => (
               <div key={widget.id}>
                 {widget.type === "link" && (
                   <div className="flex items-center space-x-3 rounded-lg border p-2">
