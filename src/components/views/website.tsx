@@ -27,17 +27,24 @@ export default function WebsiteView({
         <img
           src={`https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/${data.image}`}
           alt="Website"
-          className="mb-1 size-24 rounded-full border"
+          className="size-24 rounded-full border"
         />
       )}
       {data?.title !== "" && (
-        <h1 className="mt-1 text-center font-medium">{data?.title}</h1>
+        <h1
+          className={cn(
+            "mt-2 text-center font-medium sm:text-lg",
+            mobile && "sm:text-base",
+          )}
+        >
+          {data?.title}
+        </h1>
       )}
       {data?.description !== "" && (
         <p
           className={cn(
-            "mt-1 text-center text-xs text-zinc-700 sm:text-sm dark:text-zinc-300",
-            mobile && "sm:text-xs",
+            "text-center text-sm text-zinc-700 sm:text-base dark:text-zinc-300",
+            mobile && "sm:text-sm",
           )}
         >
           {data?.description}
@@ -58,8 +65,8 @@ export default function WebsiteView({
                 <div className="flex min-h-17 items-center space-x-3 rounded-lg border p-2">
                   <div
                     className={cn(
-                      "bg-foreground/5 relative aspect-square size-12 rounded-lg lg:size-18",
-                      mobile && "lg:size-12",
+                      "bg-foreground/5 relative aspect-square size-16 rounded-lg border lg:size-18",
+                      mobile && "lg:size-16",
                       widget.data.image === "" && "hidden",
                     )}
                   >
@@ -76,8 +83,20 @@ export default function WebsiteView({
                     )}
                   </div>
                   <div className="relative w-full">
-                    <h1 className="text-sm font-medium">{widget.data.title}</h1>
-                    <p className="text-foreground/70 text-xs">
+                    <h1
+                      className={cn(
+                        "text-sm font-medium sm:text-base",
+                        mobile && "sm:text-sm",
+                      )}
+                    >
+                      {widget.data.title}
+                    </h1>
+                    <p
+                      className={cn(
+                        "text-foreground/70 text-xs sm:text-sm",
+                        mobile && "sm:text-xs",
+                      )}
+                    >
                       {widget.data.description}
                     </p>
                   </div>

@@ -82,7 +82,7 @@ export default function Page() {
                   <span className="hidden lg:block">Desktop Preview</span>
                 </Button>
               </DialogTrigger>
-              <DialogContent className="flex h-full max-h-dvh w-full max-w-screen flex-col rounded-none border-none">
+              <DialogContent className="flex h-full max-h-dvh w-full max-w-screen flex-col overflow-x-hidden rounded-none border-none">
                 <DialogTitle className="-mx-5 border-b px-5 pb-3">
                   Preview
                 </DialogTitle>
