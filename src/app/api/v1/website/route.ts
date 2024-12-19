@@ -78,3 +78,78 @@ export async function POST(request: Request) {
     data: res[0],
   })
 }
+
+export async function DELETE(request: Request) {
+  try {
+    const data = await request.json()
+
+    // Ensure the user is authenticated
+    const session = await auth()
+    if (!session) {
+      return Response.json(
+        {
+          error: "Unauthorized",
+        },
+        { status: 401 },
+      )
+    }
+
+    // Validate required fields
+    if (!data.widgetId || !data.id) {
+      return Response.json(
+        {
+          error: "Missing required fields: `widgetId` and `id`",
+        },
+        { status: 400 },
+      )
+    }
+
+    // Update the `widgets` JSONB column, removing the widget with the specified `id`
+    const res = await db
+      .update(websites)
+      .set({
+        widgets: sql`COALESCE(
+          (
+            SELECT jsonb_agg(elem)
+            FROM jsonb_array_elements(widgets) elem
+            WHERE elem->>'id' != ${data.widgetId}
+          ),
+          '[]'::jsonb
+        )`,
+      })
+      .where(
+        and(
+          eq(websites.userId, session.user?.id as string), // Ensure the widget belongs to the user
+          eq(websites.id, data.id), // Ensure the correct `websites` entry is targeted
+        ),
+      )
+      .returning()
+
+    // Check if any rows were affected
+    if (res.length === 0) {
+      return Response.json(
+        {
+          error: "Widget not found or no changes made",
+        },
+        { status: 404 },
+      )
+    }
+
+    // Success response
+    return Response.json(
+      {
+        message: "Widget deleted successfully",
+        data: res[0],
+      },
+      { status: 200 },
+    )
+  } catch (error) {
+    console.error("Error in DELETE /widgets:", error)
+    return Response.json(
+      {
+        error: "Internal server error",
+      },
+      { status: 500 },
+    )
+  }
+}

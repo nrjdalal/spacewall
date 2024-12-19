@@ -5,6 +5,14 @@
 import XHeader from "@/components/common/x-header"
 import { Button } from "@/components/ui/button"
 import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command"
+import {
   Dialog,
   DialogContent,
   DialogTitle,
@@ -19,6 +27,11 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import { Textarea } from "@/components/ui/textarea"
 import WebsiteView from "@/components/views/website"
 import { Content, ContentPreview, ContentRoot } from "@/components/x/content"
@@ -26,7 +39,14 @@ import { cn, createChecksum } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import Compressor from "compressorjs"
-import { Edit, Image as ImageIcon, Loader2 } from "lucide-react"
+import {
+  Check,
+  ChevronsUpDown,
+  Edit,
+  Image as ImageIcon,
+  Loader2,
+  Trash2,
+} from "lucide-react"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -118,7 +138,7 @@ export default function Page() {
             {data?.widgets?.toReversed().map((widget: any) => (
               <div key={widget.id}>
                 {widget.type === "link" && (
-                  <div className="flex items-center space-x-3 rounded-lg border p-2">
+                  <div className="relative flex items-center space-x-3 rounded-lg border p-2">
                     <div className="bg-foreground/5 relative aspect-square size-18 rounded-lg">
                       {widget.data.image ? (
                         <img
@@ -147,6 +167,7 @@ export default function Page() {
                         {widget.data.url}
                       </a>
                     </div>
+                    <DeleteWidget id={data.id} widgetId={widget.id} />
                   </div>
                 )}
               </div>
@@ -467,8 +488,15 @@ const AddWidget = ({ id }: { id: string }) => {
 
   const queryClient = useQueryClient()
 
+  const types = [
+    {
+      label: "Link",
+      value: "link",
+    },
+  ]
+
   const formSchema = z.object({
-    type: z.enum(["link"]),
+    type: z.string(),
     data: z.object({
       title: z.string().min(1),
       url: z.string().min(1),
@@ -483,7 +511,7 @@ const AddWidget = ({ id }: { id: string }) => {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      type: "link" as const,
+      type: "link",
       data: {
         title: "",
         url: "",
@@ -522,9 +550,11 @@ const AddWidget = ({ id }: { id: string }) => {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setSubmitting(true)
 
-    let image = values.data.image
+    let image = values.data.image.length ? values.data.image : ""
 
-    if (values.data.image instanceof FileList) {
+    if (values.data.image instanceof FileList && values.data.image.length) {
+      console.log(values.data.image)
+
       const orignalFile = values.data.image[0] as File
       let file = orignalFile
 
@@ -600,17 +630,58 @@ const AddWidget = ({ id }: { id: string }) => {
                 control={form.control}
                 name="type"
                 render={({ field }) => (
-                  <FormItem className="relative hidden">
-                    <FormLabel>Type</FormLabel>
-                    <FormControl>
-                      <Input
-                        className="mt-1.5"
-                        placeholder={form.getValues("type")}
-                        {...field}
-                        readOnly
-                      />
-                    </FormControl>
-                    <FormMessage className="absolute -bottom-5 text-xs" />
+                  <FormItem className="flex flex-col">
+                    <FormLabel>Widget</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            className={cn(
+                              "mt-1.5 justify-between pl-3",
+                              !field.value && "text-muted-foreground",
+                            )}
+                          >
+                            {field.value
+                              ? types.find((type) => type.value === field.value)
+                                  ?.label
+                              : "Select widget"}
+                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="-mt-px p-0" align="end">
+                        <Command>
+                          <CommandInput placeholder="Search widgets" />
+                          <CommandList>
+                            <CommandEmpty>No widget found.</CommandEmpty>
+                            <CommandGroup>
+                              {types.map((type) => (
+                                <CommandItem
+                                  value={type.label}
+                                  key={type.value}
+                                  onSelect={() => {
+                                    form.setValue("type", type.value)
+                                  }}
+                                >
+                                  {type.label}
+                                  <Check
+                                    className={cn(
+                                      "ml-auto",
+                                      type.value === field.value
+                                        ? "opacity-100"
+                                        : "opacity-0",
+                                    )}
+                                  />
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -618,24 +689,6 @@ const AddWidget = ({ id }: { id: string }) => {
 
             {form.getValues("type") === "link" && (
               <>
-                <FormField
-                  control={form.control}
-                  name="data.image"
-                  render={() => (
-                    <FormItem className="relative">
-                      <FormLabel>Image</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="file"
-                          accept="image/jpeg,image/png"
-                          className="mt-1.5 pt-1.5"
-                          {...form.register("data.image")}
-                        />
-                      </FormControl>
-                      <FormMessage className="absolute -bottom-5 text-xs" />
-                    </FormItem>
-                  )}
-                />
                 <FormField
                   control={form.control}
                   name="data.title"
@@ -646,6 +699,23 @@ const AddWidget = ({ id }: { id: string }) => {
                         <Input
                           className="mt-1.5"
                           placeholder="Title"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="absolute -bottom-5 text-xs" />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="data.url"
+                  render={({ field }) => (
+                    <FormItem className="relative">
+                      <FormLabel>URL</FormLabel>
+                      <FormControl>
+                        <Input
+                          className="mt-1.5"
+                          placeholder="URL"
                           {...field}
                         />
                       </FormControl>
@@ -672,15 +742,16 @@ const AddWidget = ({ id }: { id: string }) => {
                 />
                 <FormField
                   control={form.control}
-                  name="data.url"
-                  render={({ field }) => (
+                  name="data.image"
+                  render={() => (
                     <FormItem className="relative">
-                      <FormLabel>URL</FormLabel>
+                      <FormLabel>Image</FormLabel>
                       <FormControl>
                         <Input
-                          className="mt-1.5"
-                          placeholder="URL"
-                          {...field}
+                          type="file"
+                          accept="image/jpeg,image/png"
+                          className="mt-1.5 pt-1.5"
+                          {...form.register("data.image")}
                         />
                       </FormControl>
                       <FormMessage className="absolute -bottom-5 text-xs" />
@@ -701,5 +772,49 @@ const AddWidget = ({ id }: { id: string }) => {
         </Form>
       </DialogContent>
     </Dialog>
+  )
+}
+
+const DeleteWidget = ({ id, widgetId }: { id: string; widgetId: string }) => {
+  const queryClient = useQueryClient()
+
+  const mutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch("/api/v1/website", {
+        method: "DELETE",
+        body: JSON.stringify({
+          id,
+          widgetId,
+        }),
+      })
+      if (!response.ok)
+        return Promise.reject({
+          message: "Something went wrong!",
+        })
+      return (await response.json()).data
+    },
+    onMutate: async () => {
+      await queryClient.cancelQueries({
+        queryKey: ["website"],
+      })
+      const prev = queryClient.getQueryData(["website"])
+      queryClient.setQueryData(["website"], undefined)
+      return { prev }
+    },
+    onError: (err, _newData, context) => {
+      queryClient.setQueryData(["website"], context?.prev)
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["website"],
+      })
+    },
+  })
+
+  return (
+    <Trash2
+      className="bg-destructive text-background/80 dark:text-foreground/80 absolute top-2 right-2 size-6 cursor-pointer rounded-md p-1"
+      onClick={() => mutation.mutate()}
+    />
   )
 }
