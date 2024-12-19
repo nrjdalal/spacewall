@@ -2,17 +2,16 @@
 
 set -e
 
-DB_PUSH=false
+DB_PUSH=true
 DEPLOYMENT_URL="https://vercel.com/nrjdalals-projects/spacewall/${VERCEL_DEPLOYMENT_ID#dpl_}"
 
 notify_failure() {
   curl \
     -H "Title: Vercel" \
     -H "Priority: high" \
-    -H "Tags: red_circle" \
     -H "Click: $DEPLOYMENT_URL" \
     -H "Actions: view, deployment logs, $DEPLOYMENT_URL" \
-    -d "$VERCEL_ENV build failed" \
+    -d "🔴 $VERCEL_ENV build failed, click to check logs" \
     ntfy.sh/nrjdalal
 }
 
@@ -34,8 +33,7 @@ seconds=$((elapsed_time % 60))
 curl \
   -H "Title: Vercel" \
   -H "Priority: low" \
-  -H "Tags: green_circle" \
   -H "Click: $DEPLOYMENT_URL" \
   -H "Actions: view, deployment logs, $DEPLOYMENT_URL" \
-  -d "$VERCEL_ENV build completed in ${minutes}m ${seconds}s" \
+  -d "🟢 $VERCEL_ENV build completed in ${minutes}m ${seconds}s" \
   ntfy.sh/nrjdalal
