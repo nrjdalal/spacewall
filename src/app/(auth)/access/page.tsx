@@ -75,7 +75,7 @@ export default function SignIn() {
         <div className="space-y-1 pb-5">
           <p className="flex items-center text-3xl font-medium">
             Space
-            <Crown className="size-6" />
+            <Crown className="size-7" />
             all
           </p>
           <p className="text-primary/50 text-lg font-medium">

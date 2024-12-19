@@ -8,7 +8,7 @@ export default function Page() {
       <div className="max-w-sm space-y-6 text-center">
         <h1 className="flex items-center justify-center text-6xl font-medium">
           Space
-          <Crown className="size-12" />
+          <Crown className="size-13" />
           all
         </h1>
 
