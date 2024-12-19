@@ -119,12 +119,12 @@ export default function Page() {
               <div key={widget.id}>
                 {widget.type === "link" && (
                   <div className="flex items-center space-x-3 rounded-lg border p-2">
-                    <div className="bg-foreground/5 relative aspect-square size-18 rounded-lg border">
+                    <div className="bg-foreground/5 relative aspect-square size-18 rounded-lg">
                       {widget.data.image ? (
                         <img
-                          src={`https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/${data.image}`}
+                          src={`https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/${widget.data.image}`}
                           alt="Website Image"
-                          className="h-full w-full rounded-full object-cover"
+                          className="h-full w-full rounded-lg object-cover"
                         />
                       ) : (
                         <div className="text-foreground/60 grid h-full w-full place-content-center">
@@ -473,7 +473,10 @@ const AddWidget = ({ id }: { id: string }) => {
       title: z.string().min(1),
       url: z.string().min(1),
       description: z.string().optional(),
-      image: z.string().optional(),
+      image: z.union([
+        z.string(),
+        typeof window === "undefined" ? z.any() : z.instanceof(FileList),
+      ]),
     }),
   })
 
@@ -519,7 +522,69 @@ const AddWidget = ({ id }: { id: string }) => {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setSubmitting(true)
 
-    await mutation.mutateAsync(values)
+    let image = values.data.image
+
+    if (values.data.image instanceof FileList) {
+      const orignalFile = values.data.image[0] as File
+      let file = orignalFile
+
+      try {
+        file = await new Promise((resolve, reject) => {
+          new Compressor(file, {
+            width: 256,
+            height: 256,
+            resize: "cover",
+            success(result) {
+              resolve(result as File)
+            },
+            error(err) {
+              reject(err)
+            },
+          })
+        })
+
+        if (orignalFile.size < file.size) file = orignalFile
+      } catch {
+        file = orignalFile
+      }
+
+      const signedUrl = await fetch("/api/v1/s3/upload", {
+        method: "PUT",
+        body: JSON.stringify({
+          ContentType: file.type,
+          ContentLength: file.size,
+          ChecksumSHA256: await createChecksum(file),
+        }),
+      })
+
+      const { url, key } = await signedUrl.json()
+
+      const res = await fetch(url, {
+        method: "PUT",
+        headers: {
+          "Content-Type": file.type,
+        },
+        body: file,
+      })
+
+      if (!res.ok) {
+        return Promise.reject({
+          message: "Something went wrong!",
+        })
+      }
+
+      image = key
+    }
+
+    console.log(image)
+
+    await mutation.mutateAsync({
+      type: values.type,
+      data: {
+        ...values.data,
+        image,
+      },
+    })
   }
 
   return (
@@ -556,15 +621,15 @@ const AddWidget = ({ id }: { id: string }) => {
                 <FormField
                   control={form.control}
                   name="data.image"
-                  render={({ field }) => (
-                    <FormItem className="relative hidden">
+                  render={() => (
+                    <FormItem className="relative">
                       <FormLabel>Image</FormLabel>
                       <FormControl>
                         <Input
                           type="file"
                           accept="image/jpeg,image/png"
                           className="mt-1.5 pt-1.5"
-                          {...field}
+                          {...form.register("data.image")}
                         />
                       </FormControl>
                       <FormMessage className="absolute -bottom-5 text-xs" />

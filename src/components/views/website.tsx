@@ -58,7 +58,7 @@ export default function WebsiteView({
                 <div className="flex min-h-17 items-center space-x-3 rounded-lg border p-2">
                   <div
                     className={cn(
-                      "bg-foreground/5 relative aspect-square size-12 rounded-lg border lg:size-18",
+                      "bg-foreground/5 relative aspect-square size-12 rounded-lg lg:size-18",
                       mobile && "lg:size-12",
                       widget.data.image === "" && "hidden",
                     )}
@@ -67,7 +67,7 @@ export default function WebsiteView({
                       <img
                         src={`https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/${widget.data.image}`}
                         alt="Website Image"
-                        className="h-full w-full rounded-full object-cover"
+                        className="h-full w-full rounded-lg object-cover"
                       />
                     ) : (
                       <div className="text-foreground/60 grid h-full w-full place-content-center">
