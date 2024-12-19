@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 
 import { cn } from "@/lib/utils"
-import { ImageIcon } from "lucide-react"
+import { Crown, ImageIcon } from "lucide-react"
 import Link from "next/link"
 
 export default function WebsiteView({
@@ -87,6 +87,16 @@ export default function WebsiteView({
           </div>
         ))}
       </div>
+
+      <Link
+        href="https://spacewall.me"
+        target="_blank"
+        className="mt-196 flex items-center py-5 text-xl font-medium"
+      >
+        Space
+        <Crown className="size-5" />
+        all
+      </Link>
     </main>
   )
 }

@@ -29,6 +29,7 @@ import Compressor from "compressorjs"
 import { Edit, Image as ImageIcon, Loader2 } from "lucide-react"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
+import { toast } from "sonner"
 import { z } from "zod"
 
 export default function Page() {
@@ -70,7 +71,14 @@ export default function Page() {
                 </div>
               </DialogContent>
             </Dialog>
-            <Button className="w-40">Share</Button>
+            <Button
+              className="w-40"
+              onClick={() => {
+                toast.info("Feature coming soon!")
+              }}
+            >
+              Share
+            </Button>
           </div>
 
           <div className="flex items-center space-x-3">
