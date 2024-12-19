@@ -124,7 +124,7 @@ export default function Page() {
                   description={data?.description}
                 />
                 <h1 className="font-medium">{data?.title || "Title"}</h1>
-                <p className="text-foreground/70 text-sm">
+                <p className="text-sm text-zinc-700 dark:text-zinc-300">
                   {data?.description || "Description"}
                 </p>
               </div>
