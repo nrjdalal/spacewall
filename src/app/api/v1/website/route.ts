@@ -1,6 +1,7 @@
 import { db, websites } from "@/db"
 import { auth } from "@/lib/auth"
-import { and, eq } from "drizzle-orm"
+import { generateId } from "@/lib/utils"
+import { and, eq, sql } from "drizzle-orm"
 
 export async function GET() {
   const session = await auth()
@@ -41,7 +42,7 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const body = await request.json()
+  const data = await request.json()
 
   const session = await auth()
 
@@ -54,13 +55,20 @@ export async function POST(request: Request) {
     })
   }
 
+  if (data.widget) {
+    data.widgets = sql`COALESCE(widgets, '[]'::jsonb) || ${JSON.stringify({
+      id: generateId(),
+      ...data.widget,
+    })}`
+  }
+
   const res = await db
     .update(websites)
-    .set(body)
+    .set(data)
     .where(
       and(
         eq(websites.userId, session.user?.id as string),
-        eq(websites.id, body.id),
+        eq(websites.id, data.id),
       ),
     )
     .returning()

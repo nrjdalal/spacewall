@@ -2,7 +2,6 @@
 
 set -e
 
-DB_PUSH=true
 DEPLOYMENT_URL="https://vercel.com/nrjdalals-projects/spacewall/${VERCEL_DEPLOYMENT_ID#dpl_}"
 
 notify_failure() {
@@ -12,14 +11,14 @@ notify_failure() {
     -H "Click: $DEPLOYMENT_URL" \
     -H "Actions: view, deployment logs, $DEPLOYMENT_URL" \
     -d "🔴 $VERCEL_ENV build failed, click to check logs" \
-    ntfy.sh/nrjdalal
+    ntfy.sh/nrjdalal &>/dev/null
 }
 
 trap 'notify_failure' ERR
 
 start_time=$(date +%s)
 
-if [ "$DB_PUSH" = true ]; then
+if [ "$VERCEL_ENV" = "production" ]; then
   bun run drizzle-kit push
 fi
 
@@ -36,4 +35,4 @@ curl \
   -H "Click: $DEPLOYMENT_URL" \
   -H "Actions: view, deployment logs, $DEPLOYMENT_URL" \
   -d "🟢 $VERCEL_ENV build completed in ${minutes}m ${seconds}s" \
-  ntfy.sh/nrjdalal
+  ntfy.sh/nrjdalal &>/dev/null
