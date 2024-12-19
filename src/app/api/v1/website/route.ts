@@ -1,5 +1,6 @@
 import { db, websites } from "@/db"
 import { auth } from "@/lib/auth"
+import { generateId } from "@/lib/utils"
 import { and, eq, sql } from "drizzle-orm"
 
 export async function GET() {
@@ -55,7 +56,10 @@ export async function POST(request: Request) {
   }
 
   if (data.widget) {
-    data.widgets = sql`COALESCE(widgets, '[]'::jsonb) || ${JSON.stringify(data.widget)}`
+    data.widgets = sql`COALESCE(widgets, '[]'::jsonb) || ${JSON.stringify({
+      id: generateId(),
+      ...data.widget,
+    })}`
   }
 
   const res = await db
