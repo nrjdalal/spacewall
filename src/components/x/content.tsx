@@ -38,9 +38,9 @@ const ContentPreview = React.forwardRef<
     )}
     {...props}
   >
-    <div className="fixed z-5">
+    <div className="pointer-events-none fixed z-5">
       <Image
-        className="pointer-events-none w-[360px] min-w-[360px] xl:w-[384px] xl:min-w-[384px]"
+        className="w-[360px] min-w-[360px] xl:w-[384px] xl:min-w-[384px]"
         src="/iphone.png"
         alt="preview"
         width={384}

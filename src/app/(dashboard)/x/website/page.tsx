@@ -462,8 +462,8 @@ const AddWidget = ({ id }: { id: string }) => {
   const formSchema = z.object({
     type: z.enum(["link"]),
     data: z.object({
-      title: z.string(),
-      url: z.string(),
+      title: z.string().min(1),
+      url: z.string().min(1),
       description: z.string().optional(),
       image: z.string().optional(),
     }),
