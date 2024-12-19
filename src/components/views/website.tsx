@@ -43,8 +43,8 @@ export default function WebsiteView({
       {data?.description !== "" && (
         <p
           className={cn(
-            "text-center text-sm text-zinc-700 sm:text-base dark:text-zinc-300",
-            mobile && "sm:text-sm",
+            "text-center text-xs text-zinc-700 sm:text-sm dark:text-zinc-300",
+            mobile && "sm:text-xs",
           )}
         >
           {data?.description}
