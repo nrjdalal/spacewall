@@ -12,7 +12,7 @@ notify_failure() {
     -H "Click: $DEPLOYMENT_URL" \
     -H "Actions: view, deployment logs, $DEPLOYMENT_URL" \
     -d "🔴 $VERCEL_ENV build failed, click to check logs" \
-    ntfy.sh/nrjdalal
+    ntfy.sh/nrjdalal &>/dev/null
 }
 
 trap 'notify_failure' ERR
@@ -36,4 +36,4 @@ curl \
   -H "Click: $DEPLOYMENT_URL" \
   -H "Actions: view, deployment logs, $DEPLOYMENT_URL" \
   -d "🟢 $VERCEL_ENV build completed in ${minutes}m ${seconds}s" \
-  ntfy.sh/nrjdalal
+  ntfy.sh/nrjdalal &>/dev/null
