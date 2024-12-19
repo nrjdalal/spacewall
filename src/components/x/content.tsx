@@ -38,14 +38,16 @@ const ContentPreview = React.forwardRef<
     )}
     {...props}
   >
-    <Image
-      className="pointer-events-none fixed z-5 w-[360px] lg:top-34 xl:top-33 xl:w-[384px]"
-      src="/iphone.png"
-      alt="preview"
-      width={384}
-      height={742.5}
-    />
-    <div className="fixed top-51.25 h-146.5 w-72 overflow-hidden rounded-b-3xl xl:h-156.5 xl:w-76.5">
+    <div className="fixed z-5">
+      <Image
+        className="pointer-events-none w-[360px] min-w-[360px] xl:w-[384px] xl:min-w-[384px]"
+        src="/iphone.png"
+        alt="preview"
+        width={384}
+        height={742.5}
+      />
+    </div>
+    <div className="fixed top-52.25 h-146.5 w-72 overflow-hidden rounded-b-4xl xl:h-157 xl:w-76.5">
       <ScrollArea className="h-full w-full border-t">{children}</ScrollArea>
     </div>
   </aside>
