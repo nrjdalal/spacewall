@@ -2,7 +2,6 @@
 
 set -e
 
-DB_PUSH=false
 DEPLOYMENT_URL="https://vercel.com/nrjdalals-projects/spacewall/${VERCEL_DEPLOYMENT_ID#dpl_}"
 
 notify_failure() {
@@ -19,7 +18,7 @@ trap 'notify_failure' ERR
 
 start_time=$(date +%s)
 
-if [ "$DB_PUSH" = true ]; then
+if [ "$VERCEL_ENV" = "production" ]; then
   bun run drizzle-kit push
 fi
 
