@@ -26,7 +26,7 @@ import { cn, createChecksum } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import Compressor from "compressorjs"
-import { Edit, Image as ImageIcon, Loader2 } from "lucide-react"
+import { Edit, Image as ImageIcon, Loader2, Trash2 } from "lucide-react"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -118,7 +118,7 @@ export default function Page() {
             {data?.widgets?.toReversed().map((widget: any) => (
               <div key={widget.id}>
                 {widget.type === "link" && (
-                  <div className="flex items-center space-x-3 rounded-lg border p-2">
+                  <div className="relative flex items-center space-x-3 rounded-lg border p-2">
                     <div className="bg-foreground/5 relative aspect-square size-18 rounded-lg">
                       {widget.data.image ? (
                         <img
@@ -147,6 +147,7 @@ export default function Page() {
                         {widget.data.url}
                       </a>
                     </div>
+                    <DeleteWidget id={data.id} widgetId={widget.id} />
                   </div>
                 )}
               </div>
@@ -522,9 +523,11 @@ const AddWidget = ({ id }: { id: string }) => {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setSubmitting(true)
 
-    let image = values.data.image
+    let image = values.data.image.length ? values.data.image : ""
 
-    if (values.data.image instanceof FileList) {
+    if (values.data.image instanceof FileList && values.data.image.length) {
+      console.log(values.data.image)
+
       const orignalFile = values.data.image[0] as File
       let file = orignalFile
 
@@ -701,5 +704,49 @@ const AddWidget = ({ id }: { id: string }) => {
         </Form>
       </DialogContent>
     </Dialog>
+  )
+}
+
+const DeleteWidget = ({ id, widgetId }: { id: string; widgetId: string }) => {
+  const queryClient = useQueryClient()
+
+  const mutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch("/api/v1/website", {
+        method: "DELETE",
+        body: JSON.stringify({
+          id,
+          widgetId,
+        }),
+      })
+      if (!response.ok)
+        return Promise.reject({
+          message: "Something went wrong!",
+        })
+      return (await response.json()).data
+    },
+    onMutate: async () => {
+      await queryClient.cancelQueries({
+        queryKey: ["website"],
+      })
+      const prev = queryClient.getQueryData(["website"])
+      queryClient.setQueryData(["website"], undefined)
+      return { prev }
+    },
+    onError: (err, _newData, context) => {
+      queryClient.setQueryData(["website"], context?.prev)
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["website"],
+      })
+    },
+  })
+
+  return (
+    <Trash2
+      className="bg-destructive text-background/80 dark:text-foreground/80 absolute top-2 right-2 size-6 cursor-pointer rounded-md p-1"
+      onClick={() => mutation.mutate()}
+    />
   )
 }
