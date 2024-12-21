@@ -2,61 +2,35 @@
 
 import { Icons } from "@/assets/icons"
 import { Button } from "@/components/ui/button"
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { ChevronLeft, ChevronRight, Crown, Loader2 } from "lucide-react"
+import { ZodHookForm } from "@/components/x/zod-hook-form"
+import { ChevronLeft, Crown, Loader2 } from "lucide-react"
 import { signIn } from "next-auth/react"
 import Link from "next/link"
 import { useState } from "react"
-import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
-
-const formSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-})
 
 export default function SignIn() {
   const [provider, setProvider] = useState<
     "email" | "github" | "google" | null
   >(null)
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: "",
-    },
-  })
-
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    if (provider) return
-    handleSignIn("email", { email: values.email })
-  }
-
-  function handleSignIn(
+  async function handleSignIn(
     type: "email" | "github" | "google",
     options?: { email?: string },
   ) {
     if (provider) return
     setProvider(type)
-    signIn(type, { ...options, redirect: false }).then((res) => {
-      if (res?.error) {
-        toast.error("An error occurred, please try different method.")
-        return setProvider(null)
-      } else if (type === "email") {
-        toast.success("Check your email for the magic link.")
-        return setProvider(null)
-      }
-    })
+    const res = await signIn(type, { ...options, redirect: false })
+    if (res?.error) {
+      toast.error("An error occurred, please try different method.")
+      return setProvider(null)
+    }
+    if (type === "email") {
+      toast.success("Check your email for the magic link.")
+      return setProvider(null)
+    }
   }
 
   return (
@@ -83,36 +57,24 @@ export default function SignIn() {
           </p>
         </div>
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem className="relative">
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="mt-1.5 font-mono"
-                      placeholder="hi@spacewall.me"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage className="absolute -bottom-5 text-xs" />
-                </FormItem>
-              )}
-            />
-
-            <Button
-              type="submit"
-              className="mt-3 h-10 w-full"
-              disabled={!!provider}
-            >
-              <span className="mt-0.75">Continue</span>
-              <ChevronRight />
-            </Button>
-          </form>
-        </Form>
+        <ZodHookForm
+          schema={z.object({
+            email: z
+              .string()
+              .email("Please enter a valid email address")
+              .field({
+                type: "email",
+                label: "Email",
+                className: "mt-1.5",
+                placeholder: "hi@spacewall.me",
+              }),
+          })}
+          onSubmit={async (values) => {
+            if (provider) return
+            await handleSignIn("email", { email: values.email })
+          }}
+          disabled={!!provider}
+        />
 
         <div className="flex items-center justify-between py-1">
           <Separator className="w-3/7" />

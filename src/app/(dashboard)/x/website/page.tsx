@@ -35,6 +35,7 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import WebsiteView from "@/components/views/website"
 import { Content, ContentPreview, ContentRoot } from "@/components/x/content"
+import { ZodHookForm } from "@/components/x/zod-hook-form"
 import { cn, createChecksum } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
@@ -103,7 +104,7 @@ export default function Page() {
 
           <div className="flex items-center space-x-3">
             <div className="bg-foreground/5 relative aspect-square size-24 rounded-full border">
-              <EditWebsiteImage id={data?.id || ""} image={data?.image || ""} />
+              <EditWebsiteImage id={data?.id || ""} />
               {data?.image ? (
                 <img
                   src={`https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/${data.image}`}
@@ -182,22 +183,21 @@ export default function Page() {
   )
 }
 
-const EditWebsiteImage = ({ id, image }: { id: string; image: string }) => {
+const EditWebsiteImage = ({ id }: { id: string }) => {
   const [isOpen, setIsOpen] = useState(false)
-  const [submitting, setSubmitting] = useState(false)
 
   const queryClient = useQueryClient()
 
-  const formSchema = z.object({
-    image: z.union([
-      z.string(),
-      typeof window === "undefined" ? z.any() : z.instanceof(FileList),
-    ]),
+  const schema = z.object({
+    image: z.unknown().field({
+      type: "file",
+      accept: "image/jpeg,image/png",
+      label: "Image",
+      className: "mt-1.5 pt-1.5",
+    }),
   })
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    setSubmitting(true)
-
+  async function onSubmit(values: z.infer<typeof schema>) {
     if (values.image instanceof FileList) {
       const orignalFile = values.image[0] as File
       let file = orignalFile
@@ -253,15 +253,8 @@ const EditWebsiteImage = ({ id, image }: { id: string; image: string }) => {
     }
   }
 
-  const form = useForm({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      image,
-    },
-  })
-
   const mutation = useMutation({
-    mutationFn: async (values: z.infer<typeof formSchema>) => {
+    mutationFn: async (values: { image: string }) => {
       const response = await fetch("/api/v1/website", {
         method: "POST",
         body: JSON.stringify({
@@ -289,13 +282,11 @@ const EditWebsiteImage = ({ id, image }: { id: string; image: string }) => {
     },
     onError: (_err, _newData, context) => {
       queryClient.setQueryData(["website"], context?.prev)
-      setSubmitting(false)
     },
     onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: ["website"],
       })
-      setSubmitting(false)
     },
   })
 
@@ -313,36 +304,7 @@ const EditWebsiteImage = ({ id, image }: { id: string; image: string }) => {
         >
           ID: {id}
         </DialogTitle>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-            <FormField
-              control={form.control}
-              name="image"
-              render={() => (
-                <FormItem className="relative">
-                  <FormLabel>Image</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="file"
-                      accept="image/jpeg,image/png"
-                      className="mt-1.5 pt-1.5"
-                      {...form.register("image")}
-                    />
-                  </FormControl>
-                  <FormMessage className="absolute -bottom-5 text-xs" />
-                </FormItem>
-              )}
-            />
-
-            <Button
-              type="submit"
-              className="mt-3 h-10 w-full"
-              disabled={submitting}
-            >
-              {submitting ? <Loader2 className="animate-spin" /> : "Save"}
-            </Button>
-          </form>
-        </Form>
+        <ZodHookForm schema={schema} onSubmit={onSubmit} />
       </DialogContent>
     </Dialog>
   )
