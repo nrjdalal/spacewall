@@ -108,7 +108,7 @@ export const ZodHookForm = ({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(submit)}
-        className={cn("grid grid-cols-12 space-y-5", className)}
+        className={cn("grid grid-cols-12 gap-5", className)}
       >
         {data.map((formField) => {
           return (

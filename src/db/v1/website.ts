@@ -9,10 +9,11 @@ export const websites = pgTable("website", {
   userId: text("userId")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
-  description: text("description").notNull().default(""),
-  image: text("image").notNull().default(""),
   primary: boolean("primary"),
+  cover: text("cover").notNull().default(""),
+  image: text("image").notNull().default(""),
   title: text("title").notNull().default(""),
+  description: text("description").notNull().default(""),
   order: jsonb("order"),
 })
 

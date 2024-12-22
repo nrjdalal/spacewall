@@ -50,19 +50,21 @@ export default function Page() {
         description="Think link in bio, one link, etc but for professionals."
       />
       <ContentRoot>
-        <Content className="space-y-4">
+        <Content className="space-y-5">
           {/*  HEADER BLOCK */}
           <section className="relative grid grid-cols-1 place-items-center rounded-md border p-3">
             <DialogEditHeader {...data} />
 
+            <div className="bg-secondary -mx-5 h-36 w-full rounded-md"></div>
+
             <Image
-              className="size-24 rounded-full border"
+              className="absolute top-24 size-24 rounded-full border"
               src={data.image}
               alt={data.title}
               height={96}
               width={96}
             />
-            <h1 className="mt-3 font-medium">{data.title}</h1>
+            <h1 className="mt-10 font-medium">{data.title}</h1>
             <p className="text-muted-foreground text-sm">
               {data.description || "Add an amazing bio!"}
             </p>
@@ -79,14 +81,23 @@ export default function Page() {
 
 const DialogEditHeader = (data: {
   id: string
+  image: string
+  cover: string
   title: string
   description: string
-  image: string
 }) => {
   const schema = z.object({
     image: z.unknown().field({
       type: "file",
       label: "Image",
+      default: data.image,
+      span: "1/2",
+    }),
+    cover: z.unknown().field({
+      type: "file",
+      label: "Cover",
+      default: data.cover,
+      span: "1/2",
     }),
     title: z.string().min(1).max(128).field({
       label: "Title",
@@ -102,18 +113,14 @@ const DialogEditHeader = (data: {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button
-          className="absolute top-3 right-3 aspect-square size-6 border p-0"
-          variant="secondary"
-        >
-          <Pencil className="text-muted-foreground" />
+        <Button className="absolute top-6 right-6 aspect-square size-6 border p-0">
+          <Pencil />
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Manage Header</DialogTitle>
         </DialogHeader>
-
         <ZodHookForm schema={schema} />
       </DialogContent>
     </Dialog>
