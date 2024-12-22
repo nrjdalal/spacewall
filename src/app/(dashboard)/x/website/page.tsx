@@ -186,8 +186,6 @@ export default function Page() {
 const EditWebsiteImage = ({ id }: { id: string }) => {
   const [isOpen, setIsOpen] = useState(false)
 
-  const queryClient = useQueryClient()
-
   const schema = z.object({
     image: z.unknown().field({
       type: "file",
@@ -197,96 +195,76 @@ const EditWebsiteImage = ({ id }: { id: string }) => {
     }),
   })
 
-  async function onSubmit(values: z.infer<typeof schema>) {
-    if (values.image instanceof FileList) {
-      const orignalFile = values.image[0] as File
-      let file = orignalFile
-
-      try {
-        file = await new Promise((resolve, reject) => {
-          new Compressor(file, {
-            width: 256,
-            height: 256,
-            resize: "cover",
-            success(result) {
-              resolve(result as File)
-            },
-            error(err) {
-              reject(err)
-            },
-          })
-        })
-
-        if (orignalFile.size < file.size) file = orignalFile
-      } catch {
-        file = orignalFile
-      }
-
-      const signedUrl = await fetch("/api/v1/s3/upload", {
-        method: "PUT",
-        body: JSON.stringify({
-          ContentType: file.type,
-          ContentLength: file.size,
-          ChecksumSHA256: await createChecksum(file),
-        }),
-      })
-
-      const { url, key } = await signedUrl.json()
-
-      const res = await fetch(url, {
-        method: "PUT",
-        headers: {
-          "Content-Type": file.type,
-        },
-        body: file,
-      })
-
-      if (!res.ok) {
-        return Promise.reject({
-          message: "Something went wrong!",
-        })
-      }
-
-      await mutation.mutateAsync({
-        image: key,
-      })
-    }
-  }
+  const queryClient = useQueryClient()
 
   const mutation = useMutation({
-    mutationFn: async (values: { image: string }) => {
-      const response = await fetch("/api/v1/website", {
-        method: "POST",
-        body: JSON.stringify({
-          ...values,
-          id,
-        }),
-      })
-      if (!response.ok)
-        return Promise.reject({
-          message: "Something went wrong!",
+    mutationFn: async (values: z.infer<typeof schema>) => {
+      if (values.image instanceof FileList) {
+        const orignalFile = values.image[0] as File
+        let file = orignalFile
+
+        try {
+          file = await new Promise((resolve, reject) => {
+            new Compressor(file, {
+              width: 256,
+              height: 256,
+              resize: "cover",
+              success(result) {
+                resolve(result as File)
+              },
+              error(err) {
+                reject(err)
+              },
+            })
+          })
+
+          if (orignalFile.size < file.size) file = orignalFile
+        } catch {
+          file = orignalFile
+        }
+
+        const signedUrl = await fetch("/api/v1/s3/upload", {
+          method: "PUT",
+          body: JSON.stringify({
+            ContentType: file.type,
+            ContentLength: file.size,
+            ChecksumSHA256: await createChecksum(file),
+          }),
         })
-      return (await response.json()).data
+
+        const { url, key } = await signedUrl.json()
+
+        const res = await fetch(url, {
+          method: "PUT",
+          headers: {
+            "Content-Type": file.type,
+          },
+          body: file,
+        })
+
+        if (!res.ok) {
+          return Promise.reject({
+            message: "Something went wrong!",
+          })
+        }
+
+        const response = await fetch("/api/v1/website", {
+          method: "POST",
+          body: JSON.stringify({
+            image: key,
+            id,
+          }),
+        })
+        if (!response.ok)
+          return Promise.reject({
+            message: "Something went wrong!",
+          })
+        return (await response.json()).data
+      }
     },
-    onMutate: async (newData) => {
-      await queryClient.cancelQueries({
-        queryKey: ["website"],
-      })
-      const prev = queryClient.getQueryData(["website"])
-      queryClient.setQueryData(["website"], {
-        ...(prev || {}),
-        ...newData,
-      })
+    onSuccess: (context) => {
+      queryClient.setQueryData(["website"], context)
       setIsOpen(false)
-      return { prev }
-    },
-    onError: (_err, _newData, context) => {
-      queryClient.setQueryData(["website"], context?.prev)
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["website"],
-      })
     },
   })
 
@@ -304,7 +282,7 @@ const EditWebsiteImage = ({ id }: { id: string }) => {
         >
           ID: {id}
         </DialogTitle>
-        <ZodHookForm schema={schema} onSubmit={onSubmit} />
+        <ZodHookForm schema={schema} onSubmit={mutation.mutateAsync} />
       </DialogContent>
     </Dialog>
   )
@@ -502,9 +480,6 @@ const AddWidget = ({ id }: { id: string }) => {
       queryClient.setQueryData(["website"], context)
       setIsOpen(false)
       form.reset()
-      setSubmitting(false)
-    },
-    onError: () => {
       setSubmitting(false)
     },
   })
