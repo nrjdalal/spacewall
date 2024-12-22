@@ -12,9 +12,18 @@ import {
 } from "@/components/ui/dialog"
 import { Content, ContentPreview, ContentRoot } from "@/components/x/content"
 import { ZodHookForm } from "@/components/x/zod-hook-form"
-import { useQuery } from "@tanstack/react-query"
-import { Loader2, Pencil } from "lucide-react"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import {
+  Crown,
+  ImageIcon,
+  LetterText,
+  LinkIcon,
+  Loader2,
+  Pencil,
+} from "lucide-react"
 import Image from "next/image"
+import Link from "next/link"
+import { useState } from "react"
 import { z } from "zod"
 
 export default function Page() {
@@ -55,7 +64,13 @@ export default function Page() {
           <section className="relative grid grid-cols-1 place-items-center rounded-md border p-3">
             <DialogEditHeader {...data} />
 
-            <div className="bg-secondary -mx-5 h-36 w-full rounded-md"></div>
+            <div className="bg-secondary h-36 w-full rounded-md">
+              <p className="mt-4 flex w-full items-center justify-center text-6xl font-medium opacity-5">
+                Space
+                <Crown className="size-13" />
+                all
+              </p>
+            </div>
 
             <Image
               className="absolute top-24 size-24 rounded-full border"
@@ -71,7 +86,54 @@ export default function Page() {
           </section>
 
           {/* ADD BLOCK */}
-          <DialogAddBlock />
+          <DialogAddBlock {...data} />
+
+          {/* MANAGE BLOCKS */}
+          {data.blocks.map(
+            (block: {
+              id: string
+              type: string
+              meta: {
+                url: string
+                title: string
+                description: string
+                image: string
+              }
+            }) => {
+              if (block.type === "link") {
+                return (
+                  <section
+                    key={block.id}
+                    className="relative flex items-center gap-3 rounded-md border p-3"
+                  >
+                    <Button className="absolute top-3 right-3 aspect-square size-6 border p-0">
+                      <Pencil />
+                    </Button>
+
+                    <div className="bg-secondary text-muted-foreground grid aspect-square size-16 place-items-center rounded-md">
+                      <LinkIcon />
+                    </div>
+
+                    <div className="w-full text-center">
+                      <h1 className="font-medium">
+                        {block.meta?.title || "Awesome Link"}
+                      </h1>
+                      <p className="text-muted-foreground text-sm">
+                        {block.meta?.description ||
+                          "More about the link (optional)"}
+                      </p>
+                      <Link
+                        href={block.meta?.url || "https://spacewall.me"}
+                        className="text-sm text-blue-500 italic"
+                      >
+                        {block.meta?.url || "https://spacewall.me"}
+                      </Link>
+                    </div>
+                  </section>
+                )
+              }
+            },
+          )}
         </Content>
         <ContentPreview></ContentPreview>
       </ContentRoot>
@@ -127,9 +189,42 @@ const DialogEditHeader = (data: {
   )
 }
 
-const DialogAddBlock = () => {
+const DialogAddBlock = (data: { id: string }) => {
+  const availableBlocks = ["link", "text", "image"] as const
+
+  const schema = z.object({
+    type: z.enum(availableBlocks),
+  })
+
+  const queryClient = useQueryClient()
+
+  const mutuation = useMutation({
+    mutationFn: async (values: z.infer<typeof schema>) => {
+      const res = await fetch("/api/v1/website", {
+        method: "POST",
+        body: JSON.stringify({
+          websiteId: data.id,
+          ...values,
+        }),
+      })
+      return await res.json()
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["website"],
+      })
+    },
+  })
+
+  async function onClick(values: z.infer<typeof schema>) {
+    await mutuation.mutateAsync(schema.parse(values))
+    setOpen(false)
+  }
+
+  const [open, setOpen] = useState(false)
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="w-full">Add Block</Button>
       </DialogTrigger>
@@ -140,21 +235,27 @@ const DialogAddBlock = () => {
         </DialogHeader>
         <div className="grid grid-cols-3 gap-4 lg:grid-cols-6">
           <Button
-            className="aspect-square h-full w-full border"
+            className="text-muted-foreground aspect-square h-full w-full border"
             variant="secondary"
+            onClick={() => onClick({ type: "link" })}
           >
+            <LinkIcon />
             Link
           </Button>
           <Button
-            className="aspect-square h-full w-full border"
+            className="text-muted-foreground aspect-square h-full w-full border"
             variant="secondary"
+            onClick={() => onClick({ type: "text" })}
           >
+            <LetterText />
             Text
           </Button>
           <Button
-            className="aspect-square h-full w-full border"
+            className="text-muted-foreground aspect-square h-full w-full border"
             variant="secondary"
+            onClick={() => onClick({ type: "image" })}
           >
+            <ImageIcon />
             Image
           </Button>
         </div>

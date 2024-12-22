@@ -93,7 +93,7 @@ export default function SignIn() {
             ) : (
               <Icons.Github className="text-foreground/50" />
             )}
-            <span className="mt-0.75 ml-1">Continue with Github</span>
+            <span className="ml-1">Continue with Github</span>
           </Button>
 
           <Button
@@ -103,7 +103,7 @@ export default function SignIn() {
             onClick={() => handleSignIn("google")}
           >
             <Icons.Google className="text-foreground/50" />
-            <span className="mt-0.75 ml-1">Continue with Google</span>
+            <span className="ml-1">Continue with Google</span>
           </Button>
         </div>
 
