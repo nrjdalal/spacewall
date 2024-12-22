@@ -10,7 +10,7 @@ export default function XHeader({
   className?: string
 }) {
   return (
-    <section className="border-b py-3">
+    <section className="border-b py-2">
       <div className={cn("mx-auto max-w-screen-lg px-5", className)}>
         <h1 className="font-medium lg:text-lg">{title}</h1>
         {description && (

@@ -24,6 +24,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Loader2 } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
+import { Separator } from "../ui/separator"
 
 const formFieldSchema = z
   .object({
@@ -35,6 +36,7 @@ const formFieldSchema = z
     description: z.string().optional(),
     options: z.record(z.string()).optional(),
     span: z.enum(["1/2", "1/3", "2/3", "1/4", "2/4", "3/4"]).optional(),
+    className: z.string().optional(),
     placeholder: z.string().optional(),
   })
   .passthrough()
@@ -134,7 +136,10 @@ export const ZodHookForm = ({
                   )}
                 >
                   {formField.label ? (
-                    <FormLabel>{formField.label}</FormLabel>
+                    <FormLabel>
+                      {formField.label}
+                      <Separator className="invisible h-0.5" />
+                    </FormLabel>
                   ) : (
                     <FormLabel className="sr-only">{formField.name}</FormLabel>
                   )}
@@ -158,6 +163,7 @@ export const ZodHookForm = ({
                   {formField.type === "file" && (
                     <FormControl>
                       <Input
+                        className={cn("pt-2", formField.className)}
                         {...formField}
                         {...form.register(formField.name)}
                       />
@@ -223,7 +229,7 @@ export const ZodHookForm = ({
         })}
         <Button
           type="submit"
-          className="col-span-full mt-3 h-10 w-full"
+          className="col-span-full mt-3 w-full"
           disabled={disabled || form.formState.isSubmitting}
         >
           {form.formState.isSubmitting ? (

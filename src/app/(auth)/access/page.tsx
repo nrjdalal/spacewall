@@ -65,12 +65,10 @@ export default function SignIn() {
               .field({
                 type: "email",
                 label: "Email",
-                className: "mt-1.5",
                 placeholder: "hi@spacewall.me",
               }),
           })}
           onSubmit={async (values) => {
-            if (provider) return
             await handleSignIn("email", { email: values.email })
           }}
           disabled={!!provider}
