@@ -50,7 +50,25 @@ export default function Page() {
       </div>
     )
 
-  console.log(data)
+  interface OrderItem {
+    id: string
+    active: boolean
+  }
+
+  interface Block {
+    id: string
+    type: string
+    meta: unknown
+  }
+
+  data.blocks = data.order.map((orderItem: OrderItem) => ({
+    ...orderItem,
+    ...(new Map(data.blocks.map((block: Block) => [block.id, block])).get(
+      orderItem.id,
+    ) || {}),
+  }))
+
+  delete data.order
 
   return (
     <>
@@ -104,7 +122,7 @@ export default function Page() {
                 return (
                   <section
                     key={block.id}
-                    className="relative flex items-center gap-3 rounded-md border p-3"
+                    className="relative flex items-center gap-3 rounded-md border p-2"
                   >
                     <Button className="absolute top-3 right-3 aspect-square size-6 border p-0">
                       <Pencil />
@@ -115,18 +133,18 @@ export default function Page() {
                     </div>
 
                     <div className="w-full text-center">
-                      <h1 className="font-medium">
-                        {block.meta?.title || "Awesome Link"}
+                      <h1 className="text-sm font-medium">
+                        {block.meta?.title || "Placeholder Link Title"}
                       </h1>
-                      <p className="text-muted-foreground text-sm">
+                      <p className="text-muted-foreground text-xs">
                         {block.meta?.description ||
-                          "More about the link (optional)"}
+                          "Placeholder description (optional)"}
                       </p>
                       <Link
-                        href={block.meta?.url || "https://spacewall.me"}
-                        className="text-sm text-blue-500 italic"
+                        href={block.meta?.url || "/"}
+                        className="text-xs text-blue-500 italic"
                       >
-                        {block.meta?.url || "https://spacewall.me"}
+                        {block.meta?.url || "placeholder.link"}
                       </Link>
                     </div>
                   </section>
