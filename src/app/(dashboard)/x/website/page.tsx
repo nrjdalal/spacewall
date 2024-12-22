@@ -62,10 +62,10 @@ export default function Page() {
   }
 
   const blocksMap = new Map(
-    data.blocks.map((block: BlockItem) => [block.id, block]),
+    data.blocks?.map((block: BlockItem) => [block.id, block]),
   )
 
-  data.sortedBlocks = data.order.map((orderItem: OrderItem) => ({
+  data.sortedBlocks = data.order?.map((orderItem: OrderItem) => ({
     ...orderItem,
     ...(blocksMap.get(orderItem.id) || {}),
   }))
@@ -107,7 +107,7 @@ export default function Page() {
           <DialogAddBlock {...data} />
 
           {/* MANAGE BLOCKS */}
-          {data.sortedBlocks.map(
+          {data.sortedBlocks?.map(
             (block: {
               id: string
               active: boolean
