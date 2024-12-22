@@ -55,20 +55,20 @@ export default function Page() {
     active: boolean
   }
 
-  interface Block {
+  interface BlockItem {
     id: string
     type: string
     meta: unknown
   }
 
-  data.blocks = data.order.map((orderItem: OrderItem) => ({
-    ...orderItem,
-    ...(new Map(data.blocks.map((block: Block) => [block.id, block])).get(
-      orderItem.id,
-    ) || {}),
-  }))
+  const blocksMap = new Map(
+    data.blocks.map((block: BlockItem) => [block.id, block]),
+  )
 
-  delete data.order
+  data.sortedBlocks = data.order.map((orderItem: OrderItem) => ({
+    ...orderItem,
+    ...(blocksMap.get(orderItem.id) || {}),
+  }))
 
   return (
     <>
@@ -107,9 +107,10 @@ export default function Page() {
           <DialogAddBlock {...data} />
 
           {/* MANAGE BLOCKS */}
-          {data.blocks.map(
+          {data.sortedBlocks.map(
             (block: {
               id: string
+              active: boolean
               type: string
               meta: {
                 url: string
