@@ -65,6 +65,7 @@ export default function SignIn() {
               .field({
                 type: "email",
                 label: "Email",
+                className: "font-mono mt-1",
                 placeholder: "hi@spacewall.me",
               }),
           })}
