@@ -9,10 +9,22 @@ export const websites = pgTable("website", {
   userId: text("userId")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
-
-  description: text("description").notNull().default(""),
-  image: text("image").notNull().default(""),
   primary: boolean("primary"),
+  cover: text("cover").notNull().default(""),
+  image: text("image").notNull().default(""),
   title: text("title").notNull().default(""),
-  widgets: jsonb("widgets"),
+  description: text("description").notNull().default(""),
+  order: jsonb("order"),
+})
+
+export const websiteBlocks = pgTable("websiteBlock", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => generateId()),
+  websiteId: text("websiteId")
+    .notNull()
+    .references(() => websites.id, { onDelete: "cascade" }),
+  type: text("type").notNull(),
+  meta: jsonb("meta"),
+  data: jsonb("data"),
 })

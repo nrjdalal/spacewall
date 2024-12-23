@@ -12,15 +12,21 @@ const s3 = new S3Client({
 })
 
 export const putObject = async ({
+  Key,
   ContentType,
   ContentLength,
   ChecksumSHA256,
 }: {
+  Key?: string
   ContentType: string
   ContentLength: number
   ChecksumSHA256: string
 }) => {
-  const Key = generateId()
+  Key =
+    Key ||
+    generateId({
+      length: 16,
+    })
 
   const signedUrl = await getSignedUrl(
     s3,

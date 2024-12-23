@@ -15,6 +15,16 @@ export async function createChecksum(data: Blob | File) {
   return hashBase64
 }
 
+export function humanBytes(bytes: number) {
+  const units = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
+  let index = 0
+  while (bytes >= 1024 && index < units.length - 1) {
+    bytes /= 1024
+    index++
+  }
+  return `${bytes.toFixed(2)} ${units[index]}`
+}
+
 export function humanNumbers(number: number | string): string {
   if (typeof number === "string") number = parseInt(number)
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
