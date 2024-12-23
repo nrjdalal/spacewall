@@ -28,8 +28,8 @@ export default function WebsiteView({
   preview?: boolean
 }) {
   return (
-    <main className={cn("min-h-dvh", preview && "min-h-171")}>
-      <section className="grid grid-cols-1 place-items-center">
+    <main className={cn("min-h-dvh pb-10", preview && "min-h-171")}>
+      <section className="relative grid grid-cols-1 place-items-center">
         <div className="relative h-36 w-full overflow-hidden">
           {data.cover && (
             <img
@@ -85,7 +85,7 @@ export default function WebsiteView({
                   key={block.id}
                   href={block.meta?.url || "/x/website"}
                   target={block.meta?.url ? "_blank" : "_self"}
-                  className="relative flex items-center gap-3 rounded-md border p-2"
+                  className="relative flex items-center gap-3 rounded-md border p-1"
                 >
                   <div className="bg-secondary grid aspect-square size-16 place-items-center rounded-md border">
                     {block.meta?.image ? (
