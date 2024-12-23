@@ -33,23 +33,23 @@ const ContentPreview = React.forwardRef<
   <aside
     ref={ref}
     className={cn(
-      "relative col-span-2 -m-5 hidden max-w-sm items-start justify-center rounded-lg lg:flex",
+      "relative col-span-2 -mt-25 hidden max-w-sm items-start justify-center rounded-lg xl:flex",
       className,
     )}
     {...props}
   >
     <div className="pointer-events-none fixed z-5">
       <Image
-        className="w-[360px] min-w-[360px] xl:w-[384px] xl:min-w-[384px]"
+        className="w-105"
         src="/iphone.png"
         alt="preview"
-        width={384}
-        height={742.5}
+        width={420}
+        height={812}
       />
     </div>
-    <div className="fixed top-52.25 h-146.5 w-72 overflow-hidden rounded-b-4xl xl:h-157 xl:w-76.5">
-      <ScrollArea className="h-full w-full border-t">{children}</ScrollArea>
-    </div>
+    <ScrollArea className="fixed z-10 mt-20 h-171.5 w-84 overflow-hidden rounded-b-4xl">
+      {children}
+    </ScrollArea>
   </aside>
 ))
 ContentPreview.displayName = "ContentPreview"
