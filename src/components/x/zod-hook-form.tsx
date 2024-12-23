@@ -23,9 +23,10 @@ import {
 import { Separator } from "@/components/ui/separator"
 import { Textarea } from "@/components/ui/textarea"
 import { useFileUpload } from "@/hooks/use-image-upload"
-import { cn } from "@/lib/utils"
+import { cn, createChecksum } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { CloudUpload, Loader2 } from "lucide-react"
+import Compressor from "compressorjs"
+import { File, Loader2 } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
@@ -34,13 +35,14 @@ const formFieldSchema = z
     type: z
       .enum(["email", "file", "password", "select", "text", "textarea"])
       .default("text"),
-    default: z.unknown().optional(),
+    default: z.string().optional(),
     label: z.string().optional(),
     description: z.string().optional(),
     options: z.record(z.string()).optional(),
     span: z.enum(["1/2", "1/3", "2/3", "1/4", "2/4", "3/4"]).optional(),
     className: z.string().optional(),
     placeholder: z.string().optional(),
+    prefix: z.string().optional(),
   })
   .passthrough()
   .superRefine((data) => {
@@ -94,16 +96,99 @@ export const ZodHookForm = ({
     ),
   })
 
-  const submit = async (values: z.infer<typeof schema>) => {
-    if (onSubmit) {
-      await onSubmit(values)
-    } else {
-      console.log(values)
-    }
-    form.reset()
-  }
+  const { fileState, handleFilePreview } = useFileUpload()
 
-  const { fileState, handleFileChange } = useFileUpload()
+  // const submit = async (values: z.infer<typeof schema>) => {
+  //   if (onSubmit) {
+  //     await onSubmit(values)
+  //   } else {
+  //     console.log(values)
+  //   }
+  //   form.reset()
+  // }
+
+  const submit = async (values: z.infer<typeof schema>) => {
+    const uploadPromises = Object.keys(fileState).map(async (key) => {
+      const state = fileState[key]
+      if (!state.file) return null
+
+      try {
+        if (state.file.type.startsWith("image/")) {
+          try {
+            const compressedFile = await new Promise<File>(
+              (resolve, reject) => {
+                new Compressor(state.file, {
+                  quality: 0.9,
+                  height: 1080,
+                  width: 1080,
+                  success(result) {
+                    resolve(result as File)
+                  },
+                  error(err) {
+                    reject(err)
+                  },
+                })
+              },
+            )
+
+            if (compressedFile.size < state.file.size)
+              state.file = compressedFile
+          } catch (err) {
+            console.error("Image compression failed:", err)
+          }
+        }
+
+        const checksum = await createChecksum(state.file)
+
+        const signedUrlResponse = await fetch("/api/v1/s3/upload", {
+          method: "PUT",
+          body: JSON.stringify({
+            Key: values[key], // Assuming the form uses the upload key
+            ContentType: state.file.type,
+            ContentLength: state.file.size,
+            ChecksumSHA256: checksum,
+          }),
+        })
+
+        if (!signedUrlResponse.ok) throw new Error("Failed to fetch signed URL")
+
+        const { url } = await signedUrlResponse.json()
+
+        const uploadResponse = await fetch(url, {
+          method: "PUT",
+          headers: { "Content-Type": state.file.type },
+          body: state.file,
+        })
+
+        if (!uploadResponse.ok) throw new Error("File upload failed")
+
+        return values[key] // Return the upload key or URL
+      } catch (err) {
+        console.error(`Failed to upload file for field "${key}":`, err)
+        throw err
+      }
+    })
+
+    try {
+      const uploadedKeys = await Promise.all(uploadPromises)
+      const updatedValues = {
+        ...values,
+        ...Object.fromEntries(
+          Object.keys(fileState).map((key, i) => [key, uploadedKeys[i]]),
+        ),
+      }
+
+      if (onSubmit) {
+        await onSubmit(updatedValues)
+      } else {
+        console.log(updatedValues)
+      }
+
+      form.reset()
+    } catch (err) {
+      console.error("File upload or form submission failed:", err)
+    }
+  }
 
   return (
     <Form {...form}>
@@ -168,7 +253,7 @@ export const ZodHookForm = ({
                           className={cn("hidden", formField.className)}
                           {...formField}
                           onChange={(event) =>
-                            handleFileChange({
+                            handleFilePreview({
                               event,
                               key: formField.name,
                               setValue: form.setValue,
@@ -176,22 +261,67 @@ export const ZodHookForm = ({
                           }
                         />
                       </FormControl>
-                      <FormLabel>
-                        <div className="h-24 w-full overflow-hidden rounded-md border">
-                          {fileState[formField.name]?.preview && (
+                      <FormLabel
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={(e) => {
+                          e.preventDefault()
+                          const files = e.dataTransfer.files
+                          if (files.length > 0) {
+                            handleFilePreview({
+                              event: {
+                                target: { files },
+                              } as unknown as React.ChangeEvent<HTMLInputElement>,
+                              key: formField.name,
+                              setValue: form.setValue,
+                            })
+                          }
+                        }}
+                      >
+                        <div className="h-24 w-full cursor-pointer overflow-hidden rounded-md border focus:bg-red-500">
+                          {!fileState[formField.name]?.preview &&
+                            (formField.default ? (
+                              <img
+                                src={
+                                  formField.prefix
+                                    ? !formField.default.startsWith("http")
+                                      ? formField.prefix + formField.default
+                                      : formField.default
+                                    : formField.default
+                                }
+                                alt="Preview"
+                                className="aspect-square h-full w-full object-contain object-center"
+                              />
+                            ) : (
+                              <div className="text-muted-foreground flex h-full w-full items-center justify-center text-center">
+                                Select a file
+                                <br />
+                                or
+                                <br />
+                                Drag & drop here
+                              </div>
+                            ))}
+                          {typeof fileState[formField.name]?.preview ===
+                            "string" && (
                             <img
-                              src={
-                                fileState[formField.name]?.preview ?? undefined
-                              }
+                              src={fileState[formField.name]?.preview as string}
                               alt="Preview"
                               className="aspect-square h-full w-full object-contain object-center"
                             />
                           )}
+                          {typeof fileState[formField.name]?.preview ===
+                            "boolean" &&
+                            fileState[formField.name]?.preview && (
+                              <div className="flex h-full w-full items-center justify-center">
+                                <File className="size-12 stroke-1" />
+                              </div>
+                            )}
+                          {fileState[formField.name]?.size && (
+                            <div className="bg-background absolute -bottom-1.5 left-1/2 -translate-x-1/2 transform rounded-md border px-1 text-xs uppercase">
+                              {fileState[formField.name]?.size}
+                            </div>
+                          )}
                         </div>
                       </FormLabel>
-                      {fileState[formField.name]?.isUploading && (
-                        <CloudUpload className="absolute right-3 bottom-3 animate-bounce" />
-                      )}
                     </>
                   )}
 

@@ -91,3 +91,31 @@ export async function POST(request: Request) {
     status: 200,
   })
 }
+
+export async function PATCH(request: Request) {
+  const session = await auth()
+
+  if (!session) {
+    return Response.json({
+      status: 401,
+      message: "Unauthorized",
+    })
+  }
+
+  const data = await request.json()
+
+  await db
+    .update(websites)
+    .set(data)
+    .where(
+      and(
+        eq(websites.id, data.websiteId),
+        eq(websites.userId, session.user?.id as string),
+      ),
+    )
+    .returning()
+
+  return Response.json({
+    status: 200,
+  })
+}

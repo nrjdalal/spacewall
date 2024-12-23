@@ -1,3 +1,5 @@
+/* eslint-disable @next/next/no-img-element */
+
 "use client"
 
 import XHeader from "@/components/common/x-header"
@@ -21,7 +23,6 @@ import {
   Loader2,
   Pencil,
 } from "lucide-react"
-import Image from "next/image"
 import Link from "next/link"
 import { useState } from "react"
 import { z } from "zod"
@@ -80,30 +81,47 @@ export default function Page() {
         <Content className="space-y-5">
           {/*  HEADER BLOCK */}
           <section className="relative grid grid-cols-1 place-items-center rounded-md border p-3">
-            <div className="bg-secondary relative h-36 w-full overflow-hidden rounded-md">
-              <p className="absolute left-1/3 flex h-full w-max -translate-x-2/3 -rotate-15 transform items-start justify-center text-7xl font-medium opacity-2.5">
-                Space
-                <Crown className="size-16" />
-                all
-              </p>
-              <p className="absolute left-1/2 flex h-full w-max -translate-x-1/2 -rotate-15 transform items-center justify-center text-7xl font-medium opacity-2.5">
-                Space
-                <Crown className="size-16" />
-                all
-              </p>
-              <p className="absolute left-2/3 flex h-full w-max -translate-x-1/3 -rotate-15 transform items-end justify-center text-7xl font-medium opacity-2.5">
-                Space
-                <Crown className="size-16" />
-                all
-              </p>
+            <div className="bg-secondary relative h-36 w-full overflow-hidden rounded-md border">
+              {data.cover ? (
+                <img
+                  className="absolute top-0 h-full w-full object-cover"
+                  src={
+                    "https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/" +
+                    data.cover
+                  }
+                  alt={data.title}
+                />
+              ) : (
+                <>
+                  <p className="absolute left-1/3 flex h-full w-max -translate-x-2/3 -rotate-15 transform items-start justify-center text-7xl font-medium opacity-2.5">
+                    Space
+                    <Crown className="size-16" />
+                    all
+                  </p>
+                  <p className="absolute left-1/2 flex h-full w-max -translate-x-1/2 -rotate-15 transform items-center justify-center text-7xl font-medium opacity-2.5">
+                    Space
+                    <Crown className="size-16" />
+                    all
+                  </p>
+                  <p className="absolute left-2/3 flex h-full w-max -translate-x-1/3 -rotate-15 transform items-end justify-center text-7xl font-medium opacity-2.5">
+                    Space
+                    <Crown className="size-16" />
+                    all
+                  </p>
+                </>
+              )}
+
               <DialogEditHeader {...data} />
             </div>
-            <Image
+            <img
               className="absolute top-0 mt-24 size-24 rounded-full border"
-              src={data.image}
+              src={
+                data.image.startsWith("http")
+                  ? data.image
+                  : "https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/" +
+                    data.image
+              }
               alt={data.title}
-              height={96}
-              width={96}
             />
             <h1 className="mt-10 font-medium">{data.title}</h1>
             <p className="text-muted-foreground text-sm">
@@ -180,15 +198,19 @@ const DialogEditHeader = (data: {
   description: string
 }) => {
   const schema = z.object({
-    image: z.string().optional().field({
+    image: z.string().field({
       type: "file",
       label: "Image",
       default: data.image,
+      prefix:
+        "https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/",
       span: "1/2",
     }),
     cover: z.string().field({
       type: "file",
       label: "Cover",
+      prefix:
+        "https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/",
       default: data.cover,
       span: "1/2",
     }),
@@ -203,12 +225,35 @@ const DialogEditHeader = (data: {
     }),
   })
 
+  const queryClient = useQueryClient()
+
+  const mutuation = useMutation({
+    mutationFn: async (values: z.infer<typeof schema>) => {
+      const res = await fetch("/api/v1/website", {
+        method: "PATCH",
+        body: JSON.stringify({
+          websiteId: data.id,
+          ...values,
+        }),
+      })
+      return await res.json()
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["website"],
+      })
+    },
+  })
+
   const onSubmit = async (values: z.infer<typeof schema>) => {
-    console.log(values)
+    await mutuation.mutateAsync(values)
+    setOpen(false)
   }
 
+  const [open, setOpen] = useState(false)
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="absolute top-3 right-3 aspect-square size-6 border p-0">
           <Pencil />
