@@ -23,8 +23,6 @@ export async function GET() {
       .values({
         primary: true,
         userId: session.user?.id as string,
-        title: session.user?.name as string,
-        image: session.user?.image as string,
       })
       .returning()
   }
@@ -104,18 +102,52 @@ export async function PATCH(request: Request) {
 
   const data = await request.json()
 
-  await db
-    .update(websites)
-    .set(data)
-    .where(
-      and(
-        eq(websites.id, data.websiteId),
-        eq(websites.userId, session.user?.id as string),
-      ),
-    )
-    .returning()
+  if (data.websiteId) {
+    await db
+      .update(websites)
+      .set(data)
+      .where(
+        and(
+          eq(websites.id, data.websiteId),
+          eq(websites.userId, session.user?.id as string),
+        ),
+      )
+      .returning()
 
-  return Response.json({
-    status: 200,
-  })
+    return Response.json({
+      status: 200,
+    })
+  }
+
+  if (data.blockId) {
+    await db
+      .update(websiteBlocks)
+      .set(data)
+      .where(and(eq(websiteBlocks.id, data.blockId)))
+      .returning()
+
+    return Response.json({
+      status: 200,
+    })
+  }
+}
+
+export async function DELETE(request: Request) {
+  const session = await auth()
+
+  if (!session) {
+    return Response.json({
+      status: 401,
+      message: "Unauthorized",
+    })
+  }
+
+  const data = await request.json()
+
+  if (data.blockId) {
+    await db.delete(websiteBlocks).where(eq(websiteBlocks.id, data.blockId))
+    return Response.json({
+      status: 200,
+    })
+  }
 }
