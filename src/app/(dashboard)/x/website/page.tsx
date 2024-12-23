@@ -130,8 +130,10 @@ export default function Page() {
                 </div>
               )}
             </div>
-            <h1 className="mt-10 font-medium">{data.title || "Page Title"}</h1>
-            <p className="text-muted-foreground text-sm">
+            <h1 className="mt-10 text-center font-medium">
+              {data.title || "Page Title"}
+            </h1>
+            <p className="text-muted-foreground text-center text-sm">
               {data.description || "Page Description / Bio"}
             </p>
           </section>

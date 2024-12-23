@@ -56,7 +56,7 @@ export default function WebsiteView({
             />
           </div>
         )}
-        <div className="mt-13 grid grid-cols-1 place-items-center">
+        <div className="mt-13 grid grid-cols-1 place-items-center text-center">
           {data.title && <h1 className="px-3 font-medium">{data.title}</h1>}
           {data.description && (
             <p className="text-muted-foreground px-3 text-sm">
@@ -107,7 +107,7 @@ export default function WebsiteView({
                   <div className="grid w-full grid-cols-12">
                     <div className="col-span-11 text-center">
                       <h1 className="text-sm font-medium">
-                        {block.meta?.title || "Placeholder Link Title"}
+                        {block.meta?.title}
                       </h1>
                       {block.meta?.description && (
                         <p className="text-muted-foreground text-xs">
