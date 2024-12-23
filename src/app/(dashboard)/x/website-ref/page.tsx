@@ -33,7 +33,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { Textarea } from "@/components/ui/textarea"
-import WebsiteView from "@/components/views/website"
+import WebsiteView from "@/components/views/website-ref"
 import { Content, ContentPreview, ContentRoot } from "@/components/x/content"
 import { ZodHookForm } from "@/components/x/zod-hook-form"
 import { cn, createChecksum } from "@/lib/utils"

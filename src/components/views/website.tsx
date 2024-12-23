@@ -1,121 +1,76 @@
 /* eslint-disable @next/next/no-img-element */
 
 import { cn } from "@/lib/utils"
-import { Crown, ImageIcon } from "lucide-react"
-import Link from "next/link"
+import { Crown } from "lucide-react"
 
 export default function WebsiteView({
   data,
-  mobile = false,
+  preview = false,
 }: {
   data: {
     image: string
     title: string
     description: string
-    widgets: unknown[]
+    cover: string
   }
-  mobile?: boolean
+  preview?: boolean
 }) {
   return (
-    <main
-      className={cn(
-        "mx-auto flex w-full max-w-screen-sm flex-col items-center justify-center p-5",
-        mobile && "p-3",
-      )}
-    >
-      {data?.image !== "" && (
-        <img
-          src={`https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/${data.image}`}
-          alt="Website"
-          className="size-24 rounded-full border"
-        />
-      )}
-      {data?.title !== "" && (
-        <h1
-          className={cn(
-            "mt-2 text-center font-medium sm:text-lg",
-            mobile && "sm:text-base",
+    <main className={cn("min-h-dvh", preview && "min-h-171")}>
+      <section className="relative grid grid-cols-1 place-items-center rounded-md p-3">
+        <div className="bg-secondary relative h-36 w-full overflow-hidden rounded-md border">
+          {data.cover ? (
+            <img
+              className="absolute top-0 h-full w-full object-cover object-center"
+              src={
+                "https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/" +
+                data.cover
+              }
+              alt={data.title}
+            />
+          ) : (
+            <>
+              <p className="absolute left-1/3 flex h-full w-max -translate-x-2/3 -rotate-15 transform items-start justify-center text-7xl font-medium opacity-2.5">
+                Space
+                <Crown className="size-16" />
+                all
+              </p>
+              <p className="absolute left-1/2 flex h-full w-max -translate-x-1/2 -rotate-15 transform items-center justify-center text-7xl font-medium opacity-2.5">
+                Space
+                <Crown className="size-16" />
+                all
+              </p>
+              <p className="absolute left-2/3 flex h-full w-max -translate-x-1/3 -rotate-15 transform items-end justify-center text-7xl font-medium opacity-2.5">
+                Space
+                <Crown className="size-16" />
+                all
+              </p>
+            </>
           )}
-        >
-          {data?.title}
-        </h1>
-      )}
-      {data?.description !== "" && (
-        <p
-          className={cn(
-            "text-center text-xs text-zinc-700 sm:text-sm dark:text-zinc-300",
-            mobile && "sm:text-xs",
+        </div>
+        <div className="bg-secondary absolute top-0 mt-24 size-24 rounded-full border object-cover object-center">
+          {data.image ? (
+            <img
+              className="h-full w-full rounded-full object-cover object-center"
+              src={
+                data.image.startsWith("http")
+                  ? data.image
+                  : "https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/" +
+                    data.image
+              }
+              alt={data.title}
+            />
+          ) : (
+            <div className="text-muted-foreground/25 grid h-full w-full place-content-center">
+              <Crown />
+            </div>
           )}
-        >
-          {data?.description}
+        </div>
+        <h1 className="mt-10 font-medium">{data.title}</h1>
+        <p className="text-muted-foreground text-sm">
+          {data.description || "Add an amazing bio!"}
         </p>
-      )}
-
-      <div
-        className={cn(
-          "mt-5 w-full space-y-2 overflow-hidden",
-          mobile && "w-66 xl:w-70.5",
-        )}
-      >
-        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-        {data?.widgets?.toReversed().map((widget: any) => (
-          <div key={widget.id}>
-            {widget.type === "link" && (
-              <Link href={widget.data.url} target="_blank">
-                <div className="flex min-h-17 items-center space-x-3 rounded-lg border p-2">
-                  <div
-                    className={cn(
-                      "bg-foreground/5 relative aspect-square size-16 rounded-lg border lg:size-18",
-                      mobile && "lg:size-16",
-                      widget.data.image === "" && "hidden",
-                    )}
-                  >
-                    {widget.data.image ? (
-                      <img
-                        src={`https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/${widget.data.image}`}
-                        alt="Website Image"
-                        className="h-full w-full rounded-lg object-cover"
-                      />
-                    ) : (
-                      <div className="text-foreground/60 grid h-full w-full place-content-center">
-                        <ImageIcon />
-                      </div>
-                    )}
-                  </div>
-                  <div className="relative w-full">
-                    <h1
-                      className={cn(
-                        "text-sm font-medium sm:text-base",
-                        mobile && "sm:text-sm",
-                      )}
-                    >
-                      {widget.data.title}
-                    </h1>
-                    <p
-                      className={cn(
-                        "text-foreground/70 text-xs sm:text-sm",
-                        mobile && "sm:text-xs",
-                      )}
-                    >
-                      {widget.data.description}
-                    </p>
-                  </div>
-                </div>
-              </Link>
-            )}
-          </div>
-        ))}
-      </div>
-
-      <Link
-        href="https://spacewall.me"
-        target="_blank"
-        className="mt-196 flex items-center py-5 text-xl font-medium"
-      >
-        Space
-        <Crown className="size-5" />
-        all
-      </Link>
+      </section>
     </main>
   )
 }

@@ -12,6 +12,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import WebsiteView from "@/components/views/website"
 import { Content, ContentPreview, ContentRoot } from "@/components/x/content"
 import { ZodHookForm } from "@/components/x/zod-hook-form"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
@@ -113,16 +114,24 @@ export default function Page() {
 
               <DialogEditHeader {...data} />
             </div>
-            <img
-              className="bg-secondary absolute top-0 mt-24 size-24 rounded-full border object-cover object-center"
-              src={
-                data.image.startsWith("http")
-                  ? data.image
-                  : "https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/" +
-                    data.image
-              }
-              alt={data.title}
-            />
+            <div className="bg-secondary absolute top-0 mt-24 size-24 rounded-full border object-cover object-center">
+              {data.image ? (
+                <img
+                  className="h-full w-full rounded-full object-cover object-center"
+                  src={
+                    data.image.startsWith("http")
+                      ? data.image
+                      : "https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/" +
+                        data.image
+                  }
+                  alt={data.title}
+                />
+              ) : (
+                <div className="text-muted-foreground/25 grid h-full w-full place-content-center">
+                  <Crown />
+                </div>
+              )}
+            </div>
             <h1 className="mt-10 font-medium">{data.title}</h1>
             <p className="text-muted-foreground text-sm">
               {data.description || "Add an amazing bio!"}
@@ -184,7 +193,9 @@ export default function Page() {
             )}
           </div>
         </Content>
-        <ContentPreview></ContentPreview>
+        <ContentPreview>
+          <WebsiteView data={data} preview />
+        </ContentPreview>
       </ContentRoot>
     </>
   )
