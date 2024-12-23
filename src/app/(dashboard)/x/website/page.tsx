@@ -376,10 +376,6 @@ const DialogEditBlockLink = (data: {
   }
 }) => {
   const schema = z.object({
-    url: z.string().field({
-      label: "URL",
-      default: data.meta?.url || "",
-    }),
     title: z
       .string()
       .min(1)
@@ -388,6 +384,10 @@ const DialogEditBlockLink = (data: {
         label: "Title",
         default: data.meta?.title || "",
       }),
+    url: z.string().field({
+      label: "URL",
+      default: data.meta?.url || "",
+    }),
     description: z
       .string()
       .max(256)
