@@ -1,3 +1,5 @@
+/* eslint-disable @next/next/no-img-element */
+
 "use client"
 
 import { Button } from "@/components/ui/button"
@@ -18,13 +20,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { Separator } from "@/components/ui/separator"
 import { Textarea } from "@/components/ui/textarea"
+import { useFileUpload } from "@/hooks/use-image-upload"
 import { cn } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Loader2 } from "lucide-react"
+import { CloudUpload, Loader2 } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { Separator } from "../ui/separator"
 
 const formFieldSchema = z
   .object({
@@ -55,30 +58,26 @@ const describeField = (describe?: Partial<z.infer<typeof formFieldSchema>>) => {
 }
 
 declare module "zod" {
-  interface ZodString {
-    field(describe: Partial<z.infer<typeof formFieldSchema>>): this
-  }
-  interface ZodUnknown {
-    field(describe: Partial<z.infer<typeof formFieldSchema>>): this
+  interface ZodType {
+    field(describe: unknown): this
   }
 }
 
-z.ZodString.prototype.field = function (describe) {
-  return this.describe(describeField(describe))
-}
-z.ZodUnknown.prototype.field = function (describe) {
-  return this.describe(describeField(describe))
+z.ZodType.prototype.field = function (describe) {
+  return this.describe(
+    describeField(describe as Partial<z.infer<typeof formFieldSchema>>),
+  )
 }
 
 export const ZodHookForm = ({
   className,
   schema,
   onSubmit,
-  disabled,
+  disabled = false,
 }: {
   className?: string
   schema: z.ZodObject<z.ZodRawShape>
-  onSubmit?: (values: z.infer<typeof schema>) => Promise<void>
+  onSubmit?: (values: z.infer<typeof schema>) => Promise<void> | void
   disabled?: boolean
 }) => {
   const data = [
@@ -103,6 +102,8 @@ export const ZodHookForm = ({
     }
     form.reset()
   }
+
+  const { fileState, handleFileChange } = useFileUpload()
 
   return (
     <Form {...form}>
@@ -161,13 +162,37 @@ export const ZodHookForm = ({
                   )}
 
                   {formField.type === "file" && (
-                    <FormControl>
-                      <Input
-                        className={cn("pt-2", formField.className)}
-                        {...formField}
-                        {...form.register(formField.name)}
-                      />
-                    </FormControl>
+                    <>
+                      <FormControl>
+                        <Input
+                          className={cn("hidden", formField.className)}
+                          {...formField}
+                          onChange={(event) =>
+                            handleFileChange({
+                              event,
+                              key: formField.name,
+                              setValue: form.setValue,
+                            })
+                          }
+                        />
+                      </FormControl>
+                      <FormLabel>
+                        <div className="h-24 w-full overflow-hidden rounded-md border">
+                          {fileState[formField.name]?.preview && (
+                            <img
+                              src={
+                                fileState[formField.name]?.preview ?? undefined
+                              }
+                              alt="Preview"
+                              className="aspect-square h-full w-full object-contain object-center"
+                            />
+                          )}
+                        </div>
+                      </FormLabel>
+                      {fileState[formField.name]?.isUploading && (
+                        <CloudUpload className="absolute right-3 bottom-3 animate-bounce" />
+                      )}
+                    </>
                   )}
 
                   {formField.type === "select" && (

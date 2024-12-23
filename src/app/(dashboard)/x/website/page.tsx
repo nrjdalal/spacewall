@@ -80,18 +80,26 @@ export default function Page() {
         <Content className="space-y-5">
           {/*  HEADER BLOCK */}
           <section className="relative grid grid-cols-1 place-items-center rounded-md border p-3">
-            <DialogEditHeader {...data} />
-
-            <div className="bg-secondary h-36 w-full rounded-md">
-              <p className="mt-4 flex w-full items-center justify-center text-6xl font-medium opacity-5">
+            <div className="bg-secondary relative h-36 w-full overflow-hidden rounded-md">
+              <p className="absolute left-1/3 flex h-full w-max -translate-x-2/3 -rotate-15 transform items-start justify-center text-7xl font-medium opacity-2.5">
                 Space
-                <Crown className="size-13" />
+                <Crown className="size-16" />
                 all
               </p>
+              <p className="absolute left-1/2 flex h-full w-max -translate-x-1/2 -rotate-15 transform items-center justify-center text-7xl font-medium opacity-2.5">
+                Space
+                <Crown className="size-16" />
+                all
+              </p>
+              <p className="absolute left-2/3 flex h-full w-max -translate-x-1/3 -rotate-15 transform items-end justify-center text-7xl font-medium opacity-2.5">
+                Space
+                <Crown className="size-16" />
+                all
+              </p>
+              <DialogEditHeader {...data} />
             </div>
-
             <Image
-              className="absolute top-24 size-24 rounded-full border"
+              className="absolute top-0 mt-24 size-24 rounded-full border"
               src={data.image}
               alt={data.title}
               height={96}
@@ -107,52 +115,56 @@ export default function Page() {
           <DialogAddBlock {...data} />
 
           {/* MANAGE BLOCKS */}
-          {data.sortedBlocks?.map(
-            (block: {
-              id: string
-              active: boolean
-              type: string
-              meta: {
-                url: string
-                title: string
-                description: string
-                image: string
-              }
-            }) => {
-              if (block.type === "link") {
-                return (
-                  <section
-                    key={block.id}
-                    className="relative flex items-center gap-3 rounded-md border p-2"
-                  >
-                    <Button className="absolute top-3 right-3 aspect-square size-6 border p-0">
-                      <Pencil />
-                    </Button>
+          <div className="space-y-3">
+            {data.sortedBlocks?.map(
+              (block: {
+                id: string
+                active: boolean
+                type: string
+                meta: {
+                  url: string
+                  title: string
+                  description: string
+                  image: string
+                }
+              }) => {
+                if (block.type === "link") {
+                  return (
+                    <section
+                      key={block.id}
+                      className="relative flex items-center gap-3 rounded-md border p-2"
+                    >
+                      <Button className="absolute top-3 right-3 aspect-square size-6 border p-0">
+                        <Pencil />
+                      </Button>
 
-                    <div className="bg-secondary text-muted-foreground grid aspect-square size-16 place-items-center rounded-md">
-                      <LinkIcon />
-                    </div>
+                      <div className="bg-secondary grid aspect-square size-16 place-items-center rounded-md">
+                        <LinkIcon className="text-muted-foreground" />
+                      </div>
 
-                    <div className="w-full text-center">
-                      <h1 className="text-sm font-medium">
-                        {block.meta?.title || "Placeholder Link Title"}
-                      </h1>
-                      <p className="text-muted-foreground text-xs">
-                        {block.meta?.description ||
-                          "Placeholder description (optional)"}
-                      </p>
-                      <Link
-                        href={block.meta?.url || "/"}
-                        className="text-xs text-blue-500 italic"
-                      >
-                        {block.meta?.url || "placeholder.link"}
-                      </Link>
-                    </div>
-                  </section>
-                )
-              }
-            },
-          )}
+                      <div className="grid w-full grid-cols-12">
+                        <div className="col-span-11 text-center">
+                          <h1 className="text-sm font-medium">
+                            {block.meta?.title || "Placeholder Link Title"}
+                          </h1>
+                          <p className="text-muted-foreground text-xs">
+                            {block.meta?.description ||
+                              "Placeholder description (optional)"}
+                          </p>
+                          <Link
+                            href={block.meta?.url || "/"}
+                            className="text-xs text-blue-500 italic"
+                          >
+                            {block.meta?.url || "placeholder.link"}
+                          </Link>
+                        </div>
+                      </div>
+                    </section>
+                  )
+                }
+              },
+            )}
+          </div>
         </Content>
         <ContentPreview></ContentPreview>
       </ContentRoot>
@@ -168,13 +180,13 @@ const DialogEditHeader = (data: {
   description: string
 }) => {
   const schema = z.object({
-    image: z.unknown().field({
+    image: z.string().optional().field({
       type: "file",
       label: "Image",
       default: data.image,
       span: "1/2",
     }),
-    cover: z.unknown().field({
+    cover: z.string().field({
       type: "file",
       label: "Cover",
       default: data.cover,
@@ -191,10 +203,14 @@ const DialogEditHeader = (data: {
     }),
   })
 
+  const onSubmit = async (values: z.infer<typeof schema>) => {
+    console.log(values)
+  }
+
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="absolute top-6 right-6 aspect-square size-6 border p-0">
+        <Button className="absolute top-3 right-3 aspect-square size-6 border p-0">
           <Pencil />
         </Button>
       </DialogTrigger>
@@ -202,7 +218,8 @@ const DialogEditHeader = (data: {
         <DialogHeader>
           <DialogTitle>Manage Header</DialogTitle>
         </DialogHeader>
-        <ZodHookForm schema={schema} />
+        {/* @ts-expect-error will fix later */}
+        <ZodHookForm schema={schema} onSubmit={onSubmit} />
       </DialogContent>
     </Dialog>
   )
