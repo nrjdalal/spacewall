@@ -10,7 +10,7 @@ const ContentRoot = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "mx-auto w-full max-w-screen-lg grid-cols-5 gap-5 p-5 lg:grid",
+      "mx-auto w-full max-w-screen-lg grid-cols-5 gap-5 p-5 xl:grid",
       className,
     )}
     {...props}
