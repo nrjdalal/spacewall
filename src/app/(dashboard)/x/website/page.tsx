@@ -12,6 +12,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import WebsiteView from "@/components/views/website"
 import { Content, ContentPreview, ContentRoot } from "@/components/x/content"
 import { ZodHookForm } from "@/components/x/zod-hook-form"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
@@ -184,7 +185,9 @@ export default function Page() {
             )}
           </div>
         </Content>
-        <ContentPreview></ContentPreview>
+        <ContentPreview>
+          <WebsiteView data={data} preview />
+        </ContentPreview>
       </ContentRoot>
     </>
   )
