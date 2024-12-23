@@ -159,12 +159,23 @@ export default function Page() {
                       key={block.id}
                       className="relative flex items-center gap-3 rounded-md border p-2"
                     >
-                      <Button className="absolute top-3 right-3 aspect-square size-6 border p-0">
-                        <Pencil />
-                      </Button>
+                      <DialogEditBlockLink {...block} />
 
-                      <div className="bg-secondary grid aspect-square size-16 place-items-center rounded-md">
-                        <LinkIcon className="text-muted-foreground" />
+                      <div className="bg-secondary grid aspect-square size-16 place-items-center rounded-md border">
+                        {block.meta?.image ? (
+                          <img
+                            className="h-full w-full rounded-md object-cover object-center"
+                            src={
+                              "https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/" +
+                              block.meta?.image
+                            }
+                            alt={block.meta?.title || "Placeholder Link Title"}
+                          />
+                        ) : (
+                          <div className="text-muted-foreground/25 grid h-full w-full place-content-center">
+                            <LinkIcon />
+                          </div>
+                        )}
                       </div>
 
                       <div className="grid w-full grid-cols-12">
@@ -172,10 +183,11 @@ export default function Page() {
                           <h1 className="text-sm font-medium">
                             {block.meta?.title || "Placeholder Link Title"}
                           </h1>
-                          <p className="text-muted-foreground text-xs">
-                            {block.meta?.description ||
-                              "Placeholder description (optional)"}
-                          </p>
+                          {block.meta?.description && (
+                            <p className="text-muted-foreground text-xs">
+                              {block.meta?.description}
+                            </p>
+                          )}
                           <Link
                             href={block.meta?.url || "/"}
                             className="text-xs text-blue-500 italic"
@@ -349,6 +361,116 @@ const DialogAddBlock = (data: { id: string }) => {
             Image
           </Button>
         </div>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+const DialogEditBlockLink = (data: {
+  id: string
+  meta: {
+    url: string
+    title: string
+    description: string
+    image: string
+  }
+}) => {
+  const schema = z.object({
+    url: z.string().field({
+      label: "URL",
+      default: data.meta?.url || "",
+    }),
+    title: z
+      .string()
+      .min(1)
+      .max(128)
+      .field({
+        label: "Title",
+        default: data.meta?.title || "",
+      }),
+    description: z
+      .string()
+      .max(256)
+      .field({
+        type: "textarea",
+        label: "Description",
+        default: data.meta?.description || "",
+      }),
+    image: z.string().field({
+      type: "file",
+      label: "Image",
+      default: data.meta?.image || "",
+      prefix:
+        "https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/",
+    }),
+  })
+
+  const queryClient = useQueryClient()
+
+  const mutuation = useMutation({
+    mutationFn: async (values: z.infer<typeof schema>) => {
+      const res = await fetch("/api/v1/website", {
+        method: "PATCH",
+        body: JSON.stringify({
+          blockId: data.id,
+          meta: values,
+        }),
+      })
+      return await res.json()
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["website"],
+      })
+    },
+  })
+
+  const onSubmit = async (values: z.infer<typeof schema>) => {
+    await mutuation.mutateAsync(values)
+    setOpen(false)
+  }
+
+  const [open, setOpen] = useState(false)
+
+  const deleteMutation = useMutation({
+    mutationFn: async () => {
+      const res = await fetch("/api/v1/website", {
+        method: "DELETE",
+        body: JSON.stringify({
+          blockId: data.id,
+        }),
+      })
+      return await res.json()
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["website"],
+      })
+    },
+  })
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button className="absolute top-3 right-3 aspect-square size-6 border p-0">
+          <Pencil />
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Manage Link</DialogTitle>
+        </DialogHeader>
+        {/* @ts-expect-error will fix later */}
+        <ZodHookForm schema={schema} onSubmit={onSubmit} />
+        <Button
+          variant="destructive"
+          onClick={() => {
+            deleteMutation.mutate()
+            setOpen(false)
+          }}
+        >
+          Delete
+        </Button>
       </DialogContent>
     </Dialog>
   )
