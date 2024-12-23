@@ -30,7 +30,7 @@ export default function WebsiteView({
           )}
         </div>
         {data.image && (
-          <div className="bg-secondary absolute top-0 mt-24 size-24 rounded-full border object-cover object-center">
+          <div className="bg-background absolute top-0 mt-24 size-24 rounded-full border object-cover object-center">
             <img
               className="h-full w-full rounded-full object-cover object-center"
               src={
