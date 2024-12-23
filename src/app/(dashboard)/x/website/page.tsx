@@ -84,7 +84,7 @@ export default function Page() {
             <div className="bg-secondary relative h-36 w-full overflow-hidden rounded-md border">
               {data.cover ? (
                 <img
-                  className="absolute top-0 h-full w-full object-cover"
+                  className="absolute top-0 h-full w-full object-cover object-center"
                   src={
                     "https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/" +
                     data.cover
@@ -114,7 +114,7 @@ export default function Page() {
               <DialogEditHeader {...data} />
             </div>
             <img
-              className="absolute top-0 mt-24 size-24 rounded-full border"
+              className="bg-secondary absolute top-0 mt-24 size-24 rounded-full border object-cover object-center"
               src={
                 data.image.startsWith("http")
                   ? data.image

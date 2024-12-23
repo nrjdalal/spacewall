@@ -316,8 +316,10 @@ export const ZodHookForm = ({
                               </div>
                             )}
                           {fileState[formField.name]?.size && (
-                            <div className="bg-background absolute -bottom-1.5 left-1/2 -translate-x-1/2 transform rounded-md border px-1 text-xs uppercase">
-                              {fileState[formField.name]?.size}
+                            <div className="absolute -bottom-1.5 left-1/2 flex w-full -translate-x-1/2 transform justify-center">
+                              <span className="bg-background text-muted-foreground rounded-sm border px-1 text-xs uppercase">
+                                {fileState[formField.name]?.size}
+                              </span>
                             </div>
                           )}
                         </div>
