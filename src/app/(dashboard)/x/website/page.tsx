@@ -119,10 +119,8 @@ export default function Page() {
                 <img
                   className="h-full w-full rounded-full object-cover object-center"
                   src={
-                    data.image.startsWith("http")
-                      ? data.image
-                      : "https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/" +
-                        data.image
+                    "https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/" +
+                    data.image
                   }
                   alt={data.title}
                 />
@@ -132,9 +130,9 @@ export default function Page() {
                 </div>
               )}
             </div>
-            <h1 className="mt-10 font-medium">{data.title}</h1>
+            <h1 className="mt-10 font-medium">{data.title || "Page Title"}</h1>
             <p className="text-muted-foreground text-sm">
-              {data.description || "Add an amazing bio!"}
+              {data.description || "Page Description / Bio"}
             </p>
           </section>
 

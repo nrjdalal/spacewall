@@ -23,8 +23,6 @@ export async function GET() {
       .values({
         primary: true,
         userId: session.user?.id as string,
-        title: session.user?.name as string,
-        image: session.user?.image as string,
       })
       .returning()
   }
