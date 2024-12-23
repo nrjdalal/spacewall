@@ -16,7 +16,7 @@ export default function WebsiteView({
 }) {
   return (
     <main className={cn("min-h-dvh", preview && "min-h-171")}>
-      <section className="relative grid grid-cols-1 place-items-center rounded-md">
+      <section className="grid grid-cols-1 place-items-center">
         <div className="relative h-36 w-full overflow-hidden">
           {data.cover && (
             <img
@@ -43,12 +43,14 @@ export default function WebsiteView({
             />
           </div>
         )}
-        {data.title && <h1 className="mt-13 px-3 font-medium">{data.title}</h1>}
-        {data.description && (
-          <p className="text-muted-foreground px-3 text-sm">
-            {data.description}
-          </p>
-        )}
+        <div className="mt-13 grid grid-cols-1 place-items-center">
+          {data.title && <h1 className="px-3 font-medium">{data.title}</h1>}
+          {data.description && (
+            <p className="text-muted-foreground px-3 text-sm">
+              {data.description}
+            </p>
+          )}
+        </div>
       </section>
     </main>
   )
