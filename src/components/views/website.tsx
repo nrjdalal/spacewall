@@ -95,7 +95,7 @@ export default function WebsiteView({
                   key={block.id}
                   href={block.meta?.url || "/x/website"}
                   target={block.meta?.url ? "_blank" : "_self"}
-                  className="relative grid max-h-16 grid-cols-6 items-center gap-1.5 rounded-md border p-1"
+                  className="relative grid grid-cols-6 items-center gap-1.5 rounded-md border p-1"
                 >
                   <div className="col-span-1">
                     {block.meta?.image ? (
@@ -113,17 +113,15 @@ export default function WebsiteView({
                       </div>
                     )}
                   </div>
-                  <div className="col-span-4 w-full">
-                    <div className="col-span-11">
-                      <h1 className="text-center text-sm font-medium">
-                        {block.meta?.title || "Placeholder Link Title"}
-                      </h1>
-                      {block.meta?.description && (
-                        <p className="text-muted-foreground text-xs">
-                          {block.meta?.description}
-                        </p>
-                      )}
-                    </div>
+                  <div className="col-span-4 w-full text-center">
+                    <h1 className="text-sm font-medium">
+                      {block.meta?.title || "Placeholder Link Title"}
+                    </h1>
+                    {block.meta?.description && (
+                      <p className="text-muted-foreground text-xs">
+                        {block.meta?.description}
+                      </p>
+                    )}
                   </div>
                 </Link>
               )
