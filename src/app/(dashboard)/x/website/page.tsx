@@ -82,9 +82,12 @@ export default function Page() {
         <Content className="space-y-5">
           {/* SHARE WEBSITE */}
           <section className="flex justify-between">
-            <div className="relative flex h-9 items-center rounded-md border pr-9 pl-3 text-sm">
-              <span className="text-muted-foreground">spacewall.me/</span>
-              {data.slug}
+            <div className="flex h-9 items-center gap-2 rounded-md border pr-2 pl-3 text-sm">
+              <p>
+                <span className="text-muted-foreground">linkz.at/</span>
+                {data.slug}
+              </p>
+
               <DialogEditSlug {...data} />
             </div>
             <Button className="w-24" variant="secondary">
@@ -227,7 +230,7 @@ export default function Page() {
 
 const DialogEditSlug = (data: { id: string; slug: string }) => {
   const schema = z.object({
-    slug: z.string().field({
+    slug: z.string().min(2).field({
       label: "Slug",
       default: data.slug,
     }),
@@ -263,7 +266,7 @@ const DialogEditSlug = (data: { id: string; slug: string }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="absolute top-1 right-1.25 aspect-square size-6 border p-0">
+        <Button className="aspect-square size-6 border p-0">
           <Pencil />
         </Button>
       </DialogTrigger>
