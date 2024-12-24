@@ -30,11 +30,11 @@ export default function WebsiteView({
   return (
     <main
       className={cn(
-        "relative mx-auto min-h-dvh max-w-screen-sm pb-24 sm:pt-5",
+        "relative mx-auto min-h-dvh max-w-screen-sm pb-24 sm:pt-3",
         preview && "min-h-171",
       )}
     >
-      <section className="relative grid grid-cols-1 place-items-center">
+      <section className="relative grid grid-cols-1 place-items-center sm:px-3">
         <div
           className={cn(
             "relative h-36 w-full overflow-hidden",
