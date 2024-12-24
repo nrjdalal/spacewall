@@ -20,6 +20,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import {
   Camera,
   Crown,
+  ExternalLink,
   ImageIcon,
   LetterText,
   LinkIcon,
@@ -106,15 +107,22 @@ export default function Page() {
 
               <DialogEditSlug {...data} />
             </div>
-            <Button
-              className="w-24"
-              variant="secondary"
-              onClick={handleCopy(
-                process.env.NEXT_PUBLIC_SITE_URL + "/" + data.slug,
-              )}
-            >
-              Share
-            </Button>
+            <div className="flex gap-2">
+              <Link href={"/" + data.slug} target="_blank">
+                <Button variant="outline">
+                  <ExternalLink />
+                </Button>
+              </Link>
+              <Button
+                className="px-6"
+                variant="outline"
+                onClick={handleCopy(
+                  process.env.NEXT_PUBLIC_SITE_URL + "/" + data.slug,
+                )}
+              >
+                Share
+              </Button>
+            </div>
           </section>
 
           {/*  HEADER BLOCK */}
