@@ -24,6 +24,9 @@ export default function SignIn() {
     setProvider(type)
     const res = await signIn(type, { ...options, redirect: false })
     if (res?.error) {
+      if (type === "email") {
+        toast.info("POSTMASTER: I am on a vacation, please use OAUTH.")
+      }
       toast.error("An error occurred, please try different method.")
       return setProvider(null)
     }
