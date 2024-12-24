@@ -95,12 +95,12 @@ export default function WebsiteView({
                   key={block.id}
                   href={block.meta?.url || "/x/website"}
                   target={block.meta?.url ? "_blank" : "_self"}
-                  className="relative flex items-center gap-1.5 rounded-md border p-1"
+                  className="relative grid max-h-16 grid-cols-6 items-center gap-1.5 rounded-md border p-1"
                 >
-                  <div className="grid aspect-square size-16 place-items-center">
+                  <div className="col-span-1">
                     {block.meta?.image ? (
                       <img
-                        className="bg-secondary h-full w-full rounded-md border object-cover object-center"
+                        className="bg-secondary aspect-square h-full max-h-14 rounded-md border object-cover object-center"
                         src={
                           "https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/" +
                           block.meta?.image
@@ -108,12 +108,12 @@ export default function WebsiteView({
                         alt={block.meta?.title || "Placeholder Link Title"}
                       />
                     ) : (
-                      <div className="text-muted-foreground/25 grid h-full w-full place-content-center">
-                        <LinkIcon className="size-8 stroke-1" />
+                      <div className="text-muted-foreground/25 grid aspect-square h-full max-h-14 place-content-center">
+                        <LinkIcon className="size-6 stroke-1" />
                       </div>
                     )}
                   </div>
-                  <div className="grid w-full grid-cols-12">
+                  <div className="col-span-4 w-full">
                     <div className="col-span-11">
                       <h1 className="text-center text-sm font-medium">
                         {block.meta?.title || "Placeholder Link Title"}
