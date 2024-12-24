@@ -12,7 +12,11 @@ export const websites = pgTable("website", {
   slug: text("slug")
     .notNull()
     .unique()
-    .$defaultFn(() => generateId()),
+    .$defaultFn(() =>
+      generateId({
+        length: 6,
+      }),
+    ),
   primary: boolean("primary"),
   cover: text("cover").notNull().default(""),
   image: text("image").notNull().default(""),
