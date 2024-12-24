@@ -14,6 +14,10 @@ export default async function Page({
     .from(websites)
     .where(and(eq(websites.slug, slug)))
 
+  if (website.length === 0) {
+    return <div>Website not found. Please try later.</div>
+  }
+
   const blocks = await db
     .select({
       id: websiteBlocks.id,
