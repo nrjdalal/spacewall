@@ -45,11 +45,10 @@ export default async function Page({
   )
 
   // @ts-expect-error - TS doesn't know about the order property
-  data.sortedBlocks = data.order
-    .map((orderItem: OrderItem) => ({
-      ...(blocksMap.get(orderItem.id) || {}),
-    }))
-    .filter((orderItem: OrderItem) => orderItem.active)
+  data.sortedBlocks = data.order.map((orderItem: OrderItem) => ({
+    ...(blocksMap.get(orderItem.id) || {}),
+  }))
+  // .filter((orderItem: OrderItem) => orderItem.active)
 
   // @ts-expect-error - TS doesn't know about the order property
   return <WebsiteView data={data} />
