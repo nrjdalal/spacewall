@@ -15,6 +15,7 @@ import {
 import WebsiteView from "@/components/views/website"
 import { Content, ContentPreview, ContentRoot } from "@/components/x/content"
 import { ZodHookForm } from "@/components/x/zod-hook-form"
+import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import {
   Crown,
@@ -29,6 +30,8 @@ import { useState } from "react"
 import { z } from "zod"
 
 export default function Page() {
+  const [, copy] = useCopyToClipboard()
+
   const { data, isError, isLoading } = useQuery({
     queryKey: ["website"],
     queryFn: async () => {
@@ -72,6 +75,16 @@ export default function Page() {
     ...(blocksMap.get(orderItem.id) || {}),
   }))
 
+  const handleCopy = (text: string) => () => {
+    copy(text)
+      .then(() => {
+        console.log("Copied!", { text })
+      })
+      .catch((error) => {
+        console.error("Failed to copy!", error)
+      })
+  }
+
   return (
     <>
       <XHeader
@@ -84,13 +97,21 @@ export default function Page() {
           <section className="flex justify-between">
             <div className="flex h-9 items-center gap-2 rounded-md border pr-2 pl-3 text-sm">
               <p>
-                <span className="text-muted-foreground">linkz.at/</span>
+                <span className="text-muted-foreground">
+                  {process.env.NEXT_PUBLIC_SITE_URL?.split("//")[1]}/
+                </span>
                 {data.slug}
               </p>
 
               <DialogEditSlug {...data} />
             </div>
-            <Button className="w-24" variant="secondary">
+            <Button
+              className="w-24"
+              variant="secondary"
+              onClick={handleCopy(
+                process.env.NEXT_PUBLIC_SITE_URL + "/" + data.slug,
+              )}
+            >
               Share
             </Button>
           </section>
