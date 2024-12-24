@@ -80,6 +80,18 @@ export default function Page() {
       />
       <ContentRoot>
         <Content className="space-y-5">
+          {/* SHARE WEBSITE */}
+          <section className="flex justify-between">
+            <div className="relative flex h-9 items-center rounded-md border py-2 pr-9 pl-3">
+              <span className="text-muted-foreground">spacewall.me/</span>
+              {data.slug}
+              <DialogEditSlug {...data} />
+            </div>
+            <Button className="w-24" variant="secondary">
+              Share
+            </Button>
+          </section>
+
           {/*  HEADER BLOCK */}
           <section className="relative grid grid-cols-1 place-items-center rounded-md border p-3">
             <div className="bg-secondary relative h-36 w-full overflow-hidden rounded-md border">
@@ -210,6 +222,59 @@ export default function Page() {
         </ContentPreview>
       </ContentRoot>
     </>
+  )
+}
+
+const DialogEditSlug = (data: { id: string; slug: string }) => {
+  const schema = z.object({
+    slug: z.string().field({
+      label: "Slug",
+      default: data.slug,
+    }),
+  })
+
+  const queryClient = useQueryClient()
+
+  const mutuation = useMutation({
+    mutationFn: async (values: z.infer<typeof schema>) => {
+      const res = await fetch("/api/v1/website", {
+        method: "PATCH",
+        body: JSON.stringify({
+          websiteId: data.id,
+          ...values,
+        }),
+      })
+      return await res.json()
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["website"],
+      })
+    },
+  })
+
+  const onSubmit = async (values: z.infer<typeof schema>) => {
+    await mutuation.mutateAsync(values)
+    setOpen(false)
+  }
+
+  const [open, setOpen] = useState(false)
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button className="top-1.15 absolute right-1.25 aspect-square size-6 border p-0">
+          <Pencil />
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Manage Slug</DialogTitle>
+        </DialogHeader>
+        {/* @ts-expect-error will fix later */}
+        <ZodHookForm schema={schema} onSubmit={onSubmit} />
+      </DialogContent>
+    </Dialog>
   )
 }
 
