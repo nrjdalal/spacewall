@@ -28,12 +28,22 @@ export default function WebsiteView({
   preview?: boolean
 }) {
   return (
-    <main className={cn("relative min-h-dvh pb-24", preview && "min-h-171")}>
+    <main
+      className={cn(
+        "relative mx-auto min-h-dvh max-w-screen-sm pb-24 sm:pt-5",
+        preview && "min-h-171",
+      )}
+    >
       <section className="relative grid grid-cols-1 place-items-center">
-        <div className="relative h-36 w-full overflow-hidden">
+        <div
+          className={cn(
+            "relative h-36 w-full overflow-hidden",
+            data.cover && "sm:rounded-md sm:border",
+          )}
+        >
           {data.cover && (
             <img
-              className="absolute top-0 h-full w-full border-b object-cover object-center"
+              className="absolute top-0 h-full w-full border-b object-cover object-center sm:border-b-0"
               src={
                 "https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/" +
                 data.cover
