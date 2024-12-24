@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 
 import { cn } from "@/lib/utils"
-import { LinkIcon } from "lucide-react"
+import { Crown, LinkIcon } from "lucide-react"
 import Link from "next/link"
 
 export default function WebsiteView({
@@ -28,7 +28,7 @@ export default function WebsiteView({
   preview?: boolean
 }) {
   return (
-    <main className={cn("min-h-dvh pb-10", preview && "min-h-171")}>
+    <main className={cn("relative min-h-dvh pb-24", preview && "min-h-171")}>
       <section className="relative grid grid-cols-1 place-items-center">
         <div className="relative h-36 w-full overflow-hidden">
           {data.cover && (
@@ -122,6 +122,15 @@ export default function WebsiteView({
           },
         )}
       </div>
+
+      <Link
+        href={"https://spacewall.me"}
+        className="absolute bottom-8 left-1/2 flex -translate-x-1/2 transform items-center justify-center text-lg font-medium"
+      >
+        Space
+        <Crown className="size-4" />
+        all
+      </Link>
     </main>
   )
 }
