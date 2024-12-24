@@ -76,7 +76,7 @@ export default function Page() {
     <>
       <XHeader
         title="Website"
-        description="Think link in bio, one link, etc but for professionals."
+        description="Creating a website has never been easier"
       />
       <ContentRoot>
         <Content className="space-y-5">
@@ -114,7 +114,7 @@ export default function Page() {
 
               <DialogEditHeader {...data} />
             </div>
-            <div className="bg-secondary absolute top-0 mt-24 size-24 rounded-full border object-cover object-center">
+            <div className="bg-background absolute top-0 mt-24 size-24 rounded-full border object-cover object-center">
               {data.image ? (
                 <img
                   className="h-full w-full rounded-full object-cover object-center"
