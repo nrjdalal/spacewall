@@ -18,6 +18,7 @@ import { ZodHookForm } from "@/components/x/zod-hook-form"
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import {
+  Camera,
   Crown,
   ImageIcon,
   LetterText,
@@ -211,7 +212,7 @@ export default function Page() {
                           />
                         ) : (
                           <div className="text-muted-foreground/25 grid h-full w-full place-content-center">
-                            <LinkIcon />
+                            <Camera />
                           </div>
                         )}
                       </div>
