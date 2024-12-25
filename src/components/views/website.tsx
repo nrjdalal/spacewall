@@ -115,7 +115,7 @@ export default function WebsiteView({
                   )}
                 </div>
                 <div className="col-span-4 w-full text-center">
-                  <h1 className="text-sm font-medium">
+                  <h1 className="line-clamp-2 text-sm font-medium break-words">
                     {block.meta?.title || "Placeholder Link Title"}
                   </h1>
                   {block.meta?.description && (
