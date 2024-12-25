@@ -22,19 +22,24 @@ export default function SignIn() {
   ) {
     if (provider) return
     setProvider(type)
-    const res = await signIn(type, { ...options, redirect: false })
-    if (res?.error) {
-      console.log(res.error)
-      console.log(type, type === "email")
+
+    try {
+      const res = await signIn(type, { ...options, redirect: false })
+
+      if (res?.error) {
+        if (type === "email") {
+          toast.info("POSTMASTER: on vacation, please use OAUTH.")
+          return setProvider(null)
+        }
+        throw new Error(res.error)
+      }
+
       if (type === "email") {
-        toast.info("POSTMASTER: on vacation, please use OAUTH.")
+        toast.success("Check your email for the magic link.")
         return setProvider(null)
       }
-      toast.error("An error occurred, please try different method.")
-      return setProvider(null)
-    }
-    if (type === "email") {
-      toast.success("Check your email for the magic link.")
+    } catch (error) {
+      toast.error((error as Error).message)
       return setProvider(null)
     }
   }

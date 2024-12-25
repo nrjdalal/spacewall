@@ -15,6 +15,8 @@ export const Email = {
   async sendVerificationRequest({ identifier: email, url }) {
     console.log(email, url)
 
+    throw new Error("POSTMASTER: on vacation, please use OAUTH.")
+
     // const response = await fetch("https://api.zeptomail.com/v1.1/email", {
     //   method: "POST",
     //   headers: {
@@ -39,7 +41,5 @@ export const Email = {
     //   const { errors } = await response.json()
     //   throw new Error(JSON.stringify(errors))
     // }
-
-    throw new Error("Please use OAUTH for now.")
   },
 } as EmailConfig
