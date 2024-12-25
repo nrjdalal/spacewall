@@ -322,14 +322,16 @@ export default function Page() {
                             />
                             <div className="col-span-1">
                               {block.meta?.image ? (
-                                <img
-                                  className="bg-secondary aspect-square h-full max-h-14 rounded-md border object-cover object-center"
-                                  src={
-                                    "https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/" +
-                                    block.meta?.image
-                                  }
-                                  alt={block.meta?.title}
-                                />
+                                <div className="bg-secondary aspect-square h-full max-h-14 overflow-hidden rounded-md border">
+                                  <img
+                                    className="aspect-square h-full object-cover object-center"
+                                    src={
+                                      "https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/" +
+                                      block.meta?.image
+                                    }
+                                    alt={block.meta?.title}
+                                  />
+                                </div>
                               ) : (
                                 <div className="text-muted-foreground/25 grid aspect-square h-full max-h-14 place-content-center">
                                   <Camera className="size-6 stroke-1" />
