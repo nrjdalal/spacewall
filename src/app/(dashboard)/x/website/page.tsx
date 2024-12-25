@@ -25,6 +25,7 @@ import {
   useSensors,
 } from "@dnd-kit/core"
 import {
+  arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   useSortable,
@@ -36,6 +37,7 @@ import {
   Camera,
   Crown,
   ExternalLink,
+  GripHorizontal,
   GripVertical,
   LinkIcon,
   Loader2,
@@ -45,9 +47,15 @@ import Link from "next/link"
 import { useState } from "react"
 import { z } from "zod"
 
-function SortableItem(props: { id: string; children: React.ReactNode }) {
+function SortableItem({
+  id,
+  children,
+}: {
+  id: string
+  children: React.ReactNode
+}) {
   const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: props.id })
+    useSortable({ id })
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -59,11 +67,12 @@ function SortableItem(props: { id: string; children: React.ReactNode }) {
       <div
         {...listeners}
         {...attributes}
-        className="text-muted-foreground absolute top-1/2 -left-3 z-5 w-4 -translate-y-1/2 transform cursor-grab"
+        className="text-muted-foreground absolute -bottom-3 left-1/2 z-5 w-4 -translate-x-1/2 transform cursor-grab sm:top-1/2 sm:bottom-auto sm:-left-3 sm:-translate-y-1/2 sm:translate-x-0"
       >
-        <GripVertical />
+        <GripHorizontal className="sm:hidden" />
+        <GripVertical className="hidden sm:block" />
       </div>
-      {props.children}
+      {children}
     </div>
   )
 }
@@ -78,6 +87,8 @@ export default function Page() {
     }),
   )
 
+  const queryClient = useQueryClient()
+
   const { data, isError, isLoading } = useQuery({
     queryKey: ["website"],
     queryFn: async () => {
@@ -90,10 +101,63 @@ export default function Page() {
     },
   })
 
+  const mutuation = useMutation({
+    mutationFn: async (values) => {
+      const res = await fetch("/api/v1/website", {
+        method: "PATCH",
+        body: JSON.stringify({
+          websiteId: data.id,
+          website: values,
+        }),
+      })
+      return (await res.json()).data
+    },
+    onMutate: async (values: {
+      blocks: {
+        id: string
+        type: string
+        meta: {
+          url: string
+          title: string
+          description: string
+          image: string
+        }
+      }[]
+    }) => {
+      await queryClient.cancelQueries({
+        queryKey: ["website"],
+      })
+      const prev = queryClient.getQueryData(["website"])
+      queryClient.setQueryData(["website"], {
+        ...(prev || {}),
+        blocks: values.blocks,
+      })
+      return { prev }
+    },
+    onError: (err, newData, context) => {
+      queryClient.setQueryData(["website"], context?.prev)
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["website"],
+      })
+    },
+  })
+
   // @ts-expect-error get types from dnd-kit later
-  function handleDragEnd(event) {
+  async function handleDragEnd(event) {
     const { active, over } = event
-    console.log({ active, over })
+    if (active.id !== over.id) {
+      const oldIndex = data.blocks.findIndex(
+        (block: { id: string }) => block.id === active.id,
+      )
+      const newIndex = data.blocks.findIndex(
+        (block: { id: string }) => block.id === over.id,
+      )
+      await mutuation.mutateAsync({
+        blocks: arrayMove(data.blocks, oldIndex, newIndex),
+      })
+    }
   }
 
   if (isLoading)
