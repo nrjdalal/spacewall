@@ -67,7 +67,7 @@ function SortableItem({
       <div
         {...listeners}
         {...attributes}
-        className="text-muted-foreground absolute -bottom-3 left-1/2 z-5 w-4 -translate-x-1/2 transform cursor-grab sm:top-1/2 sm:bottom-auto sm:-left-3 sm:-translate-y-1/2 sm:translate-x-0"
+        className="text-muted-foreground absolute -top-3 left-1/2 z-5 -translate-x-1/2 transform cursor-grab sm:top-1/2 sm:bottom-auto sm:-left-3 sm:-translate-y-1/2 sm:translate-x-0"
       >
         <GripHorizontal className="sm:hidden" />
         <GripVertical className="hidden sm:block" />
