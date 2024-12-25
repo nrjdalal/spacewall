@@ -2,7 +2,7 @@
 
 /// <reference path="./.sst/platform/config.d.ts" />
 
-import pulumi from "@pulumi/pulumi"
+// import pulumi from "@pulumi/pulumi"
 import z from "zod"
 
 export default $config({
@@ -34,16 +34,16 @@ export default $config({
       },
     )
 
-    const vpc = new sst.aws.Vpc("MyVpc")
-    const database = new sst.aws.Postgres(
-      `spacewall${schema.PULUMI_NODEJS_STACK}`,
-      { vpc },
-    )
+    // const vpc = new sst.aws.Vpc("MyVpc")
+    // const database = new sst.aws.Postgres(
+    //   `spacewall${schema.PULUMI_NODEJS_STACK}`,
+    //   { vpc },
+    // )
 
     return {
       fileBucketName: fileBucket.name,
       fileBucketArn: fileBucket.arn,
-      postgresUrl: pulumi.interpolate`postgresql://${database.username}:${database.password}@${database.host}:${database.port}/${database.database}`,
+      // postgresUrl: pulumi.interpolate`postgresql://${database.username}:${database.password}@${database.host}:${database.port}/${database.database}`,
     }
   },
 })

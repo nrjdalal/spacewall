@@ -18,9 +18,9 @@ trap 'notify_failure' ERR
 
 start_time=$(date +%s)
 
-# if [ "$VERCEL_ENV" = "production" ]; then
-bun run drizzle-kit push
-# fi
+if [ "$VERCEL_ENV" = "production" ]; then
+  bun run drizzle-kit push
+fi
 
 bun run next build
 
