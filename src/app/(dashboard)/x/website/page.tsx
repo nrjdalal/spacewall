@@ -276,9 +276,11 @@ export default function Page() {
             <h1 className="mt-10 text-center font-medium">
               {data.title || "Page Title"}
             </h1>
-            <p className="text-muted-foreground text-center text-sm">
-              {data.description || "Page Description / Bio"}
-            </p>
+            {data.description && (
+              <p className="text-muted-foreground text-center text-sm">
+                {data.description}
+              </p>
+            )}
           </section>
 
           {/* ADD BLOCK */}
