@@ -252,7 +252,7 @@ const DialogEditSlug = (data: { id: string; slug: string }) => {
         method: "PATCH",
         body: JSON.stringify({
           websiteId: data.id,
-          ...values,
+          website: values,
         }),
       })
       return await res.json()
@@ -328,11 +328,13 @@ const DialogEditHeader = (data: {
 
   const mutuation = useMutation({
     mutationFn: async (values: z.infer<typeof schema>) => {
+      console.log(values)
+
       const res = await fetch("/api/v1/website", {
         method: "PATCH",
         body: JSON.stringify({
           websiteId: data.id,
-          ...values,
+          website: values,
         }),
       })
       return await res.json()

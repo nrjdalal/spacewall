@@ -82,9 +82,25 @@ export async function PATCH(request: Request) {
     )
   }
 
-  const { websiteId, block } = await request.json()
+  const { websiteId, website, block } = await request.json()
 
-  console.log(websiteId, block)
+  if (website) {
+    const res = await db
+      .update(websites)
+      .set(website)
+      .where(
+        and(
+          eq(websites.id, websiteId),
+          eq(websites.userId, session.user?.id as string),
+        ),
+      )
+      .returning()
+
+    return Response.json({
+      status: 200,
+      data: res[0],
+    })
+  }
 
   const res = await db
     .update(websites)
