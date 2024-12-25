@@ -37,6 +37,7 @@ import {
   Camera,
   Crown,
   ExternalLink,
+  GripHorizontal,
   GripVertical,
   LinkIcon,
   Loader2,
@@ -66,9 +67,10 @@ function SortableItem({
       <div
         {...listeners}
         {...attributes}
-        className="text-muted-foreground absolute top-1/2 -left-3 z-5 w-4 -translate-y-1/2 transform cursor-grab"
+        className="text-muted-foreground absolute -bottom-3 left-1/2 z-5 w-4 -translate-x-1/2 transform cursor-grab sm:top-1/2 sm:bottom-auto sm:-left-3 sm:-translate-y-1/2 sm:translate-x-0"
       >
-        <GripVertical />
+        <GripHorizontal className="sm:hidden" />
+        <GripVertical className="hidden sm:block" />
       </div>
       {children}
     </div>
