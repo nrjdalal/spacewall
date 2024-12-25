@@ -45,9 +45,15 @@ import Link from "next/link"
 import { useState } from "react"
 import { z } from "zod"
 
-function SortableItem(props: { id: string; children: React.ReactNode }) {
+function SortableItem({
+  id,
+  children,
+}: {
+  id: string
+  children: React.ReactNode
+}) {
   const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: props.id })
+    useSortable({ id })
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -63,7 +69,7 @@ function SortableItem(props: { id: string; children: React.ReactNode }) {
       >
         <GripVertical />
       </div>
-      {props.children}
+      {children}
     </div>
   )
 }
