@@ -9,7 +9,6 @@ import {
 import { websites } from "@/db/v1/website"
 import { drizzle, type PostgresJsDatabase } from "drizzle-orm/postgres-js"
 import postgres from "postgres"
-import { websiteBlocks } from "./v1/website"
 
 declare global {
   // eslint-disable-next-line
@@ -52,5 +51,4 @@ export {
   users,
   verificationTokens,
   websites,
-  websiteBlocks,
 }

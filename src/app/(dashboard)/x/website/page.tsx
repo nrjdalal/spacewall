@@ -21,8 +21,6 @@ import {
   Camera,
   Crown,
   ExternalLink,
-  ImageIcon,
-  LetterText,
   LinkIcon,
   Loader2,
   Pencil,
@@ -56,26 +54,6 @@ export default function Page() {
         </p>
       </div>
     )
-
-  interface OrderItem {
-    id: string
-    active: boolean
-  }
-
-  interface BlockItem {
-    id: string
-    type: string
-    meta: unknown
-  }
-
-  const blocksMap = new Map(
-    data.blocks?.map((block: BlockItem) => [block.id, block]),
-  )
-
-  data.sortedBlocks = data.order?.map((orderItem: OrderItem) => ({
-    ...orderItem,
-    ...(blocksMap.get(orderItem.id) || {}),
-  }))
 
   const handleCopy = (text: string) => () => {
     copy(text)
@@ -188,11 +166,11 @@ export default function Page() {
 
           {/* MANAGE BLOCKS */}
           <div className="space-y-3">
-            {data.sortedBlocks?.map(
+            {data.blocks?.map(
               (block: {
                 id: string
-                active: boolean
                 type: string
+                active: boolean
                 meta: {
                   url: string
                   title: string
@@ -206,7 +184,7 @@ export default function Page() {
                       key={block.id}
                       className="relative flex items-center gap-3 rounded-md border p-2"
                     >
-                      <DialogEditBlockLink {...block} />
+                      <DialogEditBlockLink websiteId={data.id} {...block} />
 
                       <div className="bg-secondary grid aspect-square size-16 place-items-center rounded-md border">
                         {block.meta?.image ? (
@@ -392,10 +370,19 @@ const DialogEditHeader = (data: {
 }
 
 const DialogAddBlock = (data: { id: string }) => {
-  const availableBlocks = ["link", "text", "image"] as const
+  const availableBlocks = [
+    {
+      type: "link",
+      title: "Link",
+      icon: LinkIcon,
+    },
+  ] as const
 
   const schema = z.object({
-    type: z.enum(availableBlocks),
+    type: z.enum([...availableBlocks.map((block) => block.type)] as [
+      string,
+      ...string[],
+    ]),
   })
 
   const queryClient = useQueryClient()
@@ -436,30 +423,16 @@ const DialogAddBlock = (data: { id: string }) => {
           <DialogDescription>Add blocks to your website.</DialogDescription>
         </DialogHeader>
         <div className="grid grid-cols-3 gap-4 lg:grid-cols-6">
-          <Button
-            className="text-muted-foreground aspect-square h-full w-full border"
-            variant="secondary"
-            onClick={() => onClick({ type: "link" })}
-          >
-            <LinkIcon />
-            Link
-          </Button>
-          <Button
-            className="text-muted-foreground aspect-square h-full w-full border"
-            variant="secondary"
-            onClick={() => onClick({ type: "text" })}
-          >
-            <LetterText />
-            Text
-          </Button>
-          <Button
-            className="text-muted-foreground aspect-square h-full w-full border"
-            variant="secondary"
-            onClick={() => onClick({ type: "image" })}
-          >
-            <ImageIcon />
-            Image
-          </Button>
+          {availableBlocks.map((block) => (
+            <Button
+              key={block.type}
+              className="text-muted-foreground aspect-square h-full w-full border"
+              variant="secondary"
+              onClick={() => onClick({ type: block.type })}
+            >
+              {block.icon && <block.icon />} {block.title}
+            </Button>
+          ))}
         </div>
       </DialogContent>
     </Dialog>
@@ -468,6 +441,7 @@ const DialogAddBlock = (data: { id: string }) => {
 
 const DialogEditBlockLink = (data: {
   id: string
+  websiteId: string
   meta: {
     url: string
     title: string
@@ -512,8 +486,11 @@ const DialogEditBlockLink = (data: {
       const res = await fetch("/api/v1/website", {
         method: "PATCH",
         body: JSON.stringify({
-          blockId: data.id,
-          meta: values,
+          websiteId: data.websiteId,
+          block: {
+            id: data.id,
+            meta: values,
+          },
         }),
       })
       return await res.json()
@@ -537,7 +514,10 @@ const DialogEditBlockLink = (data: {
       const res = await fetch("/api/v1/website", {
         method: "DELETE",
         body: JSON.stringify({
-          blockId: data.id,
+          websiteId: data.websiteId,
+          block: {
+            id: data.id,
+          },
         }),
       })
       return await res.json()
@@ -564,8 +544,8 @@ const DialogEditBlockLink = (data: {
         <ZodHookForm schema={schema} onSubmit={onSubmit} />
         <Button
           variant="destructive"
-          onClick={() => {
-            deleteMutation.mutate()
+          onClick={async () => {
+            await deleteMutation.mutateAsync()
             setOpen(false)
           }}
         >

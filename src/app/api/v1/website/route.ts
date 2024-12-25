@@ -1,5 +1,6 @@
-import { db, websiteBlocks, websites } from "@/db"
+import { db, websites } from "@/db"
 import { auth } from "@/lib/auth"
+import { generateId } from "@/lib/utils"
 import { and, eq, sql } from "drizzle-orm"
 
 export async function GET() {
@@ -27,21 +28,9 @@ export async function GET() {
       .returning()
   }
 
-  const blocks = await db
-    .select({
-      id: websiteBlocks.id,
-      type: websiteBlocks.type,
-      meta: websiteBlocks.meta,
-    })
-    .from(websiteBlocks)
-    .where(eq(websiteBlocks.websiteId, res[0].id))
-
   return Response.json({
     status: 200,
-    data: {
-      ...res[0],
-      blocks,
-    },
+    data: res[0],
   })
 }
 
@@ -57,25 +46,14 @@ export async function POST(request: Request) {
 
   const data = await request.json()
 
-  const blockId = (
-    await db
-      .insert(websiteBlocks)
-      .values({
-        websiteId: data.websiteId,
-        type: data.type,
-      })
-      .returning({
-        id: websiteBlocks.id,
-      })
-  )[0].id
-
-  await db
+  const res = await db
     .update(websites)
     .set({
-      order: sql`COALESCE("order", '[]'::jsonb) || ${JSON.stringify({
-        id: blockId,
+      blocks: sql`${JSON.stringify({
+        id: generateId(),
         active: false,
-      })}`,
+        type: data.type,
+      })}::jsonb || COALESCE(${websites.blocks}, '[]'::jsonb)`,
     })
     .where(
       and(
@@ -87,6 +65,7 @@ export async function POST(request: Request) {
 
   return Response.json({
     status: 200,
+    data: res[0],
   })
 }
 
@@ -94,42 +73,47 @@ export async function PATCH(request: Request) {
   const session = await auth()
 
   if (!session) {
-    return Response.json({
-      status: 401,
-      message: "Unauthorized",
-    })
+    return Response.json(
+      {
+        status: 401,
+        message: "Unauthorized",
+      },
+      { status: 401 },
+    )
   }
 
-  const data = await request.json()
+  const { websiteId, block } = await request.json()
 
-  if (data.websiteId) {
-    await db
-      .update(websites)
-      .set(data)
-      .where(
-        and(
-          eq(websites.id, data.websiteId),
-          eq(websites.userId, session.user?.id as string),
-        ),
-      )
-      .returning()
+  console.log(websiteId, block)
 
-    return Response.json({
-      status: 200,
+  const res = await db
+    .update(websites)
+    .set({
+      blocks: sql`
+          (
+            SELECT jsonb_agg(
+              CASE
+                WHEN block->>'id' = ${block.id}
+                THEN jsonb_set(block, '{meta}', ${JSON.stringify({ ...block.meta })}::jsonb, true)
+                ELSE block
+              END
+            )
+            FROM jsonb_array_elements(${websites.blocks}) AS block
+          )
+        `,
     })
-  }
+    .where(
+      and(
+        eq(websites.id, websiteId),
+        eq(websites.userId, session.user?.id as string),
+      ),
+    )
+    .returning()
 
-  if (data.blockId) {
-    await db
-      .update(websiteBlocks)
-      .set(data)
-      .where(and(eq(websiteBlocks.id, data.blockId)))
-      .returning()
-
-    return Response.json({
-      status: 200,
-    })
-  }
+  return Response.json({
+    status: 200,
+    data: res[0],
+  })
 }
 
 export async function DELETE(request: Request) {
@@ -142,12 +126,27 @@ export async function DELETE(request: Request) {
     })
   }
 
-  const data = await request.json()
+  const { websiteId, block } = await request.json()
 
-  if (data.blockId) {
-    await db.delete(websiteBlocks).where(eq(websiteBlocks.id, data.blockId))
-    return Response.json({
-      status: 200,
+  const res = await db
+    .update(websites)
+    .set({
+      blocks: sql`(
+        SELECT jsonb_agg(block)
+        FROM jsonb_array_elements(COALESCE(${websites.blocks}, '[]'::jsonb)) AS block
+        WHERE block->>'id' != ${block.id}
+      )`,
     })
-  }
+    .where(
+      and(
+        eq(websites.id, websiteId),
+        eq(websites.userId, session.user?.id as string),
+      ),
+    )
+    .returning()
+
+  return Response.json({
+    status: 200,
+    data: res[0],
+  })
 }

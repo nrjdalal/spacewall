@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
 import WebsiteView from "@/components/views/website"
-import { db, websiteBlocks, websites } from "@/db"
+import { db, websites } from "@/db"
 import { and, eq } from "drizzle-orm"
 import { ChevronRight, Crown } from "lucide-react"
 import Link from "next/link"
@@ -12,12 +12,31 @@ export default async function Page({
 }) {
   const slug = (await params).slug
 
-  const website = await db
-    .select()
-    .from(websites)
-    .where(and(eq(websites.slug, slug)))
+  const website = (
+    await db
+      .select()
+      .from(websites)
+      .where(and(eq(websites.slug, slug)))
+  )[0] as {
+    id: string
+    image: string
+    title: string
+    description: string
+    cover: string
+    blocks: {
+      id: string
+      active: boolean
+      type: string
+      meta?: {
+        url?: string
+        title?: string
+        description?: string
+        image?: string
+      }
+    }[]
+  }
 
-  if (website.length === 0) {
+  if (!website.id) {
     return (
       <main className="flex min-h-dvh items-center justify-center p-7.5">
         <div className="max-w-sm space-y-6 text-center">
@@ -52,42 +71,5 @@ export default async function Page({
     )
   }
 
-  const blocks = await db
-    .select({
-      id: websiteBlocks.id,
-      type: websiteBlocks.type,
-      meta: websiteBlocks.meta,
-    })
-    .from(websiteBlocks)
-    .where(eq(websiteBlocks.websiteId, website[0].id))
-
-  const data = {
-    ...website[0],
-    blocks,
-    sortedBlocks: [] as BlockItem[],
-  }
-
-  interface OrderItem {
-    id: string
-    active: boolean
-  }
-
-  interface BlockItem {
-    id: string
-    type: string
-    meta: unknown
-  }
-
-  const blocksMap = new Map(
-    data.blocks?.map((block: BlockItem) => [block.id, block]),
-  )
-
-  // @ts-expect-error - TS doesn't know about the order property
-  data.sortedBlocks = data.order?.map((orderItem: OrderItem) => ({
-    ...(blocksMap.get(orderItem.id) || {}),
-  }))
-  // .filter((orderItem: OrderItem) => orderItem.active)
-
-  // @ts-expect-error - TS doesn't know about the order property
-  return <WebsiteView data={data} />
+  return <WebsiteView data={website} />
 }
