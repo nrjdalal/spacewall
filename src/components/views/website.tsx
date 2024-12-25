@@ -79,7 +79,7 @@ export default function WebsiteView({
             !data.cover && "mt-1",
           )}
         >
-          {data.title && <h1 className="px-3 font-medium">{data.title}</h1>}
+          {data.title && <h1 className="px-3 font-semibold">{data.title}</h1>}
           {data.description && (
             <p className="text-muted-foreground px-3 text-sm">
               {data.description}
