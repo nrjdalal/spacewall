@@ -310,52 +310,41 @@ export default function Page() {
                     if (block.type === "link") {
                       return (
                         <SortableItem id={block.id} key={block.id}>
-                          <section className="relative flex items-center gap-3 rounded-md border p-2">
+                          <div
+                            key={block.id}
+                            className="relative grid grid-cols-6 items-center gap-1.5 rounded-md border p-1"
+                          >
                             <DialogEditBlockLink
-                              websiteId={data.id}
                               {...block}
+                              websiteId={data.id}
                             />
-
-                            <div className="bg-secondary grid aspect-square size-16 place-items-center rounded-md border">
+                            <div className="col-span-1">
                               {block.meta?.image ? (
                                 <img
-                                  className="h-full w-full rounded-md object-cover object-center"
+                                  className="bg-secondary aspect-square h-full max-h-14 rounded-md border object-cover object-center"
                                   src={
                                     "https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/" +
                                     block.meta?.image
                                   }
-                                  alt={
-                                    block.meta?.title ||
-                                    "Placeholder Link Title"
-                                  }
+                                  alt={block.meta?.title}
                                 />
                               ) : (
-                                <div className="text-muted-foreground/25 grid h-full w-full place-content-center">
-                                  <Camera />
+                                <div className="text-muted-foreground/25 grid aspect-square h-full max-h-14 place-content-center">
+                                  <Camera className="size-6 stroke-1" />
                                 </div>
                               )}
                             </div>
-
-                            <div className="grid w-full grid-cols-12">
-                              <div className="col-span-11 text-center">
-                                <h1 className="text-sm font-medium">
-                                  {block.meta?.title ||
-                                    "Placeholder Link Title"}
-                                </h1>
-                                {block.meta?.description && (
-                                  <p className="text-muted-foreground text-xs">
-                                    {block.meta?.description}
-                                  </p>
-                                )}
-                                <Link
-                                  href={block.meta?.url || "/"}
-                                  className="text-xs text-blue-500 italic"
-                                >
-                                  {block.meta?.url || "placeholder.link"}
-                                </Link>
-                              </div>
+                            <div className="col-span-4 w-full text-center">
+                              <h1 className="line-clamp-2 text-sm font-medium break-words">
+                                {block.meta?.title || "Link Block"}
+                              </h1>
+                              {block.meta?.description && (
+                                <p className="text-muted-foreground text-xs">
+                                  {block.meta?.description}
+                                </p>
+                              )}
                             </div>
-                          </section>
+                          </div>
                         </SortableItem>
                       )
                     }
@@ -411,7 +400,10 @@ const DialogEditSlug = (data: { id: string; slug: string }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="aspect-square size-6 border p-0">
+        <Button
+          className="text-foreground/65 aspect-square size-6 p-0"
+          variant="outline"
+        >
           <Pencil />
         </Button>
       </DialogTrigger>
@@ -493,7 +485,10 @@ const DialogEditHeader = (data: {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="absolute top-3 right-3 aspect-square size-6 border p-0">
+        <Button
+          className="text-foreground/65 absolute top-3 right-3 aspect-square size-6 p-0"
+          variant="outline"
+        >
           <Pencil />
         </Button>
       </DialogTrigger>
@@ -597,10 +592,13 @@ const DialogEditBlockLink = (data: {
         label: "Title",
         default: data.meta?.title || "",
       }),
-    url: z.string().field({
-      label: "URL",
-      default: data.meta?.url || "",
-    }),
+    url: z
+      .string()
+      .url()
+      .field({
+        label: "URL",
+        default: data.meta?.url || "",
+      }),
     description: z
       .string()
       .max(256)
@@ -671,7 +669,10 @@ const DialogEditBlockLink = (data: {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="absolute top-3 right-3 aspect-square size-6 border p-0">
+        <Button
+          className="text-foreground/65 absolute top-1/2 right-3 aspect-square size-6 -translate-y-1/2 transform p-0"
+          variant="outline"
+        >
           <Pencil />
         </Button>
       </DialogTrigger>
