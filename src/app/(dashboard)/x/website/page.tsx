@@ -44,7 +44,7 @@ import {
   Pencil,
 } from "lucide-react"
 import Link from "next/link"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { z } from "zod"
 
 function SortableItem({
@@ -62,12 +62,33 @@ function SortableItem({
     transition,
   }
 
+  // Disable body scrolling on drag start for touch devices
+  const handleTouchStart = () => {
+    document.body.style.overflow = "hidden" // Disable scrolling for body
+  }
+
+  // Re-enable body scrolling when dragging ends
+  const handleTouchEnd = () => {
+    document.body.style.overflow = "" // Restore default body scrolling
+  }
+
+  useEffect(() => {
+    // Attach global listeners for touchend
+    document.addEventListener("touchend", handleTouchEnd)
+
+    return () => {
+      // Cleanup listeners to prevent memory leaks
+      document.removeEventListener("touchend", handleTouchEnd)
+    }
+  }, [])
+
   return (
     <div ref={setNodeRef} style={style} className="relative">
       <div
         {...listeners}
         {...attributes}
         className="text-muted-foreground absolute -top-3 left-1/2 z-5 -translate-x-1/2 transform cursor-grab sm:top-1/2 sm:bottom-auto sm:-left-3 sm:-translate-y-1/2 sm:translate-x-0"
+        onTouchStart={handleTouchStart}
       >
         <GripHorizontal className="sm:hidden" />
         <GripVertical className="hidden sm:block" />
