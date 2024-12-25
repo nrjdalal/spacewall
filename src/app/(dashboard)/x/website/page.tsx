@@ -16,11 +16,27 @@ import WebsiteView from "@/components/views/website"
 import { Content, ContentPreview, ContentRoot } from "@/components/x/content"
 import { ZodHookForm } from "@/components/x/zod-hook-form"
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard"
+import {
+  closestCenter,
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core"
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable"
+import { CSS } from "@dnd-kit/utilities"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import {
   Camera,
   Crown,
   ExternalLink,
+  GripVertical,
   LinkIcon,
   Loader2,
   Pencil,
@@ -29,16 +45,56 @@ import Link from "next/link"
 import { useState } from "react"
 import { z } from "zod"
 
+function SortableItem(props: { id: string; children: React.ReactNode }) {
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id: props.id })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  }
+
+  return (
+    <div ref={setNodeRef} style={style} className="relative">
+      <div
+        {...listeners}
+        {...attributes}
+        className="text-muted-foreground absolute top-1/2 -left-3 z-5 w-4 -translate-y-1/2 transform cursor-grab"
+      >
+        <GripVertical />
+      </div>
+      {props.children}
+    </div>
+  )
+}
+
 export default function Page() {
   const [, copy] = useCopyToClipboard()
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  )
 
   const { data, isError, isLoading } = useQuery({
     queryKey: ["website"],
     queryFn: async () => {
       const res = await fetch("/api/v1/website")
+
+      if (!res.ok)
+        throw new Error("An error occurred while fetching your website")
+
       return (await res.json()).data
     },
   })
+
+  // @ts-expect-error get types from dnd-kit later
+  function handleDragEnd(event) {
+    const { active, over } = event
+    console.log({ active, over })
+  }
 
   if (isLoading)
     return (
@@ -166,66 +222,83 @@ export default function Page() {
 
           {/* MANAGE BLOCKS */}
           <div className="space-y-3">
-            {data.blocks?.map(
-              (block: {
-                id: string
-                type: string
-                active: boolean
-                meta: {
-                  url: string
-                  title: string
-                  description: string
-                  image: string
-                }
-              }) => {
-                if (block.type === "link") {
-                  return (
-                    <section
-                      key={block.id}
-                      className="relative flex items-center gap-3 rounded-md border p-2"
-                    >
-                      <DialogEditBlockLink websiteId={data.id} {...block} />
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={data.blocks || []}
+                strategy={verticalListSortingStrategy}
+              >
+                {data.blocks?.map(
+                  (block: {
+                    id: string
+                    type: string
+                    active: boolean
+                    meta: {
+                      url: string
+                      title: string
+                      description: string
+                      image: string
+                    }
+                  }) => {
+                    if (block.type === "link") {
+                      return (
+                        <SortableItem id={block.id} key={block.id}>
+                          <section className="relative flex items-center gap-3 rounded-md border p-2">
+                            <DialogEditBlockLink
+                              websiteId={data.id}
+                              {...block}
+                            />
 
-                      <div className="bg-secondary grid aspect-square size-16 place-items-center rounded-md border">
-                        {block.meta?.image ? (
-                          <img
-                            className="h-full w-full rounded-md object-cover object-center"
-                            src={
-                              "https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/" +
-                              block.meta?.image
-                            }
-                            alt={block.meta?.title || "Placeholder Link Title"}
-                          />
-                        ) : (
-                          <div className="text-muted-foreground/25 grid h-full w-full place-content-center">
-                            <Camera />
-                          </div>
-                        )}
-                      </div>
+                            <div className="bg-secondary grid aspect-square size-16 place-items-center rounded-md border">
+                              {block.meta?.image ? (
+                                <img
+                                  className="h-full w-full rounded-md object-cover object-center"
+                                  src={
+                                    "https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/" +
+                                    block.meta?.image
+                                  }
+                                  alt={
+                                    block.meta?.title ||
+                                    "Placeholder Link Title"
+                                  }
+                                />
+                              ) : (
+                                <div className="text-muted-foreground/25 grid h-full w-full place-content-center">
+                                  <Camera />
+                                </div>
+                              )}
+                            </div>
 
-                      <div className="grid w-full grid-cols-12">
-                        <div className="col-span-11 text-center">
-                          <h1 className="text-sm font-medium">
-                            {block.meta?.title || "Placeholder Link Title"}
-                          </h1>
-                          {block.meta?.description && (
-                            <p className="text-muted-foreground text-xs">
-                              {block.meta?.description}
-                            </p>
-                          )}
-                          <Link
-                            href={block.meta?.url || "/"}
-                            className="text-xs text-blue-500 italic"
-                          >
-                            {block.meta?.url || "placeholder.link"}
-                          </Link>
-                        </div>
-                      </div>
-                    </section>
-                  )
-                }
-              },
-            )}
+                            <div className="grid w-full grid-cols-12">
+                              <div className="col-span-11 text-center">
+                                <h1 className="text-sm font-medium">
+                                  {block.meta?.title ||
+                                    "Placeholder Link Title"}
+                                </h1>
+                                {block.meta?.description && (
+                                  <p className="text-muted-foreground text-xs">
+                                    {block.meta?.description}
+                                  </p>
+                                )}
+                                <Link
+                                  href={block.meta?.url || "/"}
+                                  className="text-xs text-blue-500 italic"
+                                >
+                                  {block.meta?.url || "placeholder.link"}
+                                </Link>
+                              </div>
+                            </div>
+                          </section>
+                        </SortableItem>
+                      )
+                    }
+                  },
+                )}
+              </SortableContext>
+            </DndContext>
           </div>
         </Content>
         <ContentPreview>
