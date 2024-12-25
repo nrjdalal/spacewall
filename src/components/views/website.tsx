@@ -55,7 +55,12 @@ export default function WebsiteView({
           )}
         </div>
         {data.image && (
-          <div className="bg-background absolute top-0 mt-24 size-24 rounded-full border object-cover object-center">
+          <div
+            className={cn(
+              "bg-background absolute top-0 mt-24 size-24 rounded-full border object-cover object-center",
+              !data.cover && "mt-12",
+            )}
+          >
             <img
               className="h-full w-full rounded-full object-cover object-center"
               src={
@@ -68,7 +73,12 @@ export default function WebsiteView({
             />
           </div>
         )}
-        <div className="mt-13 grid grid-cols-1 place-items-center text-center">
+        <div
+          className={cn(
+            "mt-13 grid grid-cols-1 place-items-center text-center",
+            !data.cover && "mt-1",
+          )}
+        >
           {data.title && <h1 className="px-3 font-medium">{data.title}</h1>}
           {data.description && (
             <p className="text-muted-foreground px-3 text-sm">
