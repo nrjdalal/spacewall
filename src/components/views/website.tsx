@@ -4,6 +4,18 @@ import { cn } from "@/lib/utils"
 import { Crown, LinkIcon } from "lucide-react"
 import Link from "next/link"
 
+interface Blocks {
+  id: string
+  active: boolean
+  type: string
+  meta?: {
+    url?: string
+    title?: string
+    description?: string
+    image?: string
+  }
+}
+
 export default function WebsiteView({
   data,
   preview = false,
@@ -13,17 +25,7 @@ export default function WebsiteView({
     title: string
     description: string
     cover: string
-    sortedBlocks: {
-      id: string
-      active: boolean
-      type: string
-      meta: {
-        url: string
-        title: string
-        description: string
-        image: string
-      }
-    }[]
+    blocks: Blocks[]
   }
   preview?: boolean
 }) {
@@ -77,57 +79,45 @@ export default function WebsiteView({
       </section>
 
       <div className="mt-5 space-y-3 px-3">
-        {data.sortedBlocks?.map(
-          (block: {
-            id: string
-            active: boolean
-            type: string
-            meta: {
-              url: string
-              title: string
-              description: string
-              image: string
-            }
-          }) => {
-            if (block.type === "link") {
-              return (
-                <Link
-                  key={block.id}
-                  href={block.meta?.url || "/x/website"}
-                  target={block.meta?.url ? "_blank" : "_self"}
-                  className="relative grid grid-cols-6 items-center gap-1.5 rounded-md border p-1"
-                >
-                  <div className="col-span-1">
-                    {block.meta?.image ? (
-                      <img
-                        className="bg-secondary aspect-square h-full max-h-14 rounded-md border object-cover object-center"
-                        src={
-                          "https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/" +
-                          block.meta?.image
-                        }
-                        alt={block.meta?.title || "Placeholder Link Title"}
-                      />
-                    ) : (
-                      <div className="text-muted-foreground/25 grid aspect-square h-full max-h-14 place-content-center">
-                        <LinkIcon className="size-6 stroke-1" />
-                      </div>
-                    )}
-                  </div>
-                  <div className="col-span-4 w-full text-center">
-                    <h1 className="text-sm font-medium">
-                      {block.meta?.title || "Placeholder Link Title"}
-                    </h1>
-                    {block.meta?.description && (
-                      <p className="text-muted-foreground text-xs">
-                        {block.meta?.description}
-                      </p>
-                    )}
-                  </div>
-                </Link>
-              )
-            }
-          },
-        )}
+        {data.blocks?.map((block: Blocks) => {
+          if (block.type === "link") {
+            return (
+              <Link
+                key={block.id}
+                href={block.meta?.url || "/x/website"}
+                target={block.meta?.url ? "_blank" : "_self"}
+                className="relative grid grid-cols-6 items-center gap-1.5 rounded-md border p-1"
+              >
+                <div className="col-span-1">
+                  {block.meta?.image ? (
+                    <img
+                      className="bg-secondary aspect-square h-full max-h-14 rounded-md border object-cover object-center"
+                      src={
+                        "https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/" +
+                        block.meta?.image
+                      }
+                      alt={block.meta?.title || "Placeholder Link Title"}
+                    />
+                  ) : (
+                    <div className="text-muted-foreground/25 grid aspect-square h-full max-h-14 place-content-center">
+                      <LinkIcon className="size-6 stroke-1" />
+                    </div>
+                  )}
+                </div>
+                <div className="col-span-4 w-full text-center">
+                  <h1 className="text-sm font-medium">
+                    {block.meta?.title || "Placeholder Link Title"}
+                  </h1>
+                  {block.meta?.description && (
+                    <p className="text-muted-foreground text-xs">
+                      {block.meta?.description}
+                    </p>
+                  )}
+                </div>
+              </Link>
+            )
+          }
+        })}
       </div>
 
       <Link
