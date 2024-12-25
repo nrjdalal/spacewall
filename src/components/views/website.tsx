@@ -106,7 +106,7 @@ export default function WebsiteView({
                         "https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/" +
                         block.meta?.image
                       }
-                      alt={block.meta?.title || "Placeholder Link Title"}
+                      alt={block.meta?.title}
                     />
                   ) : (
                     <div className="text-muted-foreground/25 grid aspect-square h-full max-h-14 place-content-center">
@@ -115,8 +115,8 @@ export default function WebsiteView({
                   )}
                 </div>
                 <div className="col-span-4 w-full text-center">
-                  <h1 className="text-sm font-medium">
-                    {block.meta?.title || "Placeholder Link Title"}
+                  <h1 className="line-clamp-2 text-sm font-medium break-words">
+                    {block.meta?.title || "Link Block"}
                   </h1>
                   {block.meta?.description && (
                     <p className="text-muted-foreground text-xs">
