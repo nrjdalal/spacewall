@@ -137,11 +137,11 @@ export default function Page() {
     onError: (err, newData, context) => {
       queryClient.setQueryData(["website"], context?.prev)
     },
-    onSettled: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["website"],
-      })
-    },
+    // onSettled: () => {
+    //   queryClient.invalidateQueries({
+    //     queryKey: ["website"],
+    //   })
+    // },
   })
 
   // @ts-expect-error get types from dnd-kit later
