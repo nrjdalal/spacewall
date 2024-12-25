@@ -25,6 +25,7 @@ import {
   useSensors,
 } from "@dnd-kit/core"
 import {
+  arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   useSortable,
@@ -84,6 +85,8 @@ export default function Page() {
     }),
   )
 
+  const queryClient = useQueryClient()
+
   const { data, isError, isLoading } = useQuery({
     queryKey: ["website"],
     queryFn: async () => {
@@ -96,10 +99,63 @@ export default function Page() {
     },
   })
 
+  const mutuation = useMutation({
+    mutationFn: async (values) => {
+      const res = await fetch("/api/v1/website", {
+        method: "PATCH",
+        body: JSON.stringify({
+          websiteId: data.id,
+          website: values,
+        }),
+      })
+      return (await res.json()).data
+    },
+    onMutate: async (values: {
+      blocks: {
+        id: string
+        type: string
+        meta: {
+          url: string
+          title: string
+          description: string
+          image: string
+        }
+      }[]
+    }) => {
+      await queryClient.cancelQueries({
+        queryKey: ["website"],
+      })
+      const prev = queryClient.getQueryData(["website"])
+      queryClient.setQueryData(["website"], {
+        ...(prev || {}),
+        blocks: values.blocks,
+      })
+      return { prev }
+    },
+    onError: (err, newData, context) => {
+      queryClient.setQueryData(["website"], context?.prev)
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["website"],
+      })
+    },
+  })
+
   // @ts-expect-error get types from dnd-kit later
-  function handleDragEnd(event) {
+  async function handleDragEnd(event) {
     const { active, over } = event
-    console.log({ active, over })
+    if (active.id !== over.id) {
+      const oldIndex = data.blocks.findIndex(
+        (block: { id: string }) => block.id === active.id,
+      )
+      const newIndex = data.blocks.findIndex(
+        (block: { id: string }) => block.id === over.id,
+      )
+      await mutuation.mutateAsync({
+        blocks: arrayMove(data.blocks, oldIndex, newIndex),
+      })
+    }
   }
 
   if (isLoading)
