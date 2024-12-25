@@ -33,11 +33,12 @@ const ContentPreview = React.forwardRef<
   <aside
     ref={ref}
     className={cn(
-      "relative col-span-2 -mt-25 hidden max-w-sm items-start justify-center rounded-lg xl:flex",
+      "relative z-50 col-span-2 -mt-37.5 hidden max-w-sm items-start justify-center rounded-lg xl:flex",
       className,
     )}
     {...props}
   >
+    <div className="fixed mt-10 h-9.5 w-84 rounded-t-full bg-black"></div>
     <div className="pointer-events-none fixed z-5">
       <Image
         className="w-105"
@@ -47,8 +48,8 @@ const ContentPreview = React.forwardRef<
         height={812}
       />
     </div>
-    <div className="fixed mt-19.75 h-171.5 w-84 overflow-hidden rounded-b-4xl">
-      <ScrollArea className="h-full w-full border-t">{children}</ScrollArea>
+    <div className="fixed mt-19.5 h-171.5 w-84 overflow-hidden rounded-b-4xl">
+      <ScrollArea className="h-full w-full">{children}</ScrollArea>
     </div>
   </aside>
 ))
