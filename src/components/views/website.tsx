@@ -32,7 +32,7 @@ export default function WebsiteView({
   return (
     <main
       className={cn(
-        "relative mx-auto min-h-dvh max-w-screen-sm pb-24 sm:pt-3",
+        "bg-background relative mx-auto min-h-dvh max-w-screen-sm pb-24 sm:pt-3",
         preview && "min-h-171",
       )}
     >
