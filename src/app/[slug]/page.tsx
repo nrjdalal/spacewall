@@ -36,7 +36,7 @@ export default async function Page({
     }[]
   }
 
-  if (!website.id) {
+  if (!website?.id) {
     return (
       <main className="flex min-h-dvh items-center justify-center p-7.5">
         <div className="max-w-sm space-y-6 text-center">
