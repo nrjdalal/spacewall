@@ -5,9 +5,10 @@
   "scripts": {
     "build": "bash scripts/build.sh",
     "dev": "next dev",
-    "db-push": "bun --env-file=.env.development drizzle-kit push --force",
+    "db-push": "bun --env-file=.env.development drizzle-kit push",
     "db-studio": "bun --env-file=.env.development drizzle-kit studio",
     "deploy:dev": "sst deploy --stage dev",
+    "deploy:prod": "sst deploy --stage prod",
     "prepare": "if [ -z \"$VERCEL_ENV\" ]; then simple-git-hooks; fi",
     "update": "ncu --interactive --format group"
   },
@@ -36,7 +37,7 @@
     "cmdk": "^1.0.4",
     "compressorjs": "^1.2.1",
     "date-fns": "^4.1.0",
-    "drizzle-orm": "^0.38.2",
+    "drizzle-orm": "^0.38.3",
     "lucide-react": "^0.469.0",
     "nanoid": "^5.0.9",
     "next": "15.1.2",

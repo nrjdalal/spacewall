@@ -67,7 +67,7 @@ function SortableItem({
       <div
         {...listeners}
         {...attributes}
-        className="text-muted-foreground absolute -top-3 left-1/2 z-5 -translate-x-1/2 transform cursor-grab sm:top-1/2 sm:bottom-auto sm:-left-3 sm:-translate-y-1/2 sm:translate-x-0"
+        className="text-muted-foreground absolute -top-3 left-1/2 z-5 flex min-h-8 min-w-12 -translate-x-1/2 transform cursor-grab justify-center sm:top-1/2 sm:bottom-auto sm:-left-3 sm:min-h-12 sm:min-w-8 sm:-translate-y-1/2 sm:translate-x-0 sm:flex-col"
       >
         <GripHorizontal className="sm:hidden" />
         <GripVertical className="hidden sm:block" />
@@ -137,11 +137,11 @@ export default function Page() {
     onError: (err, newData, context) => {
       queryClient.setQueryData(["website"], context?.prev)
     },
-    // onSettled: () => {
-    //   queryClient.invalidateQueries({
-    //     queryKey: ["website"],
-    //   })
-    // },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["website"],
+      })
+    },
   })
 
   // @ts-expect-error get types from dnd-kit later
@@ -229,10 +229,7 @@ export default function Page() {
               {data.cover ? (
                 <img
                   className="absolute top-0 h-full w-full object-cover object-center"
-                  src={
-                    "https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/" +
-                    data.cover
-                  }
+                  src={process.env.NEXT_PUBLIC_CDN_URL + "/" + data.cover}
                   alt={data.title}
                 />
               ) : (
@@ -261,10 +258,7 @@ export default function Page() {
               {data.image ? (
                 <img
                   className="h-full w-full rounded-full object-cover object-center"
-                  src={
-                    "https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/" +
-                    data.image
-                  }
+                  src={process.env.NEXT_PUBLIC_CDN_URL + "/" + data.image}
                   alt={data.title}
                 />
               ) : (
@@ -326,7 +320,8 @@ export default function Page() {
                                   <img
                                     className="aspect-square h-full object-cover object-center"
                                     src={
-                                      "https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/" +
+                                      process.env.NEXT_PUBLIC_CDN_URL +
+                                      "/" +
                                       block.meta?.image
                                     }
                                     alt={block.meta?.title}
@@ -434,15 +429,13 @@ const DialogEditHeader = (data: {
       type: "file",
       label: "Image",
       default: data.image,
-      prefix:
-        "https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/",
+      prefix: process.env.NEXT_PUBLIC_CDN_URL + "/",
       span: "1/2",
     }),
     cover: z.string().field({
       type: "file",
       label: "Cover",
-      prefix:
-        "https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/",
+      prefix: process.env.NEXT_PUBLIC_CDN_URL + "/",
       default: data.cover,
       span: "1/2",
     }),
@@ -615,8 +608,7 @@ const DialogEditBlockLink = (data: {
       type: "file",
       label: "Image",
       default: data.meta?.image || "",
-      prefix:
-        "https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/",
+      prefix: process.env.NEXT_PUBLIC_CDN_URL + "/",
     }),
   })
 

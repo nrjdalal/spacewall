@@ -46,10 +46,7 @@ export default function WebsiteView({
           {data.cover && (
             <img
               className="absolute top-0 h-full w-full border-b object-cover object-center sm:border-b-0"
-              src={
-                "https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/" +
-                data.cover
-              }
+              src={process.env.NEXT_PUBLIC_CDN_URL + "/" + data.cover}
               alt={data.title}
             />
           )}
@@ -66,8 +63,7 @@ export default function WebsiteView({
               src={
                 data.image.startsWith("http")
                   ? data.image
-                  : "https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/" +
-                    data.image
+                  : process.env.NEXT_PUBLIC_CDN_URL + "/" + data.image
               }
               alt={data.title}
             />
@@ -104,7 +100,8 @@ export default function WebsiteView({
                       <img
                         className="aspect-square h-full object-cover object-center"
                         src={
-                          "https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/" +
+                          process.env.NEXT_PUBLIC_CDN_URL +
+                          "/" +
                           block.meta?.image
                         }
                         alt={block.meta?.title}
