@@ -1,5 +1,9 @@
 import { generateId } from "@/lib/utils"
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3"
+import {
+  DeleteObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from "@aws-sdk/client-s3"
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
 
 const s3 = new S3Client({
@@ -43,5 +47,27 @@ export const putObject = async ({
   return {
     key: Key,
     url: signedUrl,
+  }
+}
+
+export const deleteObject = async (Key: string) => {
+  if (!Key) {
+    throw new Error("Key is required to delete an object.")
+  }
+
+  try {
+    await s3.send(
+      new DeleteObjectCommand({
+        Key,
+        Bucket: process.env.S3_BUCKET_NAME,
+      }),
+    )
+    return {
+      success: true,
+      message: `Object with key "${Key}" deleted successfully.`,
+    }
+  } catch (error) {
+    console.error("Error deleting object:", error)
+    throw new Error("Failed to delete object.")
   }
 }
