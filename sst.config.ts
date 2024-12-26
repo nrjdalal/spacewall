@@ -16,14 +16,14 @@ export default $config({
   async run() {
     const schema = z
       .object({
-        PULUMI_NODEJS_STACK: z.enum(["dev"]),
+        PULUMI_NODEJS_STACK: z.enum(["dev", "prod"]),
       })
       .parse(process.env)
 
     const fileBucket = new sst.aws.Bucket(
       `spacewall-${schema.PULUMI_NODEJS_STACK}`,
       {
-        access: "public",
+        access: "cloudfront",
         cors: {
           allowHeaders: ["*"],
           allowMethods: ["DELETE", "GET", "PUT"],
@@ -33,6 +33,13 @@ export default $config({
         },
       },
     )
+    const cloudfront = new sst.aws.Router("MyRouter", {
+      routes: {
+        "/*": {
+          bucket: fileBucket,
+        },
+      },
+    })
 
     // const vpc = new sst.aws.Vpc("MyVpc")
     // const database = new sst.aws.Postgres(
@@ -43,6 +50,7 @@ export default $config({
     return {
       fileBucketName: fileBucket.name,
       fileBucketArn: fileBucket.arn,
+      cloudfrontDomain: cloudfront.url,
       // postgresUrl: pulumi.interpolate`postgresql://${database.username}:${database.password}@${database.host}:${database.port}/${database.database}`,
     }
   },

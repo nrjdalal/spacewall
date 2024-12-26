@@ -229,10 +229,7 @@ export default function Page() {
               {data.cover ? (
                 <img
                   className="absolute top-0 h-full w-full object-cover object-center"
-                  src={
-                    "https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/" +
-                    data.cover
-                  }
+                  src={process.env.NEXT_PUBLIC_CDN_URL + "/" + data.cover}
                   alt={data.title}
                 />
               ) : (
@@ -261,10 +258,7 @@ export default function Page() {
               {data.image ? (
                 <img
                   className="h-full w-full rounded-full object-cover object-center"
-                  src={
-                    "https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/" +
-                    data.image
-                  }
+                  src={process.env.NEXT_PUBLIC_CDN_URL + "/" + data.image}
                   alt={data.title}
                 />
               ) : (
@@ -326,7 +320,8 @@ export default function Page() {
                                   <img
                                     className="aspect-square h-full object-cover object-center"
                                     src={
-                                      "https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/" +
+                                      process.env.NEXT_PUBLIC_CDN_URL +
+                                      "/" +
                                       block.meta?.image
                                     }
                                     alt={block.meta?.title}
@@ -434,15 +429,13 @@ const DialogEditHeader = (data: {
       type: "file",
       label: "Image",
       default: data.image,
-      prefix:
-        "https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/",
+      prefix: process.env.NEXT_PUBLIC_CDN_URL + "/",
       span: "1/2",
     }),
     cover: z.string().field({
       type: "file",
       label: "Cover",
-      prefix:
-        "https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/",
+      prefix: process.env.NEXT_PUBLIC_CDN_URL + "/",
       default: data.cover,
       span: "1/2",
     }),
@@ -615,8 +608,7 @@ const DialogEditBlockLink = (data: {
       type: "file",
       label: "Image",
       default: data.meta?.image || "",
-      prefix:
-        "https://spacewall-dev-spacewalldev-dncvvomf.s3.us-east-1.amazonaws.com/",
+      prefix: process.env.NEXT_PUBLIC_CDN_URL + "/",
     }),
   })
 
