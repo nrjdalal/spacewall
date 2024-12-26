@@ -127,6 +127,33 @@ export async function PATCH(request: Request) {
     })
   }
 
+  const existingData = await db
+    .select({
+      block: sql<{ type: string; meta?: { image?: string } }>`(
+    SELECT block
+    FROM jsonb_array_elements(${websites.blocks}) AS block
+    WHERE block->>'id' = ${block.id}
+  )`,
+    })
+    .from(websites)
+    .where(
+      and(
+        eq(websites.id, websiteId),
+        eq(websites.userId, session.user?.id as string),
+      ),
+    )
+
+  if (existingData[0]?.block?.type === "link") {
+    if (
+      block.meta?.image &&
+      existingData[0]?.block?.meta?.image !== block.meta.image
+    ) {
+      if (existingData[0]?.block?.meta?.image) {
+        deleteObject(existingData[0]?.block?.meta?.image)
+      }
+    }
+  }
+
   const res = await db
     .update(websites)
     .set({
@@ -168,6 +195,28 @@ export async function DELETE(request: Request) {
   }
 
   const { websiteId, block } = await request.json()
+
+  const existingData = await db
+    .select({
+      block: sql<{ type: string; meta?: { image?: string } }>`(
+      SELECT block
+      FROM jsonb_array_elements(${websites.blocks}) AS block
+      WHERE block->>'id' = ${block.id}
+    )`,
+    })
+    .from(websites)
+    .where(
+      and(
+        eq(websites.id, websiteId),
+        eq(websites.userId, session.user?.id as string),
+      ),
+    )
+
+  if (existingData[0]?.block?.type === "link") {
+    if (existingData[0]?.block?.meta?.image) {
+      deleteObject(existingData[0]?.block?.meta?.image)
+    }
+  }
 
   const res = await db
     .update(websites)
