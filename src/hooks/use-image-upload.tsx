@@ -20,14 +20,18 @@ export function useFileUpload() {
       key,
       event,
       setValue,
+      keyprefix = "",
     }: {
       key: string
       event: React.ChangeEvent<HTMLInputElement>
       setValue: (field: string, value: string) => void
+      keyprefix?: string
     }) => {
-      const uploadKey = generateId({
-        length: 16,
-      })
+      const uploadKey =
+        keyprefix +
+        generateId({
+          length: 16,
+        })
       setValue(key, uploadKey)
       const files = event.target.files
       if (!(files instanceof FileList) || !files.length) return

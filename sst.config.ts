@@ -41,17 +41,17 @@ export default $config({
       },
     })
 
-    // const vpc = new sst.aws.Vpc("MyVpc")
-    // const database = new sst.aws.Postgres(
-    //   `spacewall${schema.PULUMI_NODEJS_STACK}`,
-    //   { vpc },
-    // )
-
     return {
-      fileBucketName: fileBucket.name,
       fileBucketArn: fileBucket.arn,
-      cloudfrontDomain: cloudfront.url,
-      // postgresUrl: pulumi.interpolate`postgresql://${database.username}:${database.password}@${database.host}:${database.port}/${database.database}`,
+      fileBucketName: fileBucket.name,
+      cloudfrontUrl: cloudfront.url,
     }
   },
 })
+
+// const vpc = new sst.aws.Vpc("MyVpc")
+// const database = new sst.aws.Postgres(
+//   `spacewall${schema.PULUMI_NODEJS_STACK}`,
+//   { vpc },
+// )
+// postgresUrl: pulumi.interpolate`postgresql://${database.username}:${database.password}@${database.host}:${database.port}/${database.database}`,

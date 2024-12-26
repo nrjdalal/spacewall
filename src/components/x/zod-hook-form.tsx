@@ -43,6 +43,7 @@ const formFieldSchema = z
     className: z.string().optional(),
     placeholder: z.string().optional(),
     prefix: z.string().optional(),
+    keyprefix: z.string().optional(),
   })
   .passthrough()
   .superRefine((data) => {
@@ -98,15 +99,6 @@ export const ZodHookForm = ({
 
   const { fileState, handleFilePreview } = useFileUpload()
 
-  // const submit = async (values: z.infer<typeof schema>) => {
-  //   if (onSubmit) {
-  //     await onSubmit(values)
-  //   } else {
-  //     console.log(values)
-  //   }
-  //   form.reset()
-  // }
-
   const submit = async (values: z.infer<typeof schema>) => {
     const uploadPromises = Object.keys(fileState).map(async (key) => {
       const state = fileState[key]
@@ -143,7 +135,7 @@ export const ZodHookForm = ({
         const signedUrlResponse = await fetch("/api/v1/s3/upload", {
           method: "PUT",
           body: JSON.stringify({
-            Key: values[key], // Assuming the form uses the upload key
+            Key: values[key],
             ContentType: state.file.type,
             ContentLength: state.file.size,
             ChecksumSHA256: checksum,
@@ -257,6 +249,7 @@ export const ZodHookForm = ({
                               event,
                               key: formField.name,
                               setValue: form.setValue,
+                              keyprefix: formField.keyprefix ?? "",
                             })
                           }
                         />
@@ -273,6 +266,7 @@ export const ZodHookForm = ({
                               } as unknown as React.ChangeEvent<HTMLInputElement>,
                               key: formField.name,
                               setValue: form.setValue,
+                              keyprefix: formField.keyprefix ?? "",
                             })
                           }
                         }}

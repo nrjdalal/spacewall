@@ -45,6 +45,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
+import { toast } from "sonner"
 import { z } from "zod"
 
 function SortableItem({
@@ -430,12 +431,14 @@ const DialogEditHeader = (data: {
       label: "Image",
       default: data.image,
       prefix: process.env.NEXT_PUBLIC_CDN_URL + "/",
+      keyprefix: "website/header/image/",
       span: "1/2",
     }),
     cover: z.string().field({
       type: "file",
       label: "Cover",
       prefix: process.env.NEXT_PUBLIC_CDN_URL + "/",
+      keyprefix: "website/header/cover/",
       default: data.cover,
       span: "1/2",
     }),
@@ -454,8 +457,6 @@ const DialogEditHeader = (data: {
 
   const mutuation = useMutation({
     mutationFn: async (values: z.infer<typeof schema>) => {
-      console.log(values)
-
       const res = await fetch("/api/v1/website", {
         method: "PATCH",
         body: JSON.stringify({
@@ -473,6 +474,14 @@ const DialogEditHeader = (data: {
   })
 
   const onSubmit = async (values: z.infer<typeof schema>) => {
+    values = Object.fromEntries(
+      Object.entries(values).filter(
+        ([key, value]) => value !== data[key as keyof typeof data],
+      ),
+    ) as typeof data
+
+    if (!Object.keys(values).length) return toast.info("No changes made.")
+
     await mutuation.mutateAsync(values)
     setOpen(false)
   }
@@ -609,6 +618,7 @@ const DialogEditBlockLink = (data: {
       label: "Image",
       default: data.meta?.image || "",
       prefix: process.env.NEXT_PUBLIC_CDN_URL + "/",
+      keyprefix: "website/link/image/",
     }),
   })
 
