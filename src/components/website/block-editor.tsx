@@ -156,7 +156,11 @@ export const BlockEditor = ({ schema, data }: EditorProps) => {
         <DialogHeader>
           <DialogTitle>Manage Link</DialogTitle>
         </DialogHeader>
-        <ZodHookForm schema={schema} onSubmit={onSubmit} />
+        <ZodHookForm
+          schema={schema}
+          onSubmit={onSubmit}
+          invalidate={["website"]}
+        />
         <Button
           variant="destructive"
           onClick={async () => {
