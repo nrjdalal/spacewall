@@ -4,7 +4,7 @@ import { Camera } from "lucide-react"
 import { z } from "zod"
 import { BlockEditor } from "../block-editor"
 
-interface BlockLinkProps {
+interface LinkProps {
   websiteId: string
   id: string
   type: string
@@ -17,7 +17,7 @@ interface BlockLinkProps {
   }
 }
 
-export const BlockLink = (props: BlockLinkProps) => {
+export const BlockLink = (props: LinkProps) => {
   const schema = z.object({
     title: z
       .string()

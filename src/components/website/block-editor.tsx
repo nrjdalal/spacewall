@@ -12,7 +12,7 @@ import { Pencil } from "lucide-react"
 import { useState } from "react"
 import { z } from "zod"
 
-type BlockEditorProps = {
+type EditorProps = {
   schema: z.ZodObject<z.ZodRawShape>
   data: {
     websiteId: string
@@ -22,7 +22,7 @@ type BlockEditorProps = {
   }
 }
 
-export const BlockEditor = ({ schema, data }: BlockEditorProps) => {
+export const BlockEditor = ({ schema, data }: EditorProps) => {
   const queryClient = useQueryClient()
 
   const mutuation = useMutation({
