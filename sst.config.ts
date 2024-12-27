@@ -22,7 +22,7 @@ export default $config({
     const fileBucket = new sst.aws.Bucket(
       `spacewall-${schema.PULUMI_NODEJS_STACK}`,
       {
-        access: "public",
+        access: "cloudfront",
         cors: {
           allowHeaders: ["*"],
           allowMethods: ["DELETE", "GET", "PUT"],
@@ -33,20 +33,18 @@ export default $config({
       },
     )
 
-    // const cloudfront = new sst.aws.Router("MyRouter", {
-    //   routes: {
-    //     "/*": {
-    //       bucket: fileBucket,
-    //     },
-    //   },
-    // })
-
-    // https://d3cvh3z5exmn5t.cloudfront.net/website/header/image/JRo4GAQnSilWzqvZ
+    const cloudfront = new sst.aws.Router("MyRouter", {
+      routes: {
+        "/*": {
+          bucket: fileBucket,
+        },
+      },
+    })
 
     return {
       fileBucketArn: fileBucket.arn,
       fileBucketName: fileBucket.name,
-      // cloudfrontUrl: cloudfront.url,
+      cloudfrontUrl: cloudfront.url,
     }
   },
 })
