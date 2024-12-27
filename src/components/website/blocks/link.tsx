@@ -34,6 +34,13 @@ export const BlockLink = (props: BlockLinkProps) => {
         label: "URL",
         default: props.meta?.href || "",
       }),
+    image: z.string().field({
+      type: "file",
+      label: "Image",
+      default: props.meta?.image || "",
+      prefix: process.env.NEXT_PUBLIC_CDN_URL + "/",
+      keyprefix: "website/link/image/",
+    }),
     description: z
       .string()
       .max(256)
@@ -42,13 +49,6 @@ export const BlockLink = (props: BlockLinkProps) => {
         label: "Description",
         default: props.meta?.description || "",
       }),
-    image: z.string().field({
-      type: "file",
-      label: "Image",
-      default: props.meta?.image || "",
-      prefix: process.env.NEXT_PUBLIC_CDN_URL + "/",
-      keyprefix: "website/link/image/",
-    }),
   })
 
   return (
@@ -85,117 +85,3 @@ export const BlockLink = (props: BlockLinkProps) => {
     </div>
   )
 }
-
-// const DialogEditBlockLink = (data: BlockLinkProps) => {
-//   const schema = z.object({
-//     title: z
-//       .string()
-//       .min(1)
-//       .max(128)
-//       .field({
-//         label: "Title",
-//         default: data.meta?.title || "",
-//       }),
-//     url: z
-//       .string()
-//       .url()
-//       .field({
-//         label: "URL",
-//         default: data.meta?.href || "",
-//       }),
-//     description: z
-//       .string()
-//       .max(256)
-//       .field({
-//         type: "textarea",
-//         label: "Description",
-//         default: data.meta?.description || "",
-//       }),
-//     image: z.string().field({
-//       type: "file",
-//       label: "Image",
-//       default: data.meta?.image || "",
-//       prefix: process.env.NEXT_PUBLIC_CDN_URL + "/",
-//       keyprefix: "website/link/image/",
-//     }),
-//   })
-
-//   const queryClient = useQueryClient()
-
-//   const mutuation = useMutation({
-//     mutationFn: async (values: z.infer<typeof schema>) => {
-//       const res = await fetch("/api/v1/website", {
-//         method: "PATCH",
-//         body: JSON.stringify({
-//           websiteId: data.websiteId,
-//           block: {
-//             id: data.id,
-//             meta: values,
-//           },
-//         }),
-//       })
-//       return await res.json()
-//     },
-//     onSuccess: () => {
-//       queryClient.invalidateQueries({
-//         queryKey: ["website"],
-//       })
-//     },
-//   })
-
-//   const onSubmit = async (values: z.infer<typeof schema>) => {
-//     await mutuation.mutateAsync(values)
-//     setOpen(false)
-//   }
-
-//   const [open, setOpen] = useState(false)
-
-//   const deleteMutation = useMutation({
-//     mutationFn: async () => {
-//       const res = await fetch("/api/v1/website", {
-//         method: "DELETE",
-//         body: JSON.stringify({
-//           websiteId: data.websiteId,
-//           block: {
-//             id: data.id,
-//           },
-//         }),
-//       })
-//       return await res.json()
-//     },
-//     onSuccess: () => {
-//       queryClient.invalidateQueries({
-//         queryKey: ["website"],
-//       })
-//     },
-//   })
-
-//   return (
-//     <Dialog open={open} onOpenChange={setOpen}>
-//       <DialogTrigger asChild>
-//         <Button
-//           className="text-foreground/65 absolute top-1/2 right-3 aspect-square size-6 -translate-y-1/2 transform p-0"
-//           variant="outline"
-//         >
-//           <Pencil />
-//         </Button>
-//       </DialogTrigger>
-//       <DialogContent>
-//         <DialogHeader>
-//           <DialogTitle>Manage Link</DialogTitle>
-//         </DialogHeader>
-//         {/* @ts-expect-error will fix later */}
-//         <ZodHookForm schema={schema} onSubmit={onSubmit} />
-//         <Button
-//           variant="destructive"
-//           onClick={async () => {
-//             await deleteMutation.mutateAsync()
-//             setOpen(false)
-//           }}
-//         >
-//           Delete
-//         </Button>
-//       </DialogContent>
-//     </Dialog>
-//   )
-// }
