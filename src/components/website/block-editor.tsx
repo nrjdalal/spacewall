@@ -23,10 +23,25 @@ type EditorProps = {
 }
 
 export const BlockEditor = ({ schema, data }: EditorProps) => {
+  const fields = Object.entries(schema?.shape).map(([key, value]) => ({
+    key,
+    ...JSON.parse(value?._def.description ?? "{}"),
+  }))
+
+  const fileValues = Object.fromEntries(
+    fields
+      .filter((field) => field.type === "file")
+      .map((field) => [field.key, field.default]),
+  )
+
   const queryClient = useQueryClient()
 
   const mutuation = useMutation({
     mutationFn: async (values: z.infer<typeof schema>) => {
+      const removeFiles = Object.keys(fileValues)
+        .filter((key) => key in values && fileValues[key] !== values[key])
+        .map((key) => fileValues[key])
+
       const res = await fetch("/api/v1/website", {
         method: "PATCH",
         body: JSON.stringify({
@@ -37,14 +52,14 @@ export const BlockEditor = ({ schema, data }: EditorProps) => {
             active: data.active,
             meta: values,
           },
+          removeFiles,
         }),
       })
+
       return await res.json()
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["website"],
-      })
+    onSuccess: (ctx) => {
+      queryClient.setQueryData(["website"], ctx.data)
     },
   })
 
