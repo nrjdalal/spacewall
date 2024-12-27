@@ -1,10 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 
-import { BlockContent, BlockEditor } from "@/components/website/block-editor"
+import { BlockContent, BlockEditor } from "@/components/website/block-manager"
 import { Camera } from "lucide-react"
 import { z } from "zod"
 
-interface LinkProps {
+interface Props {
   websiteId: string
   id: string
   type: string
@@ -17,7 +17,7 @@ interface LinkProps {
   }
 }
 
-export const BlockLink = (props: LinkProps) => {
+export const BlockLink = (props: Props) => {
   const schema = z.object({
     title: z
       .string()
