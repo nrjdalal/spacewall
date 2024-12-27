@@ -1,8 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
 
+import { BlockContent, BlockEditor } from "@/components/website/block-editor"
 import { Camera } from "lucide-react"
 import { z } from "zod"
-import { BlockEditor } from "../block-editor"
 
 interface LinkProps {
   websiteId: string
@@ -52,9 +52,9 @@ export const BlockLink = (props: LinkProps) => {
   })
 
   return (
-    <div
-      key={props.id}
-      className="relative grid grid-cols-6 items-center gap-1.5 rounded-md border p-1"
+    <BlockContent
+      id={props.id}
+      className="grid grid-cols-6 items-center gap-1.5 rounded-md border p-1"
     >
       <BlockEditor schema={schema} data={props} />
       <div className="col-span-1">
@@ -86,6 +86,6 @@ export const BlockLink = (props: LinkProps) => {
           </p>
         )}
       </div>
-    </div>
+    </BlockContent>
   )
 }

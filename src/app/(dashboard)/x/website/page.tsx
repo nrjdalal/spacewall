@@ -29,53 +29,13 @@ import {
   arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
-  useSortable,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable"
-import { CSS } from "@dnd-kit/utilities"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import {
-  Crown,
-  ExternalLink,
-  GripHorizontal,
-  GripVertical,
-  LinkIcon,
-  Loader2,
-  Pencil,
-} from "lucide-react"
+import { Crown, ExternalLink, LinkIcon, Loader2, Pencil } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
 import { z } from "zod"
-
-function SortableItem({
-  id,
-  children,
-}: {
-  id: string
-  children: React.ReactNode
-}) {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id })
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  }
-
-  return (
-    <div ref={setNodeRef} style={style} className="relative">
-      <div
-        {...listeners}
-        {...attributes}
-        className="text-muted-foreground absolute -top-3 left-1/2 z-5 flex min-h-8 min-w-12 -translate-x-1/2 transform cursor-grab justify-center sm:top-1/2 sm:bottom-auto sm:-left-3 sm:min-h-12 sm:min-w-8 sm:-translate-y-1/2 sm:translate-x-0 sm:flex-col"
-      >
-        <GripHorizontal className="sm:hidden" />
-        <GripVertical className="hidden sm:block" />
-      </div>
-      {children}
-    </div>
-  )
-}
 
 export default function Page() {
   const [, copy] = useCopyToClipboard()
@@ -296,13 +256,16 @@ export default function Page() {
               >
                 {data.blocks?.map(
                   (block: { id: string; type: string; active: boolean }) => {
-                    return (
-                      <SortableItem id={block.id} key={block.id}>
-                        {block.type === "link" && (
-                          <BlockLink {...block} websiteId={data.id} />
-                        )}
-                      </SortableItem>
-                    )
+                    if (block.type === "link") {
+                      return (
+                        <BlockLink
+                          key={block.id}
+                          {...block}
+                          websiteId={data.id}
+                        />
+                      )
+                    }
+                    return null
                   },
                 )}
               </SortableContext>
