@@ -2,7 +2,6 @@
 
 /// <reference path="./.sst/platform/config.d.ts" />
 
-// import pulumi from "@pulumi/pulumi"
 import z from "zod"
 
 export default $config({
@@ -23,7 +22,7 @@ export default $config({
     const fileBucket = new sst.aws.Bucket(
       `spacewall-${schema.PULUMI_NODEJS_STACK}`,
       {
-        access: "cloudfront",
+        access: "public",
         cors: {
           allowHeaders: ["*"],
           allowMethods: ["DELETE", "GET", "PUT"],
@@ -33,18 +32,21 @@ export default $config({
         },
       },
     )
-    const cloudfront = new sst.aws.Router("MyRouter", {
-      routes: {
-        "/*": {
-          bucket: fileBucket,
-        },
-      },
-    })
+
+    // const cloudfront = new sst.aws.Router("MyRouter", {
+    //   routes: {
+    //     "/*": {
+    //       bucket: fileBucket,
+    //     },
+    //   },
+    // })
+
+    // https://d3cvh3z5exmn5t.cloudfront.net/website/header/image/JRo4GAQnSilWzqvZ
 
     return {
       fileBucketArn: fileBucket.arn,
       fileBucketName: fileBucket.name,
-      cloudfrontUrl: cloudfront.url,
+      // cloudfrontUrl: cloudfront.url,
     }
   },
 })
