@@ -45,7 +45,6 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
-import { toast } from "sonner"
 import { z } from "zod"
 
 function SortableItem({
@@ -230,7 +229,11 @@ export default function Page() {
               {data.cover ? (
                 <img
                   className="absolute top-0 h-full w-full object-cover object-center"
-                  src={process.env.NEXT_PUBLIC_CDN_URL + "/" + data.cover}
+                  src={
+                    data.cover.startsWith("data:")
+                      ? data.cover
+                      : process.env.NEXT_PUBLIC_CDN_URL + "/" + data.cover
+                  }
                   alt={data.title}
                 />
               ) : (
@@ -259,7 +262,11 @@ export default function Page() {
               {data.image ? (
                 <img
                   className="h-full w-full rounded-full object-cover object-center"
-                  src={process.env.NEXT_PUBLIC_CDN_URL + "/" + data.image}
+                  src={
+                    data.image.startsWith("data:")
+                      ? data.image
+                      : process.env.NEXT_PUBLIC_CDN_URL + "/" + data.image
+                  }
                   alt={data.title}
                 />
               ) : (
@@ -404,37 +411,77 @@ const DialogEditHeader = (data: {
       label: "Description",
       default: data.description,
     }),
-  })
+  }) as z.ZodObject<z.ZodRawShape>
+
+  const fields = Object.entries(schema?.shape).map(([key, value]) => ({
+    key,
+    ...JSON.parse(value?._def.description ?? "{}"),
+  }))
+
+  const fileValues = Object.fromEntries(
+    fields
+      .filter((field) => field.type === "file")
+      .map((field) => [field.key, field.default]),
+  )
 
   const queryClient = useQueryClient()
 
   const mutuation = useMutation({
     mutationFn: async (values: z.infer<typeof schema>) => {
+      const removeFiles = Object.keys(fileValues)
+        .filter((key) => key in values && fileValues[key] !== values[key])
+        .map((key) => fileValues[key])
+      const files = Object.keys(values).filter((key) => {
+        try {
+          JSON.parse(values[key])
+          return true
+        } catch {
+          return false
+        }
+      })
+      files.forEach((key) => {
+        values[key] = JSON.parse(values[key]).key
+      })
       const res = await fetch("/api/v1/website", {
         method: "PATCH",
         body: JSON.stringify({
           websiteId: data.id,
           website: values,
+          removeFiles,
         }),
       })
       return await res.json()
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
+    onMutate: async (values: z.infer<typeof schema>) => {
+      const valuesCopy = { ...values }
+      const files = Object.keys(valuesCopy).filter((key) => {
+        try {
+          JSON.parse(valuesCopy[key])
+          return true
+        } catch {
+          return false
+        }
+      })
+      files.forEach((key) => {
+        valuesCopy[key] = JSON.parse(valuesCopy[key]).value
+      })
+      await queryClient.cancelQueries({
         queryKey: ["website"],
       })
+      const prev = queryClient.getQueryData(["website"])
+      queryClient.setQueryData(["website"], {
+        ...(prev || {}),
+        ...valuesCopy,
+      })
+      setOpen(false)
+      return { prev }
+    },
+    onError: (error, variables, context) => {
+      queryClient.setQueryData(["website"], context?.prev)
     },
   })
 
   const onSubmit = async (values: z.infer<typeof schema>) => {
-    values = Object.fromEntries(
-      Object.entries(values).filter(
-        ([key, value]) => value !== data[key as keyof typeof data],
-      ),
-    ) as typeof data
-
-    if (!Object.keys(values).length) return toast.info("No changes made.")
-
     await mutuation.mutateAsync(values)
     setOpen(false)
   }
@@ -455,8 +502,11 @@ const DialogEditHeader = (data: {
         <DialogHeader>
           <DialogTitle>Manage Header</DialogTitle>
         </DialogHeader>
-        {/* @ts-expect-error will fix later */}
-        <ZodHookForm schema={schema} onSubmit={onSubmit} />
+        <ZodHookForm
+          schema={schema}
+          onSubmit={onSubmit}
+          invalidate={["website"]}
+        />
       </DialogContent>
     </Dialog>
   )

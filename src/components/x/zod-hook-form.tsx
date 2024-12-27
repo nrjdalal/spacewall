@@ -25,6 +25,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { useFileUpload } from "@/hooks/use-image-upload"
 import { cn, createChecksum } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useQueryClient } from "@tanstack/react-query"
 import Compressor from "compressorjs"
 import { File, Loader2 } from "lucide-react"
 import { useForm } from "react-hook-form"
@@ -77,13 +78,17 @@ export const ZodHookForm = ({
   className,
   schema,
   onSubmit,
+  invalidate = [],
   disabled = false,
 }: {
   className?: string
   schema: z.ZodObject<z.ZodRawShape>
   onSubmit?: (values: z.infer<typeof schema>) => Promise<void> | void
+  invalidate?: string[]
   disabled?: boolean
 }) => {
+  const queryClient = useQueryClient()
+
   const data = [
     ...Object.entries(schema?.shape).map(([key, value]) => ({
       name: key,
@@ -167,6 +172,9 @@ export const ZodHookForm = ({
         const actions = async () => {
           await onSubmit(values)
           await Promise.all(uploadPromises)
+          await queryClient.invalidateQueries({
+            queryKey: invalidate,
+          })
         }
 
         toast.promise(actions(), {
