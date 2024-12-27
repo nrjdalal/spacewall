@@ -100,9 +100,11 @@ export default function WebsiteView({
                       <img
                         className="aspect-square h-full object-cover object-center"
                         src={
-                          process.env.NEXT_PUBLIC_CDN_URL +
-                          "/" +
-                          block.meta?.image
+                          block.meta?.image.startsWith("data:")
+                            ? block.meta?.image
+                            : process.env.NEXT_PUBLIC_CDN_URL +
+                              "/" +
+                              block.meta?.image
                         }
                         alt={block.meta?.title}
                       />

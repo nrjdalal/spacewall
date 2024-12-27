@@ -4,7 +4,7 @@ import { Camera } from "lucide-react"
 import { z } from "zod"
 import { BlockEditor } from "../block-editor"
 
-interface BlockLinkProps {
+interface LinkProps {
   websiteId: string
   id: string
   type: string
@@ -17,7 +17,7 @@ interface BlockLinkProps {
   }
 }
 
-export const BlockLink = (props: BlockLinkProps) => {
+export const BlockLink = (props: LinkProps) => {
   const schema = z.object({
     title: z
       .string()
@@ -62,7 +62,11 @@ export const BlockLink = (props: BlockLinkProps) => {
           <div className="bg-secondary aspect-square h-full max-h-14 overflow-hidden rounded-md border">
             <img
               className="aspect-square h-full object-cover object-center"
-              src={process.env.NEXT_PUBLIC_CDN_URL + "/" + props.meta.image}
+              src={
+                props.meta.image.startsWith("data:")
+                  ? props.meta.image
+                  : process.env.NEXT_PUBLIC_CDN_URL + "/" + props.meta.image
+              }
               alt={props.meta.title}
             />
           </div>

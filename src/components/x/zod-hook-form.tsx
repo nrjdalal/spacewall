@@ -28,6 +28,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import Compressor from "compressorjs"
 import { File, Loader2 } from "lucide-react"
 import { useForm } from "react-hook-form"
+import { toast } from "sonner"
 import { z } from "zod"
 
 const formFieldSchema = z
@@ -154,7 +155,7 @@ export const ZodHookForm = ({
 
         if (!uploadResponse.ok) throw new Error("File upload failed")
 
-        return values[key] // Return the upload key or URL
+        return values[key]
       } catch (err) {
         console.error(`Failed to upload file for field "${key}":`, err)
         throw err
@@ -162,18 +163,19 @@ export const ZodHookForm = ({
     })
 
     try {
-      const uploadedKeys = await Promise.all(uploadPromises)
-      const updatedValues = {
-        ...values,
-        ...Object.fromEntries(
-          Object.keys(fileState).map((key, i) => [key, uploadedKeys[i]]),
-        ),
-      }
-
       if (onSubmit) {
-        await onSubmit(updatedValues)
+        const actions = async () => {
+          await onSubmit(values)
+          await Promise.all(uploadPromises)
+        }
+
+        toast.promise(actions(), {
+          loading: "Saving data! Don't close the tab!",
+          success: "Saved successfully!",
+          error: "Failed to save",
+        })
       } else {
-        console.log(updatedValues)
+        console.log(values)
       }
 
       form.reset()
@@ -276,11 +278,11 @@ export const ZodHookForm = ({
                             (formField.default ? (
                               <img
                                 src={
-                                  formField.prefix
-                                    ? !formField.default.startsWith("http")
-                                      ? formField.prefix + formField.default
-                                      : formField.default
-                                    : formField.default
+                                  formField.default.startsWith("data:")
+                                    ? formField.default
+                                    : process.env.NEXT_PUBLIC_CDN_URL +
+                                      "/" +
+                                      formField.default
                                 }
                                 alt="Preview"
                                 className="aspect-square h-full w-full object-contain object-center"
