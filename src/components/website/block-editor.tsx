@@ -7,8 +7,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { ZodHookForm } from "@/components/x/zod-hook-form"
+import { cn } from "@/lib/utils"
+import { useSortable } from "@dnd-kit/sortable"
+import { CSS } from "@dnd-kit/utilities"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { Pencil } from "lucide-react"
+import { GripHorizontal, GripVertical, Pencil } from "lucide-react"
 import { useState } from "react"
 import { z } from "zod"
 
@@ -20,6 +23,45 @@ type EditorProps = {
     type: string
     active: boolean
   }
+}
+
+export const BlockContent = ({
+  id,
+  className,
+  children,
+  ...props
+}: {
+  id: string
+  className: string
+  children: React.ReactNode
+  [key: string]: unknown
+}) => {
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  }
+
+  return (
+    <div
+      ref={setNodeRef}
+      className={cn("relative", className)}
+      style={style}
+      {...props}
+    >
+      <div
+        {...listeners}
+        {...attributes}
+        className="text-muted-foreground absolute -top-3 left-1/2 z-5 flex min-h-8 min-w-12 -translate-x-1/2 transform cursor-grab justify-center sm:top-1/2 sm:bottom-auto sm:-left-3 sm:min-h-12 sm:min-w-8 sm:-translate-y-1/2 sm:translate-x-0 sm:flex-col"
+      >
+        <GripHorizontal className="sm:hidden" />
+        <GripVertical className="hidden sm:block" />
+      </div>
+      {children}
+    </div>
+  )
 }
 
 export const BlockEditor = ({ schema, data }: EditorProps) => {
