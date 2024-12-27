@@ -27,21 +27,28 @@ export const BlockEditor = ({ schema, data }: EditorProps) => {
     key,
     ...JSON.parse(value?._def.description ?? "{}"),
   }))
-
   const fileValues = Object.fromEntries(
     fields
       .filter((field) => field.type === "file")
       .map((field) => [field.key, field.default]),
   )
-
   const queryClient = useQueryClient()
-
   const mutuation = useMutation({
     mutationFn: async (values: z.infer<typeof schema>) => {
       const removeFiles = Object.keys(fileValues)
         .filter((key) => key in values && fileValues[key] !== values[key])
         .map((key) => fileValues[key])
-
+      const files = Object.keys(values).filter((key) => {
+        try {
+          JSON.parse(values[key])
+          return true
+        } catch {
+          return false
+        }
+      })
+      files.forEach((key) => {
+        values[key] = JSON.parse(values[key]).key
+      })
       const res = await fetch("/api/v1/website", {
         method: "PATCH",
         body: JSON.stringify({
@@ -55,11 +62,56 @@ export const BlockEditor = ({ schema, data }: EditorProps) => {
           removeFiles,
         }),
       })
-
       return await res.json()
     },
-    onSuccess: (ctx) => {
-      queryClient.setQueryData(["website"], ctx.data)
+    onMutate: async (values: z.infer<typeof schema>) => {
+      const valuesCopy = { ...values }
+      const files = Object.keys(valuesCopy).filter((key) => {
+        try {
+          JSON.parse(valuesCopy[key])
+          return true
+        } catch {
+          return false
+        }
+      })
+      files.forEach((key) => {
+        valuesCopy[key] = JSON.parse(valuesCopy[key]).value
+      })
+      await queryClient.cancelQueries({
+        queryKey: ["website"],
+      })
+      const prev = queryClient.getQueryData(["website"])
+      queryClient.setQueryData(
+        ["website"],
+        (prev: {
+          blocks: {
+            id: string
+            type: string
+            active: boolean
+            meta: Record<string, string>
+          }[]
+        }) => {
+          return {
+            ...prev,
+            blocks: prev.blocks.map((block) => {
+              if (block.id === data.id) {
+                return {
+                  id: data.id,
+                  type: data.type,
+                  active: data.active,
+                  meta: valuesCopy,
+                }
+              }
+              return block
+            }),
+          }
+        },
+      )
+      setOpen(false)
+      return { prev }
+    },
+    onError: (error, variables, context) => {
+      queryClient.setQueryData(["website"], context?.prev)
     },
   })
 

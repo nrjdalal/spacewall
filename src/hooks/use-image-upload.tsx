@@ -32,7 +32,7 @@ export function useFileUpload() {
         generateId({
           length: 16,
         })
-      setValue(key, uploadKey)
+
       const files = event.target.files
       if (!(files instanceof FileList) || !files.length) return
 
@@ -57,6 +57,10 @@ export function useFileUpload() {
                 preview: reader.result as string,
               },
             }))
+            setValue(
+              key,
+              JSON.stringify({ key: uploadKey, value: reader.result }),
+            )
           }
         }
         reader.readAsDataURL(file)
@@ -69,6 +73,7 @@ export function useFileUpload() {
             preview: true,
           },
         }))
+        setValue(key, JSON.stringify({ key: uploadKey, value: true }))
       }
     },
     [],

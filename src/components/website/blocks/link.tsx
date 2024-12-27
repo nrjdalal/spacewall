@@ -62,7 +62,11 @@ export const BlockLink = (props: LinkProps) => {
           <div className="bg-secondary aspect-square h-full max-h-14 overflow-hidden rounded-md border">
             <img
               className="aspect-square h-full object-cover object-center"
-              src={process.env.NEXT_PUBLIC_CDN_URL + "/" + props.meta.image}
+              src={
+                props.meta.image.startsWith("data:")
+                  ? props.meta.image
+                  : process.env.NEXT_PUBLIC_CDN_URL + "/" + props.meta.image
+              }
               alt={props.meta.title}
             />
           </div>
