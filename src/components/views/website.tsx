@@ -46,7 +46,11 @@ export default function WebsiteView({
           {data.cover && (
             <img
               className="absolute top-0 h-full w-full border-b object-cover object-center sm:border-b-0"
-              src={process.env.NEXT_PUBLIC_CDN_URL + "/" + data.cover}
+              src={
+                data.cover.startsWith("data:")
+                  ? data.cover
+                  : process.env.NEXT_PUBLIC_CDN_URL + "/" + data.cover
+              }
               alt={data.title}
             />
           )}
@@ -61,7 +65,7 @@ export default function WebsiteView({
             <img
               className="h-full w-full rounded-full object-cover object-center"
               src={
-                data.image.startsWith("http")
+                data.image.startsWith("data:")
                   ? data.image
                   : process.env.NEXT_PUBLIC_CDN_URL + "/" + data.image
               }

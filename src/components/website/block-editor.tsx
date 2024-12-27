@@ -27,12 +27,15 @@ export const BlockEditor = ({ schema, data }: EditorProps) => {
     key,
     ...JSON.parse(value?._def.description ?? "{}"),
   }))
+
   const fileValues = Object.fromEntries(
     fields
       .filter((field) => field.type === "file")
       .map((field) => [field.key, field.default]),
   )
+
   const queryClient = useQueryClient()
+
   const mutuation = useMutation({
     mutationFn: async (values: z.infer<typeof schema>) => {
       const removeFiles = Object.keys(fileValues)
