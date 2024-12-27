@@ -52,7 +52,7 @@ export const putObject = async ({
 
 export const deleteObject = async (Key: string) => {
   if (!Key) {
-    throw new Error("Key is required to delete an object.")
+    return console.error("Key is required!")
   }
 
   try {
@@ -68,6 +68,5 @@ export const deleteObject = async (Key: string) => {
     }
   } catch (error) {
     console.error("Error deleting object:", error)
-    throw new Error("Failed to delete object.")
   }
 }

@@ -105,9 +105,7 @@ export async function PATCH(request: Request) {
 
       for (const field of bucketFiles) {
         if (website?.[field] && existingData[0]?.[field] !== website[field]) {
-          if (existingData[0]?.[field]) {
-            deleteObject(existingData[0][field])
-          }
+          deleteObject(existingData[0][field])
         }
       }
     }
