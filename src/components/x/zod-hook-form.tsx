@@ -178,9 +178,9 @@ export const ZodHookForm = ({
         }
 
         toast.promise(actions(), {
-          loading: "Saving data! Don't close the tab!",
-          success: "Saved successfully!",
-          error: "Failed to save",
+          loading: "Updating block. Don't close the tab!",
+          success: "Block updated.",
+          error: "Updation failed!",
         })
       } else {
         console.log(values)
