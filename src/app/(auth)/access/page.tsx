@@ -40,7 +40,7 @@ export default function SignIn() {
       }
     } catch (error) {
       if (type === "email") {
-        toast.error("POSTMASTER: on vacation, please use OAUTH.")
+        toast.info("POSTMASTER: on vacation, please use OAUTH.")
         return setProvider(null)
       }
 
