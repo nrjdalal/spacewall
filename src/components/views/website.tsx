@@ -102,7 +102,7 @@ export default function WebsiteView({
                   {block.meta?.image ? (
                     <div className="bg-secondary aspect-square h-full max-h-14 overflow-hidden rounded-md border">
                       <img
-                        className="aspect-square h-full object-cover object-center"
+                        className="aspect-square w-full object-cover object-center"
                         src={
                           block.meta?.image.startsWith("data:")
                             ? block.meta?.image
