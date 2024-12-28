@@ -206,6 +206,11 @@ export const BlockEditor = ({ schema, data }: EditorProps) => {
           schema={schema}
           onSubmit={onSubmit}
           invalidate={["website"]}
+          message={{
+            loading: "Updating block. Don't close the tab!",
+            success: "Block updated.",
+            error: "Updation failed!",
+          }}
         />
         <Button
           variant="destructive"

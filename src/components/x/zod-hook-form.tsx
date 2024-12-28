@@ -80,12 +80,18 @@ export const ZodHookForm = ({
   onSubmit,
   invalidate = [],
   disabled = false,
+  message,
 }: {
   className?: string
   schema: z.ZodObject<z.ZodRawShape>
   onSubmit?: (values: z.infer<typeof schema>) => Promise<void> | void
   invalidate?: string[]
   disabled?: boolean
+  message?: {
+    loading: string
+    success: string
+    error: string
+  }
 }) => {
   const queryClient = useQueryClient()
 
@@ -177,11 +183,15 @@ export const ZodHookForm = ({
           })
         }
 
-        toast.promise(actions(), {
-          loading: "Updating block. Don't close the tab!",
-          success: "Block updated.",
-          error: "Updation failed!",
-        })
+        if (message) {
+          return toast.promise(actions(), {
+            loading: message.loading,
+            success: message.success,
+            error: message.error,
+          })
+        }
+
+        return actions()
       } else {
         console.log(values)
       }
