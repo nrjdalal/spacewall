@@ -13,6 +13,7 @@ import { CSS } from "@dnd-kit/utilities"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { GripHorizontal, GripVertical, Pencil } from "lucide-react"
 import { useState } from "react"
+import { toast } from "sonner"
 import { z } from "zod"
 
 type EditorProps = {
@@ -209,8 +210,12 @@ export const BlockEditor = ({ schema, data }: EditorProps) => {
         <Button
           variant="destructive"
           onClick={async () => {
-            await deleteMutation.mutateAsync()
             setOpen(false)
+            toast.promise(deleteMutation.mutateAsync(), {
+              loading: "Deleting block. Don't close the tab!",
+              success: "Block deleted.",
+              error: "Deletion failed!",
+            })
           }}
         >
           Delete
