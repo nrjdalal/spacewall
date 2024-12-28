@@ -86,9 +86,9 @@ export async function PATCH(request: Request) {
   const { websiteId, website, block, removeFiles } = await request.json()
 
   // ~ TODO: ADD A BETTER WAY TO REMOVE FILES
-  removeFiles?.forEach((key: string) => {
+  await removeFiles?.forEach(async (key: string) => {
     console.log("removing", key)
-    deleteObject(key)
+    await deleteObject(key)
   })
 
   if (website) {
