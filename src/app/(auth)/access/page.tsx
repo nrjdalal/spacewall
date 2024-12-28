@@ -39,6 +39,11 @@ export default function SignIn() {
         return setProvider(null)
       }
     } catch (error) {
+      if (type === "email") {
+        toast.error("POSTMASTER: on vacation, please use OAUTH.")
+        return setProvider(null)
+      }
+
       toast.error((error as Error).message)
       return setProvider(null)
     }
