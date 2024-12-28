@@ -9,7 +9,7 @@ interface Blocks {
   active: boolean
   type: string
   meta?: {
-    url?: string
+    href?: string
     title?: string
     description?: string
     image?: string
@@ -94,8 +94,8 @@ export default function WebsiteView({
             return (
               <Link
                 key={block.id}
-                href={block.meta?.url || "/x/website"}
-                target={block.meta?.url ? "_blank" : "_self"}
+                href={block.meta?.href || "/x/website"}
+                target={block.meta?.href ? "_blank" : "_self"}
                 className="relative grid grid-cols-6 items-center gap-1.5 rounded-md border p-1"
               >
                 <div className="col-span-1">
