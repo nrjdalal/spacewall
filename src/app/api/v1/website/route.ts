@@ -85,12 +85,6 @@ export async function PATCH(request: Request) {
 
   const { websiteId, website, block, removeFiles } = await request.json()
 
-  // ~ TODO: ADD A BETTER WAY TO REMOVE FILES
-  await removeFiles?.forEach(async (key: string) => {
-    console.log("removing", key)
-    await deleteObject(key)
-  })
-
   if (website) {
     const bucketFiles = ["image", "cover"] as const
 
@@ -111,10 +105,16 @@ export async function PATCH(request: Request) {
 
       for (const field of bucketFiles) {
         if (website?.[field] && existingData[0]?.[field] !== website[field]) {
-          deleteObject(existingData[0][field])
+          await deleteObject(existingData[0][field])
         }
       }
     }
+
+    // ~ TODO: ADD A BETTER WAY TO REMOVE FILES
+    await removeFiles?.forEach(async (key: string) => {
+      console.log("removing", key)
+      await deleteObject(key)
+    })
 
     const res = await db
       .update(websites)

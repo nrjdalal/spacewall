@@ -464,6 +464,11 @@ const DialogEditHeader = (data: {
           schema={schema}
           onSubmit={onSubmit}
           invalidate={["website"]}
+          message={{
+            loading: "Updating header. Don't close the tab!",
+            success: "Header updated.",
+            error: "Updation failed!",
+          }}
         />
       </DialogContent>
     </Dialog>
