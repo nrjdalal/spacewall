@@ -48,7 +48,7 @@ export const BlockContent = ({
   return (
     <div
       ref={setNodeRef}
-      className={cn("relative", className)}
+      className={cn("relative touch-none", className)}
       style={style}
       {...props}
     >
