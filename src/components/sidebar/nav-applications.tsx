@@ -7,6 +7,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar"
 import { useQueryClient } from "@tanstack/react-query"
 import { Home, Sparkle, type LucideIcon } from "lucide-react"
@@ -39,6 +40,7 @@ const applications = [
 }[]
 
 export function NavApplications() {
+  const { setOpenMobile } = useSidebar()
   const queryClient = useQueryClient()
   const pathname = usePathname()
 
@@ -76,7 +78,12 @@ export function NavApplications() {
               tooltip="Dashboard"
               asChild
             >
-              <Link href={"/x"}>
+              <Link
+                href={"/x"}
+                onClick={() => {
+                  setOpenMobile(false)
+                }}
+              >
                 <Home />
                 <span>Dashboard</span>
               </Link>
@@ -96,7 +103,12 @@ export function NavApplications() {
                   pathname.split("/")[2] === application.url.split("/")[2]
                 }
               >
-                <Link href={application.url}>
+                <Link
+                  href={application.url}
+                  onClick={() => {
+                    setOpenMobile(false)
+                  }}
+                >
                   {application.icon && <application.icon />}
                   <span>{application.title}</span>
                 </Link>
