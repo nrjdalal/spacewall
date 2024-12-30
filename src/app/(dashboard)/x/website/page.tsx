@@ -32,7 +32,14 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { Crown, ExternalLink, LinkIcon, Loader2, Pencil } from "lucide-react"
+import {
+  Crown,
+  ExternalLink,
+  LinkIcon,
+  Loader2,
+  Pencil,
+  Share2,
+} from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
 import { z } from "zod"
@@ -173,7 +180,8 @@ export default function Page() {
                   process.env.NEXT_PUBLIC_SITE_URL + "/" + data.slug,
                 )}
               >
-                Share
+                <Share2 className="sm:hidden" />
+                <span className="hidden sm:block">Share</span>
               </Button>
             </div>
           </section>
