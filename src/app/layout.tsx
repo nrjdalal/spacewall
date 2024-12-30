@@ -1,4 +1,4 @@
-import "./globals.css"
+import "./new-globals.css"
 import Providers from "@/app/providers"
 import { fontMono, fontSans } from "@/assets/fonts"
 import { cn } from "@/lib/utils"
