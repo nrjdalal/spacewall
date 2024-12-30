@@ -54,7 +54,7 @@ export const BlockLink = (props: Props) => {
   return (
     <BlockContent
       id={props.id}
-      className="grid grid-cols-6 items-center gap-1.5 rounded-md border p-1"
+      className="bg-sidebar grid grid-cols-6 items-center gap-1.5 rounded-md border p-1"
     >
       <BlockEditor schema={schema} data={props} />
       <div className="col-span-1">

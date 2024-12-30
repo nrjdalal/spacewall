@@ -150,7 +150,7 @@ export default function Page() {
         <Content className="space-y-5">
           {/* SHARE WEBSITE */}
           <section className="flex justify-between">
-            <div className="flex h-9 items-center gap-2 rounded-md border pr-2 pl-3 text-sm">
+            <div className="bg-sidebar flex h-9 items-center gap-2 rounded-md border pr-2 pl-3 text-sm">
               <p>
                 <span className="text-muted-foreground">
                   {process.env.NEXT_PUBLIC_SITE_URL?.split("//")[1]}/
@@ -162,12 +162,12 @@ export default function Page() {
             </div>
             <div className="flex gap-2">
               <Link href={"/" + data.slug} target="_blank">
-                <Button variant="outline">
+                <Button className="bg-sidebar" variant="outline">
                   <ExternalLink />
                 </Button>
               </Link>
               <Button
-                className="px-6"
+                className="bg-sidebar px-6"
                 variant="outline"
                 onClick={handleCopy(
                   process.env.NEXT_PUBLIC_SITE_URL + "/" + data.slug,
@@ -179,7 +179,7 @@ export default function Page() {
           </section>
 
           {/*  HEADER BLOCK */}
-          <section className="relative grid grid-cols-1 place-items-center rounded-md border p-3">
+          <section className="bg-sidebar relative grid grid-cols-1 place-items-center rounded-md border p-3">
             <div className="bg-secondary relative h-36 w-full overflow-hidden rounded-md border">
               {data.cover ? (
                 <img

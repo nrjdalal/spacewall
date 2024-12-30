@@ -96,7 +96,7 @@ export default function WebsiteView({
                 key={block.id}
                 href={block.meta?.href || "/x/website"}
                 target={block.meta?.href ? "_blank" : "_self"}
-                className="relative grid grid-cols-6 items-center gap-1.5 rounded-md border p-1"
+                className="bg-sidebar relative grid grid-cols-6 items-center gap-1.5 rounded-md border p-1"
               >
                 <div className="col-span-1">
                   {block.meta?.image ? (
