@@ -128,8 +128,8 @@
     --radius: 0.5rem;
     --sidebar-background: var(--color-light-0);
     --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-primary: var(--color-light-9);
+    --sidebar-primary-foreground: var(--color-light-0);
     --sidebar-accent: var(--color-light-2);
     --sidebar-accent-foreground: var(--color-light-9);
     --sidebar-border: 220 13% 91%;
@@ -162,8 +162,8 @@
     --chart-5: 340 75% 55%;
     --sidebar-background: var(--color-dark-1);
     --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-primary: var(--color-dark-9);
+    --sidebar-primary-foreground: var(--color-dark-0);
     --sidebar-accent: var(--color-dark-2);
     --sidebar-accent-foreground: var(--color-dark-9);
     --sidebar-border: 240 3.7% 15.9%;
