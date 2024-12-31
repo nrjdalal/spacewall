@@ -33,19 +33,28 @@ export default function WebsiteView({
     <main
       className={cn(
         "bg-background relative mx-auto min-h-dvh max-w-screen-sm pb-24 sm:pt-3",
-        preview && "min-h-171",
+        preview && "min-h-171 sm:pt-0",
       )}
     >
-      <section className="relative grid grid-cols-1 place-items-center sm:px-3">
+      <section
+        className={cn(
+          "relative grid grid-cols-1 place-items-center sm:px-3",
+          preview && "sm:px-0",
+        )}
+      >
         <div
           className={cn(
             "relative h-36 w-full overflow-hidden",
             data.cover && "sm:rounded-md sm:border",
+            data.cover && preview && "sm:rounded-none sm:border-none",
           )}
         >
           {data.cover && (
             <img
-              className="absolute top-0 h-full w-full border-b object-cover object-center sm:border-b-0"
+              className={cn(
+                "absolute top-0 h-full w-full border-b object-cover object-center sm:border-b-0",
+                preview && "sm:border-b",
+              )}
               src={
                 data.cover.startsWith("data:")
                   ? data.cover
