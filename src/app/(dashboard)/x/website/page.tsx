@@ -167,14 +167,17 @@ export default function Page() {
 
               <DialogEditSlug {...data} />
             </div>
-            <div className="flex gap-2">
+            <div className="ml-auto flex sm:gap-2">
               <Link href={"/" + data.slug} target="_blank">
-                <Button className="bg-sidebar" variant="outline">
+                <Button
+                  className="bg-sidebar rounded-r-none sm:rounded-md"
+                  variant="outline"
+                >
                   <ExternalLink />
                 </Button>
               </Link>
               <Button
-                className="bg-sidebar px-6"
+                className="bg-sidebar rounded-l-none sm:rounded-md"
                 variant="outline"
                 onClick={handleCopy(
                   process.env.NEXT_PUBLIC_SITE_URL + "/" + data.slug,
