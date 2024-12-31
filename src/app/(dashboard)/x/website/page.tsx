@@ -170,7 +170,7 @@ export default function Page() {
             <div className="ml-auto flex sm:gap-2">
               <Link href={"/" + data.slug} target="_blank">
                 <Button
-                  className="bg-sidebar rounded-r-none sm:rounded-md"
+                  className="bg-sidebar rounded-r-none border-r-0 sm:rounded-md sm:border-r"
                   variant="outline"
                 >
                   <ExternalLink />
