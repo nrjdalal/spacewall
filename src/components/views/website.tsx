@@ -1,19 +1,15 @@
 /* eslint-disable @next/next/no-img-element */
 
+import { ViewLink } from "@/components/website/blocks/link"
 import { cn } from "@/lib/utils"
-import { Crown, LinkIcon } from "lucide-react"
+import { Crown } from "lucide-react"
 import Link from "next/link"
 
 interface Blocks {
   id: string
   active: boolean
   type: string
-  meta?: {
-    href?: string
-    title?: string
-    description?: string
-    image?: string
-  }
+  meta?: unknown
 }
 
 export default function WebsiteView({
@@ -98,47 +94,21 @@ export default function WebsiteView({
       </section>
 
       <div className="mt-5 space-y-3 px-3">
-        {data.blocks?.map((block: Blocks) => {
+        {data.blocks?.map((block) => {
           if (block.type === "link") {
             return (
-              <Link
+              <ViewLink
                 key={block.id}
-                href={block.meta?.href || "/x/website"}
-                target={block.meta?.href ? "_blank" : "_self"}
-                className="bg-sidebar relative grid grid-cols-6 items-center gap-1.5 rounded-md border p-1"
-              >
-                <div className="col-span-1">
-                  {block.meta?.image ? (
-                    <div className="bg-secondary aspect-square h-full max-h-14 overflow-hidden rounded-md border">
-                      <img
-                        className="aspect-square w-full object-cover object-center"
-                        src={
-                          block.meta?.image.startsWith("data:")
-                            ? block.meta?.image
-                            : process.env.NEXT_PUBLIC_CDN_URL +
-                              "/" +
-                              block.meta?.image
-                        }
-                        alt={block.meta?.title}
-                      />
-                    </div>
-                  ) : (
-                    <div className="text-muted-foreground/25 grid aspect-square h-full max-h-14 place-content-center">
-                      <LinkIcon className="size-6 stroke-1" />
-                    </div>
-                  )}
-                </div>
-                <div className="col-span-4 w-full text-center">
-                  <h1 className="line-clamp-2 text-sm font-medium break-words">
-                    {block.meta?.title || "Link Block"}
-                  </h1>
-                  {block.meta?.description && (
-                    <p className="text-muted-foreground text-xs">
-                      {block.meta?.description}
-                    </p>
-                  )}
-                </div>
-              </Link>
+                {...block}
+                meta={
+                  block.meta as {
+                    title?: string
+                    href?: string
+                    image?: string
+                    description?: string
+                  }
+                }
+              />
             )
           }
         })}
