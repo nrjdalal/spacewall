@@ -2,7 +2,6 @@
 
 "use client"
 
-import { Icons } from "@/assets/icons"
 import XHeader from "@/components/common/x-header"
 import { Button } from "@/components/ui/button"
 import {
@@ -244,11 +243,6 @@ export default function Page() {
                 {data.description}
               </p>
             )}
-          </section>
-
-          {/* SOCIAL BLOCK */}
-          <section className="flex items-center justify-center gap-2">
-            <Icons.Google />
           </section>
 
           {/* ADD BLOCK */}
