@@ -9,6 +9,7 @@ import {
   SiInstagram,
   SiNpm,
   SiX,
+  SiYoutube,
 } from "@icons-pack/react-simple-icons"
 import { Camera, LinkIcon } from "lucide-react"
 import Link from "next/link"
@@ -120,6 +121,7 @@ export const ViewLink = (props: ViewLink) => {
     "instagram.com": SiInstagram,
     "npmjs.com": SiNpm,
     "x.com": SiX,
+    "youtube.com": SiYoutube,
   }
 
   return (
