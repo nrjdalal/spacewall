@@ -1,4 +1,4 @@
-## competitors
+## competitor's profile examples
 
 linktr.ee
 
@@ -10,10 +10,6 @@ linktr.ee
 komi.io
 
 - 5. https://therock.komi.io
-
-## production cdn
-
-- https://d3qd43g60x8bt1.cloudfront.net
 
 ## shadcn UI overrides
 
