@@ -107,7 +107,7 @@ export default function SignIn() {
             {provider === "github" ? (
               <Loader2 className="animate-spin" />
             ) : (
-              <Icons.Github className="text-foreground/50" />
+              <Icons.Github />
             )}
             <span className="ml-1">Continue with Github</span>
           </Button>
@@ -118,7 +118,7 @@ export default function SignIn() {
             variant="outline"
             onClick={() => handleSignIn("google")}
           >
-            <Icons.Google className="text-foreground/50" />
+            <Icons.Google />
             <span className="ml-1">Continue with Google</span>
           </Button>
         </div>
