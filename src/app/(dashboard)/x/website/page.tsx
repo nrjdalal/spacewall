@@ -2,6 +2,7 @@
 
 "use client"
 
+import { Icons } from "@/assets/icons"
 import XHeader from "@/components/common/x-header"
 import { Button } from "@/components/ui/button"
 import {
@@ -13,6 +14,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import WebsiteView from "@/components/views/website"
+import { availableBlocks } from "@/components/website"
 import { BlockLink } from "@/components/website/blocks/link"
 import { Content, ContentPreview, ContentRoot } from "@/components/x/content"
 import { ZodHookForm } from "@/components/x/zod-hook-form"
@@ -32,14 +34,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import {
-  Crown,
-  ExternalLink,
-  LinkIcon,
-  Loader2,
-  Pencil,
-  Share2,
-} from "lucide-react"
+import { Crown, ExternalLink, Loader2, Pencil, Share2 } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
 import { z } from "zod"
@@ -251,6 +246,11 @@ export default function Page() {
             )}
           </section>
 
+          {/* SOCIAL BLOCK */}
+          <section className="flex items-center justify-center gap-2">
+            <Icons.Google />
+          </section>
+
           {/* ADD BLOCK */}
           <DialogAddBlock {...data} />
 
@@ -297,7 +297,7 @@ const DialogEditSlug = (data: { id: string; slug: string }) => {
       label: "Slug",
       default: data.slug,
     }),
-  })
+  }) as z.ZodObject<z.ZodRawShape>
 
   const queryClient = useQueryClient()
 
@@ -340,7 +340,6 @@ const DialogEditSlug = (data: { id: string; slug: string }) => {
         <DialogHeader>
           <DialogTitle>Manage Slug</DialogTitle>
         </DialogHeader>
-        {/* @ts-expect-error will fix later */}
         <ZodHookForm schema={schema} onSubmit={onSubmit} />
       </DialogContent>
     </Dialog>
@@ -487,14 +486,6 @@ const DialogEditHeader = (data: {
 }
 
 const DialogAddBlock = (data: { id: string }) => {
-  const availableBlocks = [
-    {
-      type: "link",
-      title: "Link",
-      icon: LinkIcon,
-    },
-  ] as const
-
   const schema = z.object({
     type: z.enum([...availableBlocks.map((block) => block.type)] as [
       string,
