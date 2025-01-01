@@ -1,14 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
 
+import { Icons } from "@/assets/icons"
 import { BlockContent, BlockEditor } from "@/components/website/block-manager"
 import {
   SiBluesky,
   SiFacebook,
-  SiGithub,
   SiGmail,
   SiInstagram,
   SiNpm,
-  SiX,
   SiYoutube,
 } from "@icons-pack/react-simple-icons"
 import { Camera, LinkIcon } from "lucide-react"
@@ -116,12 +115,13 @@ export const ViewLink = (props: ViewLink) => {
   const Logos = {
     "bsky.app": SiBluesky,
     "facebook.com": SiFacebook,
-    "github.com": SiGithub,
+    "github.com": Icons.Github,
     "gmail.com": SiGmail,
     "instagram.com": SiInstagram,
     "npmjs.com": SiNpm,
-    "x.com": SiX,
+    "x.com": Icons.X,
     "youtube.com": SiYoutube,
+    "linkedin.com": Icons.Linkedin,
   }
 
   return (
@@ -157,7 +157,7 @@ export const ViewLink = (props: ViewLink) => {
                     (key) => props.meta?.href?.includes(key) ?? false,
                   ) as keyof typeof Logos
                 ],
-                { className: "size-8 opacity-90" },
+                { className: "size-8" },
               )
             ) : (
               <LinkIcon className="text-muted-foreground size-6 stroke-1" />
