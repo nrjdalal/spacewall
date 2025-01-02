@@ -107,10 +107,35 @@ export async function PATCH(request: Request) {
     })
   }
 
-  const res = await db
-    .update(websites)
-    .set({
-      blocks: sql`
+  if (typeof block.active === "boolean") {
+    await db
+      .update(websites)
+      .set({
+        blocks: sql`
+          (
+            SELECT jsonb_agg(
+              CASE
+                WHEN block->>'id' = ${block.id}
+                THEN jsonb_set(block, '{active}', ${JSON.stringify(block.active)}::jsonb, true)
+              END
+            )
+            FROM jsonb_array_elements(${websites.blocks}) AS block
+          )
+        `,
+      })
+      .where(
+        and(
+          eq(websites.id, websiteId),
+          eq(websites.userId, session.user?.id as string),
+        ),
+      )
+  }
+
+  if (block.meta) {
+    await db
+      .update(websites)
+      .set({
+        blocks: sql`
           (
             SELECT jsonb_agg(
               CASE
@@ -122,18 +147,18 @@ export async function PATCH(request: Request) {
             FROM jsonb_array_elements(${websites.blocks}) AS block
           )
         `,
-    })
-    .where(
-      and(
-        eq(websites.id, websiteId),
-        eq(websites.userId, session.user?.id as string),
-      ),
-    )
-    .returning()
+      })
+      .where(
+        and(
+          eq(websites.id, websiteId),
+          eq(websites.userId, session.user?.id as string),
+        ),
+      )
+  }
 
   return Response.json({
     status: 200,
-    data: res[0],
+    message: "OK",
   })
 }
 
