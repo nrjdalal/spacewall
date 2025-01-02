@@ -147,7 +147,7 @@ export const ZodHookForm = ({
         const signedUrlResponse = await fetch("/api/v1/s3/upload", {
           method: "PUT",
           body: JSON.stringify({
-            Key: values[key],
+            Key: state.uploadKey,
             ContentType: state.file.type,
             ContentLength: state.file.size,
             ChecksumSHA256: checksum,
@@ -166,7 +166,17 @@ export const ZodHookForm = ({
 
         if (!uploadResponse.ok) throw new Error("File upload failed")
 
-        return values[key]
+        const invalidate = await fetch("/api/v1/aws/cloudfront", {
+          method: "POST",
+          body: JSON.stringify({
+            paths: ["/" + state.uploadKey],
+          }),
+        })
+
+        if (!invalidate.ok)
+          throw new Error("Failed to invalidate CloudFront cache")
+
+        return console.log("File uploaded successfully.")
       } catch (err) {
         console.error(`Failed to upload file for field "${key}":`, err)
         throw err

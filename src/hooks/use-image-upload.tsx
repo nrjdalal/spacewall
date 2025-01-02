@@ -2,6 +2,7 @@ import { generateId, humanBytes } from "@/lib/utils"
 import { useCallback, useState } from "react"
 
 type FileUploadState = {
+  uploadKey: string
   file: File
   preview: string | true | null
   name: string | null
@@ -27,17 +28,14 @@ export function useFileUpload() {
       setValue: (field: string, value: string) => void
       keyprefix?: string
     }) => {
-      const uploadKey =
-        keyprefix +
-        generateId({
-          length: 16,
-        })
+      const uploadKey = keyprefix + (key || generateId())
 
       const files = event.target.files
       if (!(files instanceof FileList) || !files.length) return
 
       const file = files[0]
       const commonState = {
+        uploadKey,
         file,
         name: file.name,
         size: file.type.split("/")[1] + " • " + humanBytes(file.size),

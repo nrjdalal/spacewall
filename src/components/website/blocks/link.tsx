@@ -60,7 +60,7 @@ export const BlockLink = (props: Props) => {
       label: "Image",
       default: props.meta?.image || "",
       prefix: process.env.NEXT_PUBLIC_CDN_URL + "/",
-      keyprefix: "website/link/image/",
+      keyprefix: `website/${props.websiteId}/link/${props.id}/`,
     }),
     description: z
       .string()

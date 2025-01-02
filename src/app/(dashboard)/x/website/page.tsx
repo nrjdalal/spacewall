@@ -353,14 +353,14 @@ const DialogEditHeader = (data: {
       label: "Image",
       default: data.image,
       prefix: process.env.NEXT_PUBLIC_CDN_URL + "/",
-      keyprefix: "website/header/image/",
+      keyprefix: `website/${data.id}/header/`,
       span: "1/2",
     }),
     cover: z.string().field({
       type: "file",
       label: "Cover",
       prefix: process.env.NEXT_PUBLIC_CDN_URL + "/",
-      keyprefix: "website/header/cover/",
+      keyprefix: `website/${data.id}/header/`,
       default: data.cover,
       span: "1/2",
     }),
@@ -375,41 +375,27 @@ const DialogEditHeader = (data: {
     }),
   }) as z.ZodObject<z.ZodRawShape>
 
-  const fields = Object.entries(schema?.shape).map(([key, value]) => ({
-    key,
-    ...JSON.parse(value?._def.description ?? "{}"),
-  }))
-
-  const fileValues = Object.fromEntries(
-    fields
-      .filter((field) => field.type === "file")
-      .map((field) => [field.key, field.default]),
-  )
-
   const queryClient = useQueryClient()
 
   const mutuation = useMutation({
     mutationFn: async (values: z.infer<typeof schema>) => {
-      const removeFiles = Object.keys(fileValues)
-        .filter((key) => key in values && fileValues[key] !== values[key])
-        .map((key) => fileValues[key])
-      const files = Object.keys(values).filter((key) => {
+      const valuesCopy = { ...values }
+      const files = Object.keys(valuesCopy).filter((key) => {
         try {
-          JSON.parse(values[key])
+          JSON.parse(valuesCopy[key])
           return true
         } catch {
           return false
         }
       })
       files.forEach((key) => {
-        values[key] = JSON.parse(values[key]).key
+        valuesCopy[key] = JSON.parse(valuesCopy[key]).key
       })
       const res = await fetch("/api/v1/website", {
         method: "PATCH",
         body: JSON.stringify({
           websiteId: data.id,
-          website: values,
-          removeFiles,
+          website: valuesCopy,
         }),
       })
       return await res.json()
