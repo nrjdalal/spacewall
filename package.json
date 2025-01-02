@@ -9,8 +9,8 @@
     "db-studio": "bun --env-file=.env.development drizzle-kit studio",
     "db-push:prod": "bun --env-file=.env.production drizzle-kit push",
     "db-studio:prod": "bun --env-file=.env.production drizzle-kit studio",
-    "deploy:dev": "sst deploy --stage dev",
-    "deploy:prod": "sst deploy --stage prod",
+    "deploy:dev": "bun --env-file=.env.development sst deploy --stage dev",
+    "deploy:prod": "bun --env-file=.env.production sst deploy --stage prod",
     "prepare": "if [ -z \"$VERCEL_ENV\" ]; then simple-git-hooks; fi",
     "update": "ncu --interactive --format group"
   },
@@ -69,6 +69,7 @@
     "@pulumi/pulumi": "^3.144.1",
     "@tailwindcss/postcss": "^4.0.0-beta.8",
     "@tanstack/react-query-devtools": "^5.62.11",
+    "@types/aws-lambda": "^8.10.146",
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",

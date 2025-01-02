@@ -28,7 +28,8 @@ export function useFileUpload() {
       setValue: (field: string, value: string) => void
       keyprefix?: string
     }) => {
-      const uploadKey = keyprefix + (key || generateId())
+      const uploadKey =
+        keyprefix + ((key && key + "/v" + Date.now()) || generateId())
 
       const files = event.target.files
       if (!(files instanceof FileList) || !files.length) return

@@ -16,6 +16,9 @@ export default $config({
     const schema = z
       .object({
         PULUMI_NODEJS_STACK: z.enum(["dev", "prod"]),
+        S3_REGION: z.string(),
+        S3_ACCESS_KEY_ID: z.string(),
+        S3_SECRET_ACCESS_KEY: z.string(),
       })
       .parse(process.env)
 
@@ -33,6 +36,26 @@ export default $config({
       },
     )
 
+    const fileBucketFunction = new sst.aws.Function("MyFunction", {
+      handler: "aws/file-bucket.handler",
+      memory: "256 MB",
+      environment: {
+        S3_REGION: schema.S3_REGION,
+        S3_ACCESS_KEY_ID: schema.S3_ACCESS_KEY_ID,
+        S3_SECRET_ACCESS_KEY: schema.S3_SECRET_ACCESS_KEY,
+      },
+    })
+
+    fileBucket.notify({
+      notifications: [
+        {
+          name: "MySubscriber",
+          function: fileBucketFunction.arn,
+          events: ["s3:ObjectCreated:*"],
+        },
+      ],
+    })
+
     const cloudfront = new sst.aws.Router("MyRouter", {
       routes: {
         "/*": {
@@ -44,20 +67,11 @@ export default $config({
     return {
       fileBucketArn: fileBucket.arn,
       fileBucketName: fileBucket.name,
-      cloudfrontId: cloudfront.distributionID,
+      fileBucketFunctionArn: fileBucketFunction.arn,
       cloudfrontUrl: cloudfront.url,
     }
   },
 })
-
-// fileBucket.notify({
-//   notifications: [
-//     {
-//       name: "MySubscriber",
-//       function: "aws/file-bucket.handler",
-//     },
-//   ],
-// })
 
 // const vpc = new sst.aws.Vpc("MyVpc")
 // const database = new sst.aws.Postgres(
