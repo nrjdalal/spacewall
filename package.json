@@ -48,6 +48,7 @@
     "compressorjs": "^1.2.1",
     "date-fns": "^4.1.0",
     "drizzle-orm": "^0.38.3",
+    "hono": "^4.6.15",
     "lucide-react": "^0.469.0",
     "nanoid": "^5.0.9",
     "next": "15.1.3",
