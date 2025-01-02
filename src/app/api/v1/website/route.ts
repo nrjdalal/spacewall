@@ -1,7 +1,11 @@
 import { db, websites } from "@/db"
 import { auth } from "@/lib/auth"
-import { deleteObject } from "@/lib/s3"
 import { generateId } from "@/lib/utils"
+import {
+  DeleteObjectsCommand,
+  ListObjectsV2Command,
+  S3Client,
+} from "@aws-sdk/client-s3"
 import { and, eq, sql } from "drizzle-orm"
 
 export async function GET() {
@@ -145,29 +149,7 @@ export async function DELETE(request: Request) {
 
   const { websiteId, block } = await request.json()
 
-  const existingData = await db
-    .select({
-      block: sql<{ type: string; meta?: { image?: string } }>`(
-      SELECT block
-      FROM jsonb_array_elements(${websites.blocks}) AS block
-      WHERE block->>'id' = ${block.id}
-    )`,
-    })
-    .from(websites)
-    .where(
-      and(
-        eq(websites.id, websiteId),
-        eq(websites.userId, session.user?.id as string),
-      ),
-    )
-
-  if (existingData[0]?.block?.type === "link") {
-    if (existingData[0]?.block?.meta?.image) {
-      deleteObject(existingData[0]?.block?.meta?.image)
-    }
-  }
-
-  const res = await db
+  await db
     .update(websites)
     .set({
       blocks: sql`(
@@ -182,10 +164,41 @@ export async function DELETE(request: Request) {
         eq(websites.userId, session.user?.id as string),
       ),
     )
-    .returning()
+
+  const s3Client = new S3Client({
+    region: process.env.S3_REGION as string,
+    endpoint: process.env.S3_ENDPOINT as string,
+    credentials: {
+      accessKeyId: process.env.S3_ACCESS_KEY_ID as string,
+      secretAccessKey: process.env.S3_SECRET_ACCESS_KEY as string,
+    },
+  })
+
+  const { bucket, prefix } = {
+    bucket: process.env.S3_BUCKET_NAME as string,
+    prefix: "website/" + websiteId + "/blocks/" + block.id,
+  }
+
+  const listCommand = new ListObjectsV2Command({
+    Bucket: bucket,
+    Prefix: prefix,
+  })
+  const listResponse = await s3Client.send(listCommand)
+
+  if (listResponse.Contents) {
+    const deleteCommand = new DeleteObjectsCommand({
+      Bucket: bucket,
+      Delete: {
+        Objects: listResponse.Contents.map((content) => ({
+          Key: content.Key,
+        })),
+      },
+    })
+    await s3Client.send(deleteCommand)
+  }
 
   return Response.json({
     status: 200,
-    data: res[0],
+    message: "OK",
   })
 }
