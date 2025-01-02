@@ -49,6 +49,15 @@ export default $config({
   },
 })
 
+// fileBucket.notify({
+//   notifications: [
+//     {
+//       name: "MySubscriber",
+//       function: "aws/file-bucket.handler",
+//     },
+//   ],
+// })
+
 // const vpc = new sst.aws.Vpc("MyVpc")
 // const database = new sst.aws.Postgres(
 //   `spacewall${schema.PULUMI_NODEJS_STACK}`,

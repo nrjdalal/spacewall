@@ -68,34 +68,21 @@ export const BlockContent = ({
 }
 
 export const BlockEditor = ({ schema, data }: EditorProps) => {
-  const fields = Object.entries(schema?.shape).map(([key, value]) => ({
-    key,
-    ...JSON.parse(value?._def.description ?? "{}"),
-  }))
-
-  const fileValues = Object.fromEntries(
-    fields
-      .filter((field) => field.type === "file")
-      .map((field) => [field.key, field.default]),
-  )
-
   const queryClient = useQueryClient()
 
   const mutuation = useMutation({
     mutationFn: async (values: z.infer<typeof schema>) => {
-      const removeFiles = Object.keys(fileValues)
-        .filter((key) => key in values && fileValues[key] !== values[key])
-        .map((key) => fileValues[key])
-      const files = Object.keys(values).filter((key) => {
+      const valuesCopy = { ...values }
+      const files = Object.keys(valuesCopy).filter((key) => {
         try {
-          JSON.parse(values[key])
+          JSON.parse(valuesCopy[key])
           return true
         } catch {
           return false
         }
       })
       files.forEach((key) => {
-        values[key] = JSON.parse(values[key]).key
+        valuesCopy[key] = JSON.parse(valuesCopy[key]).key + "?t=" + Date.now()
       })
       const res = await fetch("/api/v1/website", {
         method: "PATCH",
@@ -105,9 +92,8 @@ export const BlockEditor = ({ schema, data }: EditorProps) => {
             id: data.id,
             type: data.type,
             active: data.active,
-            meta: values,
+            meta: valuesCopy,
           },
-          removeFiles,
         }),
       })
       return await res.json()

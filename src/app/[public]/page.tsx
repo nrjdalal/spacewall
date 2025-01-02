@@ -8,9 +8,9 @@ import Link from "next/link"
 export default async function Page({
   params,
 }: {
-  params: Promise<{ slug: string }>
+  params: Promise<{ public: string }>
 }) {
-  const slug = (await params).slug
+  const slug = (await params).public
 
   const website = (
     await db

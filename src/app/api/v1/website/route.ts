@@ -83,39 +83,9 @@ export async function PATCH(request: Request) {
     )
   }
 
-  const { websiteId, website, block, removeFiles } = await request.json()
+  const { websiteId, website, block } = await request.json()
 
   if (website) {
-    const bucketFiles = ["image", "cover"] as const
-
-    if (bucketFiles.some((field) => website?.[field])) {
-      const existingData = await db
-        .select(
-          Object.fromEntries(
-            bucketFiles.map((field) => [field, websites[field]]),
-          ),
-        )
-        .from(websites)
-        .where(
-          and(
-            eq(websites.id, websiteId),
-            eq(websites.userId, session.user?.id as string),
-          ),
-        )
-
-      for (const field of bucketFiles) {
-        if (website?.[field] && existingData[0]?.[field] !== website[field]) {
-          await deleteObject(existingData[0][field])
-        }
-      }
-    }
-
-    // ~ TODO: ADD A BETTER WAY TO REMOVE FILES
-    await removeFiles?.forEach(async (key: string) => {
-      console.log("removing", key)
-      await deleteObject(key)
-    })
-
     const res = await db
       .update(websites)
       .set(website)
