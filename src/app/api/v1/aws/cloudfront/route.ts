@@ -23,7 +23,7 @@ export async function POST(request: Request) {
   })
 
   const invalidationCommand = new CreateInvalidationCommand({
-    DistributionId: "EWGMXDKBEPOPA",
+    DistributionId: process.env.DISTRIBUTION_ID as string,
     InvalidationBatch: {
       CallerReference: `invalidate-${Date.now()}`,
       Paths: {
@@ -34,8 +34,6 @@ export async function POST(request: Request) {
   })
 
   const invalidationResponse = await cloudFrontClient.send(invalidationCommand)
-
-  console.log(invalidationResponse)
 
   return Response.json(invalidationResponse)
 }

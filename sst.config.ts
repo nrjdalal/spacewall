@@ -44,6 +44,7 @@ export default $config({
     return {
       fileBucketArn: fileBucket.arn,
       fileBucketName: fileBucket.name,
+      cloudfrontId: cloudfront.distributionID,
       cloudfrontUrl: cloudfront.url,
     }
   },
