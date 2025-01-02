@@ -8,6 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { Switch } from "@/components/ui/switch"
 import { ZodHookForm } from "@/components/x/zod-hook-form"
 import { cn } from "@/lib/utils"
 import { useSortable } from "@dnd-kit/sortable"
@@ -176,44 +177,75 @@ export const BlockEditor = ({ schema, data }: EditorProps) => {
     },
   })
 
+  const activeMutation = useMutation({
+    mutationFn: async () => {
+      const res = await fetch("/api/v1/website", {
+        method: "PATCH",
+        body: JSON.stringify({
+          websiteId: data.websiteId,
+          block: {
+            id: data.id,
+            type: data.type,
+            active: !data.active,
+          },
+        }),
+      })
+      return await res.json()
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["website"],
+      })
+    },
+  })
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button
-          className="text-foreground/65 absolute top-1/2 right-3 aspect-square size-6 -translate-y-1/2 transform p-0"
-          variant="outline"
-        >
-          <Pencil />
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Manage Link</DialogTitle>
-        </DialogHeader>
-        <ZodHookForm
-          schema={schema}
-          onSubmit={onSubmit}
-          invalidate={["website"]}
-          message={{
-            loading: "Updating block. Don't close the tab!",
-            success: "Block updated.",
-            error: "Updation failed!",
-          }}
-        />
-        <Button
-          variant="destructive"
-          onClick={async () => {
-            setOpen(false)
-            toast.promise(deleteMutation.mutateAsync(), {
-              loading: "Deleting block. Don't close the tab!",
-              success: "Block deleted.",
-              error: "Deletion failed!",
-            })
-          }}
-        >
-          Delete
-        </Button>
-      </DialogContent>
-    </Dialog>
+    <>
+      <Switch
+        className="absolute top-1/2 right-2 -translate-y-1/2 transform"
+        checked={data.active}
+        onCheckedChange={async () => {
+          await activeMutation.mutateAsync()
+        }}
+      />
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <Button
+            className="text-foreground/65 absolute top-1/2 right-12 aspect-square size-6 -translate-y-1/2 transform p-0"
+            variant="outline"
+          >
+            <Pencil />
+          </Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Manage Link</DialogTitle>
+          </DialogHeader>
+          <ZodHookForm
+            schema={schema}
+            onSubmit={onSubmit}
+            invalidate={["website"]}
+            message={{
+              loading: "Updating block. Don't close the tab!",
+              success: "Block updated.",
+              error: "Updation failed!",
+            }}
+          />
+          <Button
+            variant="destructive"
+            onClick={async () => {
+              setOpen(false)
+              toast.promise(deleteMutation.mutateAsync(), {
+                loading: "Deleting block. Don't close the tab!",
+                success: "Block deleted.",
+                error: "Deletion failed!",
+              })
+            }}
+          >
+            Delete
+          </Button>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }

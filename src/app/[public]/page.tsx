@@ -36,6 +36,8 @@ export default async function Page({
     }[]
   }
 
+  website.blocks = website.blocks.filter((block) => block.active)
+
   if (!website?.id) {
     return (
       <main className="flex min-h-dvh items-center justify-center p-7.5">
