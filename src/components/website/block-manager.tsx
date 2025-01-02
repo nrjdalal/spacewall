@@ -16,7 +16,6 @@ import { CSS } from "@dnd-kit/utilities"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { GripHorizontal, GripVertical, Pencil } from "lucide-react"
 import { useState } from "react"
-import { toast } from "sonner"
 import { z } from "zod"
 
 type EditorProps = {
@@ -170,7 +169,33 @@ export const BlockEditor = ({ schema, data }: EditorProps) => {
       })
       return await res.json()
     },
-    onSuccess: () => {
+    onMutate: async () => {
+      await queryClient.cancelQueries({
+        queryKey: ["website"],
+      })
+      const prev = queryClient.getQueryData(["website"])
+      queryClient.setQueryData(
+        ["website"],
+        (prev: {
+          blocks: {
+            id: string
+            type: string
+            active: boolean
+            meta: Record<string, string>
+          }[]
+        }) => {
+          return {
+            ...prev,
+            blocks: prev.blocks.filter((block) => block.id !== data.id),
+          }
+        },
+      )
+      return { prev }
+    },
+    onError: (error, variables, context) => {
+      queryClient.setQueryData(["website"], context?.prev)
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: ["website"],
       })
@@ -192,7 +217,41 @@ export const BlockEditor = ({ schema, data }: EditorProps) => {
       })
       return await res.json()
     },
-    onSuccess: () => {
+    onMutate: async () => {
+      await queryClient.cancelQueries({
+        queryKey: ["website"],
+      })
+      const prev = queryClient.getQueryData(["website"])
+      queryClient.setQueryData(
+        ["website"],
+        (prev: {
+          blocks: {
+            id: string
+            type: string
+            active: boolean
+            meta: Record<string, string>
+          }[]
+        }) => {
+          return {
+            ...prev,
+            blocks: prev.blocks.map((block) => {
+              if (block.id === data.id) {
+                return {
+                  ...block,
+                  active: !data.active,
+                }
+              }
+              return block
+            }),
+          }
+        },
+      )
+      return { prev }
+    },
+    onError: (error, variables, context) => {
+      queryClient.setQueryData(["website"], context?.prev)
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: ["website"],
       })
@@ -235,11 +294,7 @@ export const BlockEditor = ({ schema, data }: EditorProps) => {
             variant="destructive"
             onClick={async () => {
               setOpen(false)
-              toast.promise(deleteMutation.mutateAsync(), {
-                loading: "Deleting block. Don't close the tab!",
-                success: "Block deleted.",
-                error: "Deletion failed!",
-              })
+              await deleteMutation.mutateAsync()
             }}
           >
             Delete
