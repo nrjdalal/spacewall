@@ -166,16 +166,6 @@ export const ZodHookForm = ({
 
         if (!uploadResponse.ok) throw new Error("File upload failed")
 
-        const invalidate = await fetch("/api/v1/aws/cloudfront", {
-          method: "POST",
-          body: JSON.stringify({
-            paths: ["/" + state.uploadKey],
-          }),
-        })
-
-        if (!invalidate.ok)
-          throw new Error("Failed to invalidate CloudFront cache")
-
         return console.log("File uploaded successfully.")
       } catch (err) {
         console.error(`Failed to upload file for field "${key}":`, err)

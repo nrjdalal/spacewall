@@ -389,7 +389,7 @@ const DialogEditHeader = (data: {
         }
       })
       files.forEach((key) => {
-        valuesCopy[key] = JSON.parse(valuesCopy[key]).key + "?t=" + Date.now()
+        valuesCopy[key] = JSON.parse(valuesCopy[key]).key
       })
       const res = await fetch("/api/v1/website", {
         method: "PATCH",
