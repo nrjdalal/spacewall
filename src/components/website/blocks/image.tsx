@@ -14,7 +14,8 @@ interface Props {
   }
 }
 
-export const BlockImage = (props: Props) => {
+const Block = (props: Props) => {
+  const name = "Image Block"
   const schema = z.object({
     image: z
       .string()
@@ -32,12 +33,12 @@ export const BlockImage = (props: Props) => {
 
   return (
     <BlockContent id={props.id} active={props.active}>
-      <BlockEditor name="Image Block" schema={schema} data={props} />
+      <BlockEditor name={name} schema={schema} data={props} />
     </BlockContent>
   )
 }
 
-export const ViewImage = (props: Props) => {
+const View = (props: Props) => {
   return (
     <>
       {props.meta?.image ? (
@@ -61,3 +62,5 @@ export const ViewImage = (props: Props) => {
     </>
   )
 }
+
+export const { Block: ImageBlock, View: ImageView } = { Block, View }

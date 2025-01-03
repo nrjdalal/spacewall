@@ -29,7 +29,8 @@ interface Props {
   }
 }
 
-export const BlockLink = (props: Props) => {
+export const Block = (props: Props) => {
+  const name = "Link Block"
   const schema = z.object({
     title: z
       .string()
@@ -65,12 +66,12 @@ export const BlockLink = (props: Props) => {
 
   return (
     <BlockContent id={props.id} active={props.active}>
-      <BlockEditor name="Link Block" schema={schema} data={props} />
+      <BlockEditor name={name} schema={schema} data={props} />
     </BlockContent>
   )
 }
 
-export const ViewLink = (props: Props) => {
+const View = (props: Props) => {
   const Logos = {
     "bsky.app": SiBluesky,
     "facebook.com": SiFacebook,
@@ -87,7 +88,6 @@ export const ViewLink = (props: Props) => {
     <>
       {props.meta?.href ? (
         <Link
-          key={props.id}
           href={props.meta?.href || "/x/website"}
           target={props.meta?.href ? "_blank" : "_self"}
           className={cn(
@@ -150,3 +150,5 @@ export const ViewLink = (props: Props) => {
     </>
   )
 }
+
+export const { Block: LinkBlock, View: LinkView } = { Block, View }

@@ -14,8 +14,6 @@ import {
 } from "@/components/ui/dialog"
 import WebsiteView from "@/components/views/website"
 import { availableBlocks } from "@/components/website"
-import { BlockImage } from "@/components/website/blocks/image"
-import { BlockLink } from "@/components/website/blocks/link"
 import { Content, ContentPreview, ContentRoot } from "@/components/x/content"
 import { ZodHookForm } from "@/components/x/zod-hook-form"
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard"
@@ -262,25 +260,16 @@ export default function Page() {
               >
                 {data.blocks?.map(
                   (block: { id: string; type: string; active: boolean }) => {
-                    if (block.type === "link") {
-                      return (
-                        <BlockLink
-                          key={block.id}
-                          {...block}
-                          websiteId={data.id}
-                        />
-                      )
-                    }
-                    if (block.type === "image") {
-                      return (
-                        <BlockImage
-                          key={block.id}
-                          {...block}
-                          websiteId={data.id}
-                        />
-                      )
-                    }
-                    return null
+                    const Component = availableBlocks.find(
+                      (current) => current.type === block.type,
+                    )?.component
+                    return Component ? (
+                      <Component
+                        key={block.id}
+                        {...block}
+                        websiteId={data.id}
+                      />
+                    ) : null
                   },
                 )}
               </SortableContext>
