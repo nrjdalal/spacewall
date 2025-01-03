@@ -1,16 +1,15 @@
 /* eslint-disable @next/next/no-img-element */
 
-import { ViewLink } from "@/components/website/blocks/link"
+import { availableBlocks } from "@/components/website"
 import { cn } from "@/lib/utils"
 import { Crown } from "lucide-react"
 import Link from "next/link"
-import { ViewImage } from "../website/blocks/image"
 
 interface Blocks {
   id: string
   active: boolean
   type: string
-  meta?: unknown
+  meta?: Record<string, unknown>
 }
 
 export default function WebsiteView({
@@ -97,37 +96,17 @@ export default function WebsiteView({
 
       <div className="mt-5 space-y-3 px-3">
         {data.blocks?.map((block) => {
-          if (block.type === "link") {
-            return (
-              <ViewLink
-                websiteId={data.id}
-                key={block.id}
-                {...block}
-                meta={
-                  block.meta as {
-                    title?: string
-                    href?: string
-                    image?: string
-                    description?: string
-                  }
-                }
-              />
-            )
-          }
-          if (block.type === "image") {
-            return (
-              <ViewImage
-                websiteId={data.id}
-                key={block.id}
-                {...block}
-                meta={
-                  block.meta as {
-                    image?: string
-                  }
-                }
-              />
-            )
-          }
+          const View = availableBlocks.find(
+            (current) => current.type === block.type,
+          )?.view
+          return View ? (
+            <View
+              key={block.id}
+              {...block}
+              websiteId={data.id}
+              meta={block?.meta}
+            />
+          ) : null
         })}
       </div>
 
