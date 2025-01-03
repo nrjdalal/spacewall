@@ -12,6 +12,18 @@ interface Blocks {
   meta?: Record<string, unknown>
 }
 
+const groupBlocksByType = (blocks: Blocks[]) => {
+  return blocks.reduce((groups: Blocks[][], block) => {
+    const lastGroup = groups[groups.length - 1]
+    if (lastGroup && lastGroup[0].type === block.type) {
+      lastGroup.push(block)
+    } else {
+      groups.push([block])
+    }
+    return groups
+  }, [])
+}
+
 export default function WebsiteView({
   data,
   preview = false,
@@ -26,6 +38,8 @@ export default function WebsiteView({
   }
   preview?: boolean
 }) {
+  const groupedBlocks = groupBlocksByType(data.blocks || [])
+
   return (
     <main
       className={cn(
@@ -95,19 +109,31 @@ export default function WebsiteView({
       </section>
 
       <div className="mt-5 space-y-3 px-3">
-        {data.blocks?.map((block) => {
-          const View = availableBlocks.find(
-            (current) => current.type === block.type,
-          )?.view
-          return View ? (
-            <View
-              key={block.id}
-              {...block}
-              websiteId={data.id}
-              meta={block?.meta}
-            />
-          ) : null
-        })}
+        {groupedBlocks.map((group, groupIndex) => (
+          <div
+            key={groupIndex}
+            className={cn(
+              group[0].type === "image" && "space-y-3",
+              group[0].type === "link" && "space-y-3",
+              group[0].type === "social" &&
+                "flex items-center justify-center gap-3",
+            )}
+          >
+            {group.map((block) => {
+              const View = availableBlocks.find(
+                (current) => current.type === block.type,
+              )?.view
+              return View ? (
+                <View
+                  key={block.id}
+                  {...block}
+                  websiteId={data.id}
+                  meta={block?.meta}
+                />
+              ) : null
+            })}
+          </div>
+        ))}
       </div>
 
       <Link
