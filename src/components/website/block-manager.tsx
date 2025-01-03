@@ -16,15 +16,18 @@ import { CSS } from "@dnd-kit/utilities"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { EllipsisVertical, GripHorizontal, GripVertical } from "lucide-react"
 import { useState } from "react"
+import { toast } from "sonner"
 import { z } from "zod"
 
 type EditorProps = {
+  name: string
   schema: z.ZodObject<z.ZodRawShape>
   data: {
     websiteId: string
     id: string
     type: string
     active: boolean
+    meta?: Record<string, unknown>
   }
 }
 
@@ -35,7 +38,7 @@ export const BlockContent = ({
   ...props
 }: {
   id: string
-  className: string
+  className?: string
   children: React.ReactNode
   [key: string]: unknown
 }) => {
@@ -50,7 +53,10 @@ export const BlockContent = ({
   return (
     <div
       ref={setNodeRef}
-      className={cn("relative touch-none", className)}
+      className={cn(
+        "bg-sidebar relative min-h-14 touch-none rounded-md border",
+        className,
+      )}
       style={style}
       {...props}
     >
@@ -67,7 +73,7 @@ export const BlockContent = ({
   )
 }
 
-export const BlockEditor = ({ schema, data }: EditorProps) => {
+export const BlockEditor = ({ name, schema, data }: EditorProps) => {
   const queryClient = useQueryClient()
 
   const mutuation = useMutation({
@@ -259,43 +265,51 @@ export const BlockEditor = ({ schema, data }: EditorProps) => {
   })
 
   return (
-    <div className="col-span-1 flex flex-wrap items-center justify-end gap-1 pr-2">
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>
-          <EllipsisVertical className="text-muted-foreground size-5 cursor-pointer" />
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Manage Link</DialogTitle>
-          </DialogHeader>
-          <ZodHookForm
-            schema={schema}
-            onSubmit={onSubmit}
-            invalidate={["website"]}
-            message={{
-              loading: "Updating block. Don't close the tab!",
-              success: "Block updated.",
-              error: "Updation failed!",
-            }}
-          />
-          <Button
-            variant="destructive"
-            onClick={async () => {
-              setOpen(false)
-              await deleteMutation.mutateAsync()
-            }}
-          >
-            Delete
-          </Button>
-        </DialogContent>
-      </Dialog>
-      <Switch
-        className="h-4.5"
-        checked={data.active}
-        onCheckedChange={async () => {
-          await activeMutation.mutateAsync()
-        }}
-      />
+    <div className="flex h-14 items-center justify-between px-3">
+      <p className="font-medium sm:ml-1">{name}</p>
+      <div className="flex items-center space-x-2">
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
+            <EllipsisVertical className="text-muted-foreground size-5 cursor-pointer" />
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Manage Link</DialogTitle>
+            </DialogHeader>
+            <ZodHookForm
+              schema={schema}
+              onSubmit={onSubmit}
+              invalidate={["website"]}
+              message={{
+                loading: "Updating block. Don't close the tab!",
+                success: "Block updated.",
+                error: "Updation failed!",
+              }}
+            />
+            <Button
+              variant="destructive"
+              onClick={async () => {
+                setOpen(false)
+                await deleteMutation.mutateAsync()
+              }}
+            >
+              Delete
+            </Button>
+          </DialogContent>
+        </Dialog>
+        <Switch
+          className="h-4.5"
+          checked={data.active}
+          onCheckedChange={async () => {
+            try {
+              schema.parse(data?.meta)
+              await activeMutation.mutateAsync()
+            } catch {
+              toast.info("Edit required fields before publishing")
+            }
+          }}
+        />
+      </div>
     </div>
   )
 }

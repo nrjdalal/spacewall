@@ -10,7 +10,7 @@ import {
   SiNpm,
   SiYoutube,
 } from "@icons-pack/react-simple-icons"
-import { Camera, LinkIcon } from "lucide-react"
+import { LinkIcon } from "lucide-react"
 import Link from "next/link"
 import { createElement } from "react"
 import { z } from "zod"
@@ -73,11 +73,9 @@ export const BlockLink = (props: Props) => {
   })
 
   return (
-    <BlockContent
-      id={props.id}
-      className="bg-sidebar flex grid-cols-6 items-center justify-center gap-1.5 rounded-md border p-1 sm:grid"
-    >
-      <div className="col-span-1">
+    <BlockContent id={props.id}>
+      <BlockEditor name="Link Block" schema={schema} data={props} />
+      {/* <div className="col-span-1">
         {props.meta?.image ? (
           <div className="bg-secondary aspect-square h-full max-h-14 overflow-hidden rounded-md border">
             <img
@@ -105,8 +103,7 @@ export const BlockLink = (props: Props) => {
             {props.meta.description}
           </p>
         )}
-      </div>
-      <BlockEditor schema={schema} data={props} />
+      </div> */}
     </BlockContent>
   )
 }
