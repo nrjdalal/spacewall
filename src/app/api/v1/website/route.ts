@@ -117,6 +117,7 @@ export async function PATCH(request: Request) {
               CASE
                 WHEN block->>'id' = ${block.id}
                 THEN jsonb_set(block, '{active}', ${JSON.stringify(block.active)}::jsonb, true)
+                ELSE block
               END
             )
             FROM jsonb_array_elements(${websites.blocks}) AS block
