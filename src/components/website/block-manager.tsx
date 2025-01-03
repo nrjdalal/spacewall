@@ -56,7 +56,7 @@ export const BlockContent = ({
     <div
       ref={setNodeRef}
       className={cn(
-        "bg-sidebar relative min-h-14 touch-none rounded-md border",
+        "bg-sidebar relative min-h-14 rounded-md border",
         !active && "border-dashed",
         className,
       )}
@@ -66,7 +66,7 @@ export const BlockContent = ({
       <div
         {...listeners}
         {...attributes}
-        className="text-muted-foreground absolute -top-3 left-1/2 z-5 flex min-h-8 min-w-12 -translate-x-1/2 transform cursor-grab justify-center sm:top-1/2 sm:bottom-auto sm:-left-3 sm:min-h-12 sm:min-w-8 sm:-translate-y-1/2 sm:translate-x-0 sm:flex-col"
+        className="text-muted-foreground absolute -top-3 left-1/2 z-5 flex min-h-8 min-w-12 -translate-x-1/2 transform cursor-grab touch-none justify-center sm:top-1/2 sm:bottom-auto sm:-left-3 sm:min-h-12 sm:min-w-8 sm:-translate-y-1/2 sm:translate-x-0 sm:flex-col"
       >
         <GripHorizontal className="sm:hidden" />
         <GripVertical className="mt-px hidden sm:block" />
