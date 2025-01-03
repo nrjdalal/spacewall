@@ -29,10 +29,12 @@ elapsed_time=$((end_time - start_time))
 minutes=$((elapsed_time / 60))
 seconds=$((elapsed_time % 60))
 
-curl \
-  -H "Title: Vercel" \
-  -H "Priority: low" \
-  -H "Click: $DEPLOYMENT_URL" \
-  -H "Actions: view, deployment logs, $DEPLOYMENT_URL" \
-  -d "🟢 $VERCEL_ENV build completed in ${minutes}m ${seconds}s" \
-  ntfy.sh/nrjdalal &>/dev/null
+if [ "$VERCEL_ENV" = "production" ]; then
+  curl \
+    -H "Title: Vercel" \
+    -H "Priority: low" \
+    -H "Click: $DEPLOYMENT_URL" \
+    -H "Actions: view, deployment logs, $DEPLOYMENT_URL" \
+    -d "🟢 $VERCEL_ENV build completed in ${minutes}m ${seconds}s for $VERCEL_GIT_COMMIT_MESSAGE" \
+    ntfy.sh/nrjdalal &>/dev/null
+fi
