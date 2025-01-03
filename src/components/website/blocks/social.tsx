@@ -27,7 +27,7 @@ interface Props {
 }
 
 const Block = (props: Props) => {
-  const name = "Social Block"
+  const name = "Social"
   const schema = z.object({
     href: z
       .string()

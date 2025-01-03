@@ -108,11 +108,13 @@ export default function WebsiteView({
         </div>
       </section>
 
-      <div className="mt-5 space-y-6 px-3">
+      <div className="mt-5 space-y-3 px-3">
         {groupedBlocks.map((group, groupIndex) => (
           <div
             key={groupIndex}
             className={cn(
+              group[0].type === "image" && "space-y-3",
+              group[0].type === "link" && "space-y-3",
               group[0].type === "social" &&
                 "flex items-center justify-center gap-3",
             )}
