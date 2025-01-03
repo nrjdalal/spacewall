@@ -3,6 +3,12 @@
 "use client"
 
 import XHeader from "@/components/common/x-header"
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -291,28 +297,55 @@ export default function Page() {
                 items={data.blocks || []}
                 strategy={verticalListSortingStrategy}
               >
-                {groupedBlocks.map((group, groupIndex) => (
-                  <div
-                    key={groupIndex}
-                    className={cn(
-                      "space-y-3",
-                      group[0].type === "social" && "rounded-md border p-2",
-                    )}
-                  >
-                    {group.map((block) => {
-                      const Component = availableBlocks.find(
-                        (current) => current.type === block.type,
-                      )?.component
-                      return Component ? (
-                        <Component
-                          key={block.id}
-                          {...block}
-                          websiteId={data.id}
-                        />
-                      ) : null
-                    })}
-                  </div>
-                ))}
+                {groupedBlocks.map((group, groupIndex) =>
+                  group[0].type === "social" && group.length > 1 ? (
+                    <Accordion key={groupIndex} type="single" collapsible>
+                      <AccordionItem
+                        className="bg-sidebar min-h-14 rounded-md border px-3"
+                        value="social"
+                      >
+                        <AccordionTrigger>Social Block</AccordionTrigger>
+                        <AccordionContent className="space-y-3 pb-3">
+                          {group.map((block) => {
+                            const Component = availableBlocks.find(
+                              (current) => current.type === block.type,
+                            )?.component
+                            return Component ? (
+                              <Component
+                                key={block.id}
+                                {...block}
+                                websiteId={data.id}
+                              />
+                            ) : null
+                          })}
+
+                          <p className="text-muted-foreground/50 text-center text-xs">
+                            To place content above this block, drag the desired
+                            block to the topmost position.
+                            <br />
+                            To add more similar blocks, click the add block
+                            button and drag them here.
+                          </p>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
+                  ) : (
+                    <div key={groupIndex} className={cn("space-y-3")}>
+                      {group.map((block) => {
+                        const Component = availableBlocks.find(
+                          (current) => current.type === block.type,
+                        )?.component
+                        return Component ? (
+                          <Component
+                            key={block.id}
+                            {...block}
+                            websiteId={data.id}
+                          />
+                        ) : null
+                      })}
+                    </div>
+                  ),
+                )}
               </SortableContext>
             </DndContext>
           </div>
