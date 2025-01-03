@@ -4,6 +4,7 @@ import { ViewLink } from "@/components/website/blocks/link"
 import { cn } from "@/lib/utils"
 import { Crown } from "lucide-react"
 import Link from "next/link"
+import { ViewImage } from "../website/blocks/image"
 
 interface Blocks {
   id: string
@@ -106,6 +107,19 @@ export default function WebsiteView({
                     href?: string
                     image?: string
                     description?: string
+                  }
+                }
+              />
+            )
+          }
+          if (block.type === "image") {
+            return (
+              <ViewImage
+                key={block.id}
+                {...block}
+                meta={
+                  block.meta as {
+                    image?: string
                   }
                 }
               />

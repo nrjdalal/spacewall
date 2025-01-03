@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dialog"
 import WebsiteView from "@/components/views/website"
 import { availableBlocks } from "@/components/website"
+import { BlockImage } from "@/components/website/blocks/image"
 import { BlockLink } from "@/components/website/blocks/link"
 import { Content, ContentPreview, ContentRoot } from "@/components/x/content"
 import { ZodHookForm } from "@/components/x/zod-hook-form"
@@ -264,6 +265,15 @@ export default function Page() {
                     if (block.type === "link") {
                       return (
                         <BlockLink
+                          key={block.id}
+                          {...block}
+                          websiteId={data.id}
+                        />
+                      )
+                    }
+                    if (block.type === "image") {
+                      return (
+                        <BlockImage
                           key={block.id}
                           {...block}
                           websiteId={data.id}
