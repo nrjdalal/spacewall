@@ -45,10 +45,10 @@ export const BlockImage = (props: Props) => {
 
 export const ViewImage = (props: ViewProps) => {
   return (
-    <div key={props.id} className="aspect-video">
+    <div key={props.id}>
       {props.meta?.image ? (
         <img
-          className="aspect-square h-full w-full rounded-md object-cover object-center"
+          className="w-full rounded-md"
           src={
             props.meta?.image.startsWith("data:")
               ? props.meta?.image
@@ -57,7 +57,9 @@ export const ViewImage = (props: ViewProps) => {
           alt="Image"
         />
       ) : (
-        <div className="bg-muted aspect-square h-full w-full rounded-md"></div>
+        <div className="bg-muted text-muted-foreground flex h-full min-h-14 w-full items-center justify-center rounded-md border text-sm">
+          Image Block
+        </div>
       )}
     </div>
   )
