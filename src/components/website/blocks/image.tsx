@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 
 import { BlockContent, BlockEditor } from "@/components/website/block-manager"
+import { cn } from "@/lib/utils"
 import { z } from "zod"
 
 interface Props {
@@ -8,13 +9,6 @@ interface Props {
   id: string
   type: string
   active: boolean
-  meta?: {
-    image?: string
-  }
-}
-
-interface ViewProps {
-  id: string
   meta?: {
     image?: string
   }
@@ -37,18 +31,21 @@ export const BlockImage = (props: Props) => {
   })
 
   return (
-    <BlockContent id={props.id}>
+    <BlockContent id={props.id} active={props.active}>
       <BlockEditor name="Image Block" schema={schema} data={props} />
     </BlockContent>
   )
 }
 
-export const ViewImage = (props: ViewProps) => {
+export const ViewImage = (props: Props) => {
   return (
-    <div key={props.id}>
+    <>
       {props.meta?.image ? (
         <img
-          className="w-full rounded-md"
+          className={cn(
+            "w-full rounded-md border",
+            !props.active && "border-dashed",
+          )}
           src={
             props.meta?.image.startsWith("data:")
               ? props.meta?.image
@@ -57,10 +54,10 @@ export const ViewImage = (props: ViewProps) => {
           alt="Image"
         />
       ) : (
-        <div className="bg-muted text-muted-foreground flex h-full min-h-14 w-full items-center justify-center rounded-md border text-sm">
+        <div className="text-muted-foreground flex h-14 items-center justify-center rounded-md border border-dashed text-sm">
           Image Block
         </div>
       )}
-    </div>
+    </>
   )
 }

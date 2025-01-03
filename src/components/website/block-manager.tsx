@@ -33,11 +33,13 @@ type EditorProps = {
 
 export const BlockContent = ({
   id,
+  active,
   className,
   children,
   ...props
 }: {
   id: string
+  active: boolean
   className?: string
   children: React.ReactNode
   [key: string]: unknown
@@ -55,6 +57,7 @@ export const BlockContent = ({
       ref={setNodeRef}
       className={cn(
         "bg-sidebar relative min-h-14 touch-none rounded-md border",
+        !active && "border-dashed",
         className,
       )}
       style={style}

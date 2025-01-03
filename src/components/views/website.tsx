@@ -18,6 +18,7 @@ export default function WebsiteView({
   preview = false,
 }: {
   data: {
+    id: string
     image: string
     title: string
     description: string
@@ -99,6 +100,7 @@ export default function WebsiteView({
           if (block.type === "link") {
             return (
               <ViewLink
+                websiteId={data.id}
                 key={block.id}
                 {...block}
                 meta={
@@ -115,6 +117,7 @@ export default function WebsiteView({
           if (block.type === "image") {
             return (
               <ViewImage
+                websiteId={data.id}
                 key={block.id}
                 {...block}
                 meta={
