@@ -75,9 +75,8 @@ export const BlockLink = (props: Props) => {
   return (
     <BlockContent
       id={props.id}
-      className="bg-sidebar grid grid-cols-6 items-center gap-1.5 rounded-md border p-1"
+      className="bg-sidebar flex grid-cols-6 items-center justify-center gap-1.5 rounded-md border p-1 sm:grid"
     >
-      <BlockEditor schema={schema} data={props} />
       <div className="col-span-1">
         {props.meta?.image ? (
           <div className="bg-secondary aspect-square h-full max-h-14 overflow-hidden rounded-md border">
@@ -107,6 +106,7 @@ export const BlockLink = (props: Props) => {
           </p>
         )}
       </div>
+      <BlockEditor schema={schema} data={props} />
     </BlockContent>
   )
 }

@@ -259,17 +259,10 @@ export const BlockEditor = ({ schema, data }: EditorProps) => {
   })
 
   return (
-    <>
-      <Switch
-        className="absolute top-1/2 right-9 h-4.5 -translate-y-1/2 transform"
-        checked={data.active}
-        onCheckedChange={async () => {
-          await activeMutation.mutateAsync()
-        }}
-      />
+    <div className="col-span-1 flex flex-wrap items-center justify-end gap-1 pr-2">
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <EllipsisVertical className="text-muted-foreground absolute top-1/2 right-2 size-6 -translate-y-1/2 transform cursor-pointer" />
+          <EllipsisVertical className="text-muted-foreground size-5 cursor-pointer" />
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
@@ -296,6 +289,13 @@ export const BlockEditor = ({ schema, data }: EditorProps) => {
           </Button>
         </DialogContent>
       </Dialog>
-    </>
+      <Switch
+        className="h-4.5"
+        checked={data.active}
+        onCheckedChange={async () => {
+          await activeMutation.mutateAsync()
+        }}
+      />
+    </div>
   )
 }
