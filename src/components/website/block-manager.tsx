@@ -266,7 +266,7 @@ export const BlockEditor = ({ name, schema, data }: EditorProps) => {
 
   return (
     <div className="flex h-14 items-center justify-between px-3">
-      <p className="mt-px text-sm font-semibold sm:ml-1">{name}</p>
+      <p className="mt-0.5 text-sm font-semibold sm:ml-1">{name}</p>
       <div className="flex items-center space-x-2">
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
