@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils"
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { GripHorizontal, GripVertical, Pencil } from "lucide-react"
+import { EllipsisVertical, GripHorizontal, GripVertical } from "lucide-react"
 import { useState } from "react"
 import { z } from "zod"
 
@@ -261,7 +261,7 @@ export const BlockEditor = ({ schema, data }: EditorProps) => {
   return (
     <>
       <Switch
-        className="absolute top-1/2 right-2 -translate-y-1/2 transform"
+        className="absolute top-1/2 right-9 h-4.5 -translate-y-1/2 transform"
         checked={data.active}
         onCheckedChange={async () => {
           await activeMutation.mutateAsync()
@@ -269,12 +269,7 @@ export const BlockEditor = ({ schema, data }: EditorProps) => {
       />
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <Button
-            className="text-foreground/65 absolute top-1/2 right-12 aspect-square size-6 -translate-y-1/2 transform p-0"
-            variant="outline"
-          >
-            <Pencil />
-          </Button>
+          <EllipsisVertical className="text-muted-foreground absolute top-1/2 right-2 size-6 -translate-y-1/2 transform cursor-pointer" />
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
