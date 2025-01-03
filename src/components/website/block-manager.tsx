@@ -305,7 +305,7 @@ export const BlockEditor = ({ name, schema, data }: EditorProps) => {
               schema.parse(data?.meta)
               await activeMutation.mutateAsync()
             } catch {
-              toast.info("Edit required fields before publishing")
+              toast.info("Edit required fields before publishing!")
             }
           }}
         />
