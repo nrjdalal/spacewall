@@ -296,9 +296,7 @@ export default function Page() {
                     key={groupIndex}
                     className={cn(
                       "space-y-3",
-                      group.length > 1 &&
-                        group[0].type === "social" &&
-                        "rounded-md border p-2",
+                      group[0].type === "social" && "rounded-md border p-2",
                     )}
                   >
                     {group.map((block) => {
