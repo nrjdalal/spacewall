@@ -17,6 +17,7 @@ import { availableBlocks } from "@/components/website"
 import { Content, ContentPreview, ContentRoot } from "@/components/x/content"
 import { ZodHookForm } from "@/components/x/zod-hook-form"
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard"
+import { cn } from "@/lib/utils"
 import {
   closestCenter,
   DndContext,
@@ -140,6 +141,38 @@ export default function Page() {
       })
   }
 
+  const groupBlocksByType = (
+    blocks: Array<{
+      id: string
+      type: string
+      active: boolean
+      meta?: Record<string, unknown>
+    }>,
+  ) => {
+    return blocks.reduce(
+      (
+        groups: Array<{
+          id: string
+          type: string
+          active: boolean
+          meta?: Record<string, unknown>
+        }>[],
+        block,
+      ) => {
+        const lastGroup = groups[groups.length - 1]
+        if (lastGroup && lastGroup[0].type === block.type) {
+          lastGroup.push(block)
+        } else {
+          groups.push([block])
+        }
+        return groups
+      },
+      [],
+    )
+  }
+
+  const groupedBlocks = groupBlocksByType(data.blocks || [])
+
   return (
     <>
       <XHeader
@@ -258,20 +291,30 @@ export default function Page() {
                 items={data.blocks || []}
                 strategy={verticalListSortingStrategy}
               >
-                {data.blocks?.map(
-                  (block: { id: string; type: string; active: boolean }) => {
-                    const Component = availableBlocks.find(
-                      (current) => current.type === block.type,
-                    )?.component
-                    return Component ? (
-                      <Component
-                        key={block.id}
-                        {...block}
-                        websiteId={data.id}
-                      />
-                    ) : null
-                  },
-                )}
+                {groupedBlocks.map((group, groupIndex) => (
+                  <div
+                    key={groupIndex}
+                    className={cn(
+                      "space-y-3",
+                      group.length > 1 &&
+                        group[0].type === "social" &&
+                        "rounded-md border p-2",
+                    )}
+                  >
+                    {group.map((block) => {
+                      const Component = availableBlocks.find(
+                        (current) => current.type === block.type,
+                      )?.component
+                      return Component ? (
+                        <Component
+                          key={block.id}
+                          {...block}
+                          websiteId={data.id}
+                        />
+                      ) : null
+                    })}
+                  </div>
+                ))}
               </SortableContext>
             </DndContext>
           </div>
