@@ -66,7 +66,7 @@ export const BlockContent = ({
         className="text-muted-foreground absolute -top-3 left-1/2 z-5 flex min-h-8 min-w-12 -translate-x-1/2 transform cursor-grab justify-center sm:top-1/2 sm:bottom-auto sm:-left-3 sm:min-h-12 sm:min-w-8 sm:-translate-y-1/2 sm:translate-x-0 sm:flex-col"
       >
         <GripHorizontal className="sm:hidden" />
-        <GripVertical className="hidden sm:block" />
+        <GripVertical className="mt-0.5 hidden sm:block" />
       </div>
       {children}
     </div>
@@ -266,7 +266,7 @@ export const BlockEditor = ({ name, schema, data }: EditorProps) => {
 
   return (
     <div className="flex h-14 items-center justify-between px-3">
-      <p className="mt-0.5 text-sm font-semibold sm:ml-1">{name}</p>
+      <p className="mt-1 text-sm font-semibold sm:ml-1">{name}</p>
       <div className="flex items-center space-x-2">
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
