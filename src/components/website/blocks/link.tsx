@@ -75,35 +75,6 @@ export const BlockLink = (props: Props) => {
   return (
     <BlockContent id={props.id}>
       <BlockEditor name="Link Block" schema={schema} data={props} />
-      {/* <div className="col-span-1">
-        {props.meta?.image ? (
-          <div className="bg-secondary aspect-square h-full max-h-14 overflow-hidden rounded-md border">
-            <img
-              className="aspect-square h-full object-cover object-center"
-              src={
-                props.meta.image.startsWith("data:")
-                  ? props.meta.image
-                  : process.env.NEXT_PUBLIC_CDN_URL + "/" + props.meta.image
-              }
-              alt={props.meta.title}
-            />
-          </div>
-        ) : (
-          <div className="text-muted-foreground/25 grid aspect-square h-full max-h-14 place-content-center">
-            <Camera className="size-6 stroke-1" />
-          </div>
-        )}
-      </div>
-      <div className="col-span-4 w-full text-center">
-        <h1 className="line-clamp-2 text-sm font-medium break-words">
-          {props.meta?.title || "Link Block"}
-        </h1>
-        {props.meta?.description && (
-          <p className="text-muted-foreground text-xs">
-            {props.meta.description}
-          </p>
-        )}
-      </div> */}
     </BlockContent>
   )
 }
