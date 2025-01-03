@@ -186,7 +186,7 @@ export default function Page() {
         description="Creating a website has never been easier"
       />
       <ContentRoot>
-        <Content className="space-y-5">
+        <Content className="space-y-5 pb-32">
           {/* SHARE WEBSITE */}
           <section className="flex flex-wrap justify-between gap-2">
             <div className="bg-sidebar flex h-9 items-center gap-2 rounded-md border pr-2 pl-3 text-sm">
