@@ -76,10 +76,6 @@ export const BlockContent = ({
   )
 }
 
-export const SortableGroup = ({ children }: { children: React.ReactNode }) => {
-  return <div className="space-y-3">{children}</div>
-}
-
 export const BlockEditor = ({ name, schema, data }: EditorProps) => {
   const queryClient = useQueryClient()
 
@@ -281,7 +277,7 @@ export const BlockEditor = ({ name, schema, data }: EditorProps) => {
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Manage Link</DialogTitle>
+              <DialogTitle className="sr-only">Edit {name}</DialogTitle>
             </DialogHeader>
             <ZodHookForm
               schema={schema}

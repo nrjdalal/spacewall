@@ -32,24 +32,22 @@ interface Props {
 export const Block = (props: Props) => {
   const name = "Link Block"
   const schema = z.object({
-    title: z
-      .string()
-      .min(1)
-      .max(128)
-      .field({
-        label: "Title",
-        default: props.meta?.title || "",
-      }),
     href: z
       .string()
-      .url()
+      .min(4, {
+        message: "Please enter a valid URL",
+      })
       .field({
         label: "URL",
         default: props.meta?.href || "",
       }),
+    title: z.string().field({
+      label: "Title (optional)",
+      default: props.meta?.title || "",
+    }),
     image: z.string().field({
       type: "file",
-      label: "Image",
+      label: "Image (optional)",
       default: props.meta?.image || "",
       prefix: process.env.NEXT_PUBLIC_CDN_URL + "/",
       keyprefix: `website/${props.websiteId}/blocks/${props.id}/link/`,
@@ -59,7 +57,7 @@ export const Block = (props: Props) => {
       .max(256)
       .field({
         type: "textarea",
-        label: "Description",
+        label: "Description (optional)",
         default: props.meta?.description || "",
       }),
   })
