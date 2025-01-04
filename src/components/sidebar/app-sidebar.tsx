@@ -3,6 +3,7 @@
 import { NavApplications } from "@/components/sidebar/nav-applications"
 import { NavModeSwitcher } from "@/components/sidebar/nav-mode-switcher"
 import { NavUser } from "@/components/sidebar/nav-user"
+import Support from "@/components/sidebar/support"
 import {
   Sidebar,
   SidebarContent,
@@ -41,6 +42,7 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
         <NavApplications />
       </SidebarContent>
       <SidebarFooter>
+        <Support user={user} />
         <NavUser user={user} />
       </SidebarFooter>
       <SidebarRail />
