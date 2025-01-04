@@ -98,7 +98,19 @@ export default function Dashboard({
               <span className="truncate font-semibold">{user.name}</span>
               <span className="truncate text-xs">{user.email}</span>
               <p className="text-muted-foreground text-xs">
-                Last seen {humanTime(user.updatedAt!)}
+                {
+                  {
+                    lastActive: `Last active ${humanTime(
+                      new Date(user.updatedAt!).getTime(),
+                    )}`,
+                    dateJoined: `Joined ${humanTime(
+                      new Date(user.createdAt!).getTime(),
+                    )}`,
+                    alphabetical: `Last active ${humanTime(
+                      new Date(user.updatedAt!).getTime(),
+                    )}`,
+                  }[sortCriteria]
+                }
               </p>
             </div>
           </div>
