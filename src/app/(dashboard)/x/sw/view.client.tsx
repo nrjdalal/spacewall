@@ -72,7 +72,7 @@ export default function Dashboard({
           }
           value={sortCriteria}
         >
-          <SelectTrigger className="w-64">
+          <SelectTrigger className="w-48">
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
           <SelectContent>
