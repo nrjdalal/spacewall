@@ -62,6 +62,7 @@ export function NavApplications() {
             return (await response.json()).data
           },
         })
+        await fetch("/api/v1/activity")
       }
     }
 
