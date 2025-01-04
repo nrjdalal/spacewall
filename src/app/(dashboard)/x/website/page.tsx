@@ -298,7 +298,7 @@ export default function Page() {
                 strategy={verticalListSortingStrategy}
               >
                 {groupedBlocks.map((group, groupIndex) =>
-                  group.length > 1 ? (
+                  group[0].type === "social" && group.length > 1 ? (
                     <Accordion key={groupIndex} type="single" collapsible>
                       <AccordionItem
                         className="bg-sidebar min-h-14 rounded-md border px-3"
