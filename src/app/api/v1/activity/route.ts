@@ -19,6 +19,6 @@ export async function GET() {
 
   return Response.json({
     status: 200,
-    data: session.user,
+    message: "OK",
   })
 }
