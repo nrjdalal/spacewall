@@ -17,7 +17,6 @@ import { ZodHookForm } from "@/components/x/zod-hook-form"
 import { MessageSquare } from "lucide-react"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
-import { toast } from "sonner"
 import { z } from "zod"
 
 export default function Support({
@@ -65,7 +64,6 @@ export default function Support({
       body: JSON.stringify(values),
     })
     setOpen(false)
-    toast.success("Message sent! We'll get back to you soon.")
   }
 
   return (
@@ -85,7 +83,15 @@ export default function Support({
                 Request a feature, report a bug, or just say hi!
               </DialogDescription>
             </DialogHeader>
-            <ZodHookForm schema={schema} onSubmit={onSubmit} />
+            <ZodHookForm
+              schema={schema}
+              onSubmit={onSubmit}
+              message={{
+                loading: "Uploading attachment. Please wait!",
+                success: "Message sent! We'll get back to you soon.",
+                error: "An error occurred. Please try again.",
+              }}
+            />
           </DialogContent>
         </Dialog>
       </SidebarMenuItem>
