@@ -44,12 +44,10 @@ export const BlockContent = ({
   children: React.ReactNode
   [key: string]: unknown
 }) => {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id })
+  const { attributes, listeners, setNodeRef, transform } = useSortable({ id })
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition,
   }
 
   return (
@@ -74,6 +72,10 @@ export const BlockContent = ({
       {children}
     </div>
   )
+}
+
+export const SortableGroup = ({ children }: { children: React.ReactNode }) => {
+  return <div className="space-y-3">{children}</div>
 }
 
 export const BlockEditor = ({ name, schema, data }: EditorProps) => {
