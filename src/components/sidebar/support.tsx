@@ -47,12 +47,12 @@ export default function Support({
       label: "URL (optional)",
       default: process.env.NEXT_PUBLIC_SITE_URL + currentPath,
     }),
-    screenshot: z.string().field({
+    attachment: z.string().field({
       type: "file",
-      label: "Screenshot (optional)",
+      label: "Attachment (optional)",
       default: "",
       prefix: process.env.NEXT_PUBLIC_CDN_URL + "/",
-      keyprefix: `feedback/${user.email}/`,
+      keyprefix: `support/attachment/${user.email}/`,
     }),
   }) as z.ZodObject<z.ZodRawShape>
 

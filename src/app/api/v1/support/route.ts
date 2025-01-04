@@ -18,8 +18,8 @@ export async function POST(request: Request) {
       Title: data.subject,
       Priority: "low",
       Click: data?.url ? data.url : "https://spacewall.com",
-      Actions: data?.screenshot
-        ? `view, Attachment, ${process.env.NEXT_PUBLIC_CDN_URL + "/" + JSON.parse(data.screenshot).key}`
+      Actions: data?.attachment
+        ? `view, Attachment, ${process.env.NEXT_PUBLIC_CDN_URL + "/" + JSON.parse(data.attachment).key}`
         : `view, Website, ${data?.url ? data.url : "https://spacewall.com"}`,
     },
     body: data.message + "\n\n" + data.url,
