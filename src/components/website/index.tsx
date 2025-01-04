@@ -1,4 +1,4 @@
-import { Camera, FileQuestion, LinkIcon } from "lucide-react"
+import { Camera, Link, Origami } from "lucide-react"
 import { ImageBlock, ImageView } from "./blocks/image"
 import { LinkBlock, LinkView } from "./blocks/link"
 import { SocialBlock, SocialView } from "./blocks/social"
@@ -7,7 +7,7 @@ export const availableBlocks = [
   {
     type: "link",
     title: "Link",
-    icon: LinkIcon,
+    icon: Link,
     component: LinkBlock,
     view: LinkView,
   },
@@ -21,7 +21,7 @@ export const availableBlocks = [
   {
     type: "social",
     title: "Social",
-    icon: FileQuestion,
+    icon: Origami,
     component: SocialBlock,
     view: SocialView,
   },
