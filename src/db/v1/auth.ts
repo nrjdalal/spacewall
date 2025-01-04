@@ -1,4 +1,5 @@
 import { generateId } from "@/lib/utils"
+import { sql } from "drizzle-orm"
 import {
   boolean,
   integer,
@@ -17,6 +18,10 @@ export const users = pgTable("user", {
   email: text("email").unique(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: text("image"),
+  createdAt: timestamp("createdAt").defaultNow(),
+  updatedAt: timestamp("updatedAt")
+    .defaultNow()
+    .$onUpdateFn(() => sql`now()`),
 })
 
 export const accounts = pgTable(
