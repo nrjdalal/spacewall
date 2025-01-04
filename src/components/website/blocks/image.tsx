@@ -11,6 +11,7 @@ interface Props {
   active: boolean
   meta?: {
     image?: string
+    title?: string
   }
 }
 
@@ -20,7 +21,7 @@ const Block = (props: Props) => {
     image: z
       .string()
       .min(1, {
-        message: "Image is required",
+        message: "Please upload an image",
       })
       .field({
         type: "file",
@@ -29,6 +30,10 @@ const Block = (props: Props) => {
         prefix: process.env.NEXT_PUBLIC_CDN_URL + "/",
         keyprefix: `website/${props.websiteId}/blocks/${props.id}/image/`,
       }),
+    title: z.string().field({
+      label: "Title (optional)",
+      default: props.meta?.title || "",
+    }),
   })
 
   return (

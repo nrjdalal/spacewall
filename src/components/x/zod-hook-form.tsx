@@ -217,7 +217,7 @@ export const ZodHookForm = ({
               render={({ field }) => (
                 <FormItem
                   className={cn(
-                    "relative",
+                    "relative -mb-2",
                     formField.span === "1/2"
                       ? "col-span-6"
                       : formField.span === "1/3"
@@ -392,7 +392,12 @@ export const ZodHookForm = ({
                   {formField.description && (
                     <FormDescription>{formField.description}</FormDescription>
                   )}
-                  <FormMessage className="absolute -bottom-5 text-xs" />
+                  <FormMessage
+                    className={cn(
+                      "-mt-1.5 -mb-4 text-xs",
+                      formField.type === "file" && "mt-px",
+                    )}
+                  />
                 </FormItem>
               )}
             />
