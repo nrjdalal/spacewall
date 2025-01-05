@@ -26,11 +26,11 @@ export default function Dashboard({
   metrics: { totalUsers: number; activeToday: number; joinedThisWeek: number }
 }) {
   const [sortCriteria, setSortCriteria] = useState<
-    "lastActive" | "dateJoined" | "alphabetical"
-  >("lastActive")
+    "lastLogin" | "dateJoined" | "alphabetical"
+  >("lastLogin")
 
   const sortedUsers = [...users].sort((a, b) => {
-    if (sortCriteria === "lastActive") {
+    if (sortCriteria === "lastLogin") {
       return new Date(b.updatedAt!).getTime() - new Date(a.updatedAt!).getTime()
     }
     if (sortCriteria === "dateJoined") {
@@ -75,7 +75,7 @@ export default function Dashboard({
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="lastActive">Last Active</SelectItem>
+            <SelectItem value="lastLogin">Last Login</SelectItem>
             <SelectItem value="dateJoined">Date Joined</SelectItem>
             <SelectItem value="alphabetical">Alphabetically</SelectItem>
           </SelectContent>
@@ -99,13 +99,13 @@ export default function Dashboard({
               <p className="text-muted-foreground text-xs">
                 {
                   {
-                    lastActive: `Last active ${humanTime(
+                    lastLogin: `Last login ${humanTime(
                       new Date(user.updatedAt!).getTime(),
                     )}`,
                     dateJoined: `Joined ${humanTime(
                       new Date(user.createdAt!).getTime(),
                     )}`,
-                    alphabetical: `Last active ${humanTime(
+                    alphabetical: `Last login ${humanTime(
                       new Date(user.updatedAt!).getTime(),
                     )}`,
                   }[sortCriteria]

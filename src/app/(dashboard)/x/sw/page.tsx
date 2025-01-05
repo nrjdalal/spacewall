@@ -16,14 +16,16 @@ export default async function Page() {
     return <h1 className="p-5">SW is for SpaceWall</h1>
   }
 
-  const data = (await db.select().from(users)).map((user) => ({
-    ...user,
-    name: user.name || "Anonymous",
-    email: user.email || "",
-    image: user.image || "",
-    createdAt: user.createdAt ? user.createdAt.toISOString() : "",
-    updatedAt: user.updatedAt ? user.updatedAt.toISOString() : "",
-  }))
+  const data = (await db.select().from(users))
+    .map((user) => ({
+      ...user,
+      name: user.name || "",
+      email: user.email || "",
+      image: user.image || "",
+      createdAt: user.createdAt ? user.createdAt.toISOString() : "",
+      updatedAt: user.updatedAt ? user.updatedAt.toISOString() : "",
+    }))
+    .filter((user) => user.email !== session.user?.email)
 
   const activeTodayCount = data.filter(
     (user) =>
