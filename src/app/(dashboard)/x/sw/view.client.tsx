@@ -44,35 +44,34 @@ export default function Dashboard({
 
   return (
     <div className="mx-auto w-full max-w-screen-lg space-y-5 p-5">
-      <div className="@container space-y-3">
-        <div className="grid grid-cols-1 gap-3 @sm:grid-cols-2 @lg:grid-cols-3">
-          <div className="bg-sidebar rounded-md border p-5">
-            <h2 className="font-medium">Active Today</h2>
-            <p className="mt-2 text-2xl font-semibold">{metrics.activeToday}</p>
-          </div>
-          <div className="bg-sidebar rounded-md border p-5">
-            <h2 className="font-medium">Joined This Week</h2>
-            <p className="mt-2 text-2xl font-semibold">
-              {metrics.joinedThisWeek}
-            </p>
-          </div>
-          <div className="bg-sidebar rounded-md border p-5">
-            <h2 className="font-medium">Total Users</h2>
-            <p className="mt-2 text-2xl font-semibold">{metrics.totalUsers}</p>
-          </div>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="bg-sidebar rounded-md border p-5">
+          <h2 className="font-medium">Active Today</h2>
+          <p className="mt-2 text-2xl font-semibold">{metrics.activeToday}</p>
+        </div>
+        <div className="bg-sidebar rounded-md border p-5">
+          <h2 className="font-medium">Joined This Week</h2>
+          <p className="mt-2 text-2xl font-semibold">
+            {metrics.joinedThisWeek}
+          </p>
+        </div>
+        <div className="bg-sidebar rounded-md border p-5">
+          <h2 className="font-medium">Total Users</h2>
+          <p className="mt-2 text-2xl font-semibold">{metrics.totalUsers}</p>
         </div>
       </div>
 
       {/* Sort Dropdown */}
-      <div className="flex items-center justify-between gap-3">
+      <div className="grid grid-cols-2 items-center gap-3 lg:grid-cols-3">
         <h2 className="font-medium">Users</h2>
+        <span className="hidden lg:block" />
         <Select
           onValueChange={(value) =>
             setSortCriteria(value as typeof sortCriteria)
           }
           value={sortCriteria}
         >
-          <SelectTrigger className="w-48">
+          <SelectTrigger className="bg-sidebar w-full">
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
           <SelectContent>
