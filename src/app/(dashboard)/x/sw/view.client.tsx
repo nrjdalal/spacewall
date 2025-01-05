@@ -105,7 +105,7 @@ export default function Dashboard({
                     dateJoined: `Joined ${humanTime(
                       new Date(user.createdAt!).getTime(),
                     )}`,
-                    alphabetical: `Last active ${humanTime(
+                    alphabetical: `Last login ${humanTime(
                       new Date(user.updatedAt!).getTime(),
                     )}`,
                   }[sortCriteria]
