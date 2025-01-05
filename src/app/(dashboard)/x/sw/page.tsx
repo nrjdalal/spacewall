@@ -16,25 +16,34 @@ export default async function Page() {
     return <h1 className="p-5">SW is for SpaceWall</h1>
   }
 
-  const data = (await db.select().from(users))
-    .map((user) => ({
-      ...user,
-      name: user.name || "",
-      email: user.email || "",
-      image: user.image || "",
-      createdAt: user.createdAt ? user.createdAt.toISOString() : "",
-      updatedAt: user.updatedAt ? user.updatedAt.toISOString() : "",
-    }))
-    .filter((user) => user.email !== session.user?.email)
+  let data = (await db.select().from(users)).map((user) => ({
+    ...user,
+    name: user.name || "",
+    email: user.email || "",
+    image: user.image || "",
+    createdAt: user.createdAt ? user.createdAt.toISOString() : "",
+    updatedAt: user.updatedAt ? user.updatedAt.toISOString() : "",
+  }))
 
-  const activeTodayCount = data.filter(
-    (user) =>
-      new Date(user.updatedAt!).toDateString() === new Date().toDateString(),
-  ).length
+  if (process.env.NODE_ENV !== "development") {
+    data = data.filter((user) => user.email !== session.user?.email)
+  }
+
+  const indianTimeOffset = 5.5 * 60 * 60 * 1000 // IST is UTC+5:30
+
+  const activeTodayCount = data.filter((user) => {
+    const userUpdatedAt = new Date(
+      new Date(user.updatedAt!).getTime() + indianTimeOffset,
+    )
+    const now = new Date(new Date().getTime() + indianTimeOffset)
+    return userUpdatedAt.toDateString() === now.toDateString()
+  }).length
 
   const joinedThisWeekCount = data.filter((user) => {
-    const createdAt = new Date(user.createdAt!)
-    const now = new Date()
+    const createdAt = new Date(
+      new Date(user.createdAt!).getTime() + indianTimeOffset,
+    )
+    const now = new Date(new Date().getTime() + indianTimeOffset)
     const weekStart = new Date(
       now.getFullYear(),
       now.getMonth(),
