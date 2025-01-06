@@ -67,7 +67,7 @@ export async function PUT(request: Request) {
     .from(websites)
     .where(eq(websites.userId, session.user?.id as string))
 
-  if (websitesCount[0].count >= 5) {
+  if (websitesCount[0].count >= 3) {
     return Response.json(
       {
         status: 403,
