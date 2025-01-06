@@ -47,7 +47,7 @@ export default function Page() {
     <>
       <XHeader
         title="Websites"
-        description="Creating a website has never been easier"
+        description="Create and manage your websites."
       />
       <ContentRoot>
         <Content className="space-y-5">
