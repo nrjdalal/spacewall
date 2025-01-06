@@ -43,6 +43,7 @@ import { Crown, ExternalLink, Loader2, Pencil, Share2 } from "lucide-react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
 import { useState } from "react"
+import { toast } from "sonner"
 import { z } from "zod"
 
 export default function Page() {
@@ -565,8 +566,12 @@ const DialogAddBlock = (data: { id: string }) => {
   })
 
   async function onClick(values: z.infer<typeof schema>) {
-    await mutation.mutateAsync(schema.parse(values))
     setOpen(false)
+    toast.promise(mutation.mutateAsync(schema.parse(values)), {
+      loading: "Adding block. Don't close the tab!",
+      success: "Block added.",
+      error: "Adding block failed!",
+    })
   }
 
   const [open, setOpen] = useState(false)
