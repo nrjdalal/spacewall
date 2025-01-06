@@ -1,0 +1,1 @@
+- disabled prefetch websites in sidebar applications
