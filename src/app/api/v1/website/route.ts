@@ -6,9 +6,12 @@ import {
   ListObjectsV2Command,
   S3Client,
 } from "@aws-sdk/client-s3"
-import { and, eq, sql } from "drizzle-orm"
+import slugify from "@sindresorhus/slugify"
+import { and, desc, eq, sql } from "drizzle-orm"
 
-export async function GET() {
+export async function GET(request: Request) {
+  const { id } = Object.fromEntries(new URL(request.url).searchParams.entries())
+
   const session = await auth()
 
   if (!session) {
@@ -18,24 +21,59 @@ export async function GET() {
     })
   }
 
-  let res = await db
+  if (!id) {
+    const res = await db
+      .select({
+        id: websites.id,
+        slug: websites.slug,
+        image: websites.image,
+        title: websites.title,
+      })
+      .from(websites)
+      .where(eq(websites.userId, session.user?.id as string))
+      .orderBy(desc(websites.updatedAt))
+
+    return Response.json({
+      status: 200,
+      data: res,
+    })
+  }
+
+  const res = await db
     .select()
     .from(websites)
-    .where(and(eq(websites.userId, session.user?.id as string)))
-
-  if (!res.length) {
-    res = await db
-      .insert(websites)
-      .values({
-        primary: true,
-        userId: session.user?.id as string,
-      })
-      .returning()
-  }
+    .where(
+      and(eq(websites.id, id), eq(websites.userId, session.user?.id as string)),
+    )
 
   return Response.json({
     status: 200,
     data: res[0],
+  })
+}
+
+export async function PUT(request: Request) {
+  const session = await auth()
+
+  if (!session) {
+    return Response.json({
+      status: 401,
+      message: "Unauthorized",
+    })
+  }
+
+  const data = await request.json()
+
+  data.slug = slugify(data.slug)
+
+  await db.insert(websites).values({
+    userId: session.user?.id as string,
+    ...data,
+  })
+
+  return Response.json({
+    status: 200,
+    message: "OK",
   })
 }
 
@@ -90,7 +128,13 @@ export async function PATCH(request: Request) {
   const { websiteId, website, block } = await request.json()
 
   if (website) {
-    const res = await db
+    if (website.slug) {
+      website.slug = slugify(website.slug)
+    }
+
+    website.updatedAt = new Date()
+
+    await db
       .update(websites)
       .set(website)
       .where(
@@ -99,11 +143,10 @@ export async function PATCH(request: Request) {
           eq(websites.userId, session.user?.id as string),
         ),
       )
-      .returning()
 
     return Response.json({
       status: 200,
-      data: res[0],
+      message: "OK",
     })
   }
 

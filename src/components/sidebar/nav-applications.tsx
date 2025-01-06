@@ -17,7 +17,7 @@ import { useEffect } from "react"
 
 const applications = [
   {
-    title: "Website",
+    title: "Websites",
     url: "/x/website",
     icon: Sparkle,
     prefetch: {
@@ -46,26 +46,26 @@ export function NavApplications() {
 
   useEffect(() => {
     const prefetchApplications = async () => {
-      const sortedApplications = applications
-        .filter((app) => app.prefetch)
-        .sort((a, b) => a.prefetch!.priority - b.prefetch!.priority)
+      // const sortedApplications = applications
+      //   .filter((app) => app.prefetch)
+      //   .sort((a, b) => a.prefetch!.priority - b.prefetch!.priority)
 
-      for (const application of sortedApplications) {
-        await queryClient.prefetchQuery({
-          queryKey: [application.prefetch!.queryKey],
-          queryFn: async () => {
-            const response = await fetch(application.prefetch!.apiRoute)
-            if (!response.ok)
-              return Promise.reject({
-                message: "Something went wrong!",
-              })
-            return (await response.json()).data
-          },
-        })
-        await fetch("/api/v1/activity")
-      }
+      // for (const application of sortedApplications) {
+      //   await queryClient.prefetchQuery({
+      //     queryKey: [application.prefetch!.queryKey],
+      //     queryFn: async () => {
+      //       const response = await fetch(application.prefetch!.apiRoute)
+      //       if (!response.ok)
+      //         return Promise.reject({
+      //           message: "Something went wrong!",
+      //         })
+      //       return (await response.json()).data
+      //     },
+      //   })
+
+      // }
+      await fetch("/api/v1/activity")
     }
-
     prefetchApplications()
   }, [queryClient])
 

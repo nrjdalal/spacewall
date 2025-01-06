@@ -1,6 +1,6 @@
 import { users } from "@/db"
 import { generateId } from "@/lib/utils"
-import { boolean, jsonb, pgTable, text } from "drizzle-orm/pg-core"
+import { boolean, jsonb, pgTable, text, timestamp } from "drizzle-orm/pg-core"
 
 export const websites = pgTable("website", {
   id: text("id")
@@ -23,4 +23,6 @@ export const websites = pgTable("website", {
   title: text("title").notNull().default(""),
   description: text("description").notNull().default(""),
   blocks: jsonb("blocks").default([]),
+  createdAt: timestamp("createdAt").defaultNow(),
+  updatedAt: timestamp("updatedAt").defaultNow(),
 })
