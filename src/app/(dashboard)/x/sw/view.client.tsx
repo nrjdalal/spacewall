@@ -2,6 +2,13 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -9,6 +16,9 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { humanTime } from "@/lib/utils"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { Loader2 } from "lucide-react"
+import Link from "next/link"
 import { useState } from "react"
 
 export default function Dashboard({
@@ -85,36 +95,96 @@ export default function Dashboard({
       {/* Users List */}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {sortedUsers.map((user) => (
-          <div
-            key={user.id}
-            className="bg-sidebar flex items-center gap-3 rounded-md border p-3"
-          >
-            <Avatar className="size-14 rounded-lg">
-              <AvatarImage src={user.image ?? ""} alt={user.name ?? ""} />
-              <AvatarFallback className="rounded-lg">SW</AvatarFallback>
-            </Avatar>
-            <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-semibold">{user.name}</span>
-              <span className="truncate text-xs">{user.email}</span>
-              <p className="text-muted-foreground text-xs">
-                {
+          <GetUserInfo id={user.id} key={user.id}>
+            <div className="bg-sidebar flex cursor-pointer items-center gap-3 rounded-md border p-3">
+              <Avatar className="size-14 rounded-lg">
+                <AvatarImage src={user.image ?? ""} alt={user.name ?? ""} />
+                <AvatarFallback className="rounded-lg">SW</AvatarFallback>
+              </Avatar>
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-semibold">{user.name}</span>
+                <span className="truncate text-xs">{user.email}</span>
+                <p className="text-muted-foreground text-xs">
                   {
-                    lastLogin: `Last login ${humanTime(
-                      new Date(user.updatedAt!).getTime(),
-                    )}`,
-                    dateJoined: `Joined ${humanTime(
-                      new Date(user.createdAt!).getTime(),
-                    )}`,
-                    alphabetical: `Last login ${humanTime(
-                      new Date(user.updatedAt!).getTime(),
-                    )}`,
-                  }[sortCriteria]
-                }
-              </p>
+                    {
+                      lastLogin: `Last login ${humanTime(
+                        new Date(user.updatedAt!).getTime(),
+                      )}`,
+                      dateJoined: `Joined ${humanTime(
+                        new Date(user.createdAt!).getTime(),
+                      )}`,
+                      alphabetical: `Last login ${humanTime(
+                        new Date(user.updatedAt!).getTime(),
+                      )}`,
+                    }[sortCriteria]
+                  }
+                </p>
+              </div>
             </div>
-          </div>
+          </GetUserInfo>
         ))}
       </div>
     </div>
+  )
+}
+
+const GetUserInfo = ({
+  id,
+  children,
+}: {
+  id: string
+  children: React.ReactNode
+}) => {
+  const [userInfo, setUserInfo] = useState<{
+    data: {
+      websites: { id: string; slug: string }[]
+    }
+  } | null>(null)
+
+  const queryClient = useQueryClient()
+
+  const mutation = useMutation({
+    onMutate: () => {
+      queryClient.setQueryData(["user-info"], null)
+    },
+    mutationFn: async () => {
+      const res = await fetch(`/api/admin-api/user-info?id=${id}`)
+      if (!res.ok) {
+        throw new Error("Failed to fetch user info")
+      }
+      return res.json()
+    },
+    onSuccess: (data) => {
+      queryClient.setQueryData(["user-info"], data)
+      setUserInfo(data)
+    },
+  })
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild onClick={() => mutation.mutate()}>
+        {children}
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>User Info</DialogTitle>
+        </DialogHeader>
+
+        {queryClient.getQueryData(["user-info"]) && userInfo ? (
+          <div className="text-sm">
+            <h1 className="mb-2 font-semibold underline">Websites</h1>
+            <div className="flex flex-col">
+              {userInfo.data.websites.map((website) => (
+                <Link key={website.id} href={`/x/website/${website.id}`}>
+                  • /{website.slug}
+                </Link>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <Loader2 className="animate-spin" />
+        )}
+      </DialogContent>
+    </Dialog>
   )
 }

@@ -39,12 +39,22 @@ export async function GET(request: Request) {
     })
   }
 
-  const res = await db
-    .select()
-    .from(websites)
-    .where(
-      and(eq(websites.id, id), eq(websites.userId, session.user?.id as string)),
-    )
+  const adminUsers = process.env.SW_ADMINS!.split(",")
+
+  let res
+  if (adminUsers.includes(session.user?.email as string)) {
+    res = await db.select().from(websites).where(eq(websites.id, id))
+  } else {
+    res = await db
+      .select()
+      .from(websites)
+      .where(
+        and(
+          eq(websites.id, id),
+          eq(websites.userId, session.user?.id as string),
+        ),
+      )
+  }
 
   return Response.json({
     status: 200,
