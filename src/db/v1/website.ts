@@ -1,6 +1,6 @@
 import { users } from "@/db"
 import { generateId } from "@/lib/utils"
-import { boolean, jsonb, pgTable, text, timestamp } from "drizzle-orm/pg-core"
+import { jsonb, pgTable, text, timestamp } from "drizzle-orm/pg-core"
 
 export const websites = pgTable("website", {
   id: text("id")
@@ -9,20 +9,12 @@ export const websites = pgTable("website", {
   userId: text("userId")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
-  slug: text("slug")
-    .notNull()
-    .unique()
-    .$defaultFn(() =>
-      generateId({
-        length: 6,
-      }),
-    ),
-  primary: boolean("primary"),
-  cover: text("cover").notNull().default(""),
-  image: text("image").notNull().default(""),
+  slug: text("slug").notNull().unique(),
   title: text("title").notNull().default(""),
   description: text("description").notNull().default(""),
-  blocks: jsonb("blocks").default([]),
+  cover: text("cover").notNull().default(""),
+  image: text("image").notNull().default(""),
+  blocks: jsonb("blocks"),
   createdAt: timestamp("createdAt").defaultNow(),
   updatedAt: timestamp("updatedAt").defaultNow(),
 })

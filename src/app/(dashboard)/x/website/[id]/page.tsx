@@ -419,6 +419,7 @@ const DialogEditHeader = (data: {
   const schema = z.object({
     image: z.string().field({
       type: "file",
+      accept: "image/*",
       label: "Image",
       default: data.image,
       prefix: process.env.NEXT_PUBLIC_CDN_URL + "/",
@@ -427,6 +428,7 @@ const DialogEditHeader = (data: {
     }),
     cover: z.string().field({
       type: "file",
+      accept: "image/*",
       label: "Cover",
       prefix: process.env.NEXT_PUBLIC_CDN_URL + "/",
       keyprefix: `website/${data.id}/`,
