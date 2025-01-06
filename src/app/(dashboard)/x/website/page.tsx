@@ -59,12 +59,13 @@ export default function Page() {
               <Link
                 href={`/x/website/${website.id}`}
                 className="bg-sidebar z-0 flex h-14 flex-col items-center justify-center rounded-md border text-sm"
+                prefetch={false}
               >
                 <span>{website.title ?? "Untitled"}</span>
                 <span className="text-muted-foreground text-xs">
                   spacewall.me/{website.slug}
                 </span>
-              </Link>{" "}
+              </Link>
             </div>
           ))}
         </Content>
