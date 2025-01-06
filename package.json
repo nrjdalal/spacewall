@@ -5,7 +5,7 @@
   "scripts": {
     "build": "bash scripts/build.sh",
     "dev": "next dev",
-    "db-push": "bun --env-file=.env.development drizzle-kit push",
+    "db-push": "bun --env-file=.env.development drizzle-kit push && bun --env-file=.env.development drizzle-kit generate",
     "db-studio": "bun --env-file=.env.development drizzle-kit studio",
     "db-push:prod": "bun --env-file=.env.production drizzle-kit push",
     "db-studio:prod": "bun --env-file=.env.production drizzle-kit studio",
