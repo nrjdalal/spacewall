@@ -165,7 +165,7 @@ const GetUserInfo = ({
       <DialogTrigger asChild onClick={() => mutation.mutate()}>
         {children}
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="focus:outline-none">
         <DialogHeader>
           <DialogTitle>User Info</DialogTitle>
         </DialogHeader>

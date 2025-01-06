@@ -275,9 +275,13 @@ export const BlockEditor = ({ name, schema, data }: EditorProps) => {
           <DialogTrigger asChild>
             <EllipsisVertical className="text-muted-foreground size-5 cursor-pointer" />
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent
+            onOpenAutoFocus={(e) => {
+              e.preventDefault()
+            }}
+          >
             <DialogHeader>
-              <DialogTitle className="sr-only">Edit {name}</DialogTitle>
+              <DialogTitle>Edit {name}</DialogTitle>
             </DialogHeader>
             <ZodHookForm
               schema={schema}
