@@ -12,7 +12,7 @@ import {
 import { Content, ContentRoot } from "@/components/x/content"
 import { ZodHookForm } from "@/components/x/zod-hook-form"
 import { useMutation, useQuery } from "@tanstack/react-query"
-import { Loader2 } from "lucide-react"
+import { Loader2, Trash2 } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
 import { toast } from "sonner"
@@ -54,16 +54,18 @@ export default function Page() {
           <DialogAddWebsite />
 
           {data.map((website: { id: string; title: string; slug: string }) => (
-            <Link
-              key={website.id}
-              href={`/x/website/${website.id}`}
-              className="bg-sidebar flex h-14 flex-col items-center justify-center rounded-md border text-sm"
-            >
-              <span>{website.title ?? "Untitled"}</span>
-              <span className="text-muted-foreground text-xs">
-                spacewall.me/{website.slug}
-              </span>
-            </Link>
+            <div key={website.id} className="relative">
+              <DeleteWebsite id={website.id} />
+              <Link
+                href={`/x/website/${website.id}`}
+                className="bg-sidebar z-0 flex h-14 flex-col items-center justify-center rounded-md border text-sm"
+              >
+                <span>{website.title ?? "Untitled"}</span>
+                <span className="text-muted-foreground text-xs">
+                  spacewall.me/{website.slug}
+                </span>
+              </Link>{" "}
+            </div>
           ))}
         </Content>
       </ContentRoot>
@@ -125,6 +127,80 @@ const DialogAddWebsite = () => {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>New Website</DialogTitle>
+        </DialogHeader>
+        <ZodHookForm
+          schema={schema}
+          onSubmit={onSubmit}
+          invalidate={["websites"]}
+        />
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+const DeleteWebsite = ({ id }: { id: string }) => {
+  const schema = z.object({
+    purge: z.string().field({
+      label: "Type 'permanently delete' to confirm",
+      default: "",
+    }),
+  }) as z.ZodObject<z.ZodRawShape>
+
+  const mutation = useMutation({
+    mutationFn: async (values: z.infer<typeof schema>) => {
+      const response = await fetch(`/api/v1/website`, {
+        method: "DELETE",
+        body: JSON.stringify({
+          websiteId: id,
+          ...values,
+        }),
+      })
+
+      const json = await response.json()
+
+      if (response.status !== 200) {
+        if (json?.message) {
+          throw new Error(json.message)
+        }
+        throw new Error("An error occurred.")
+      }
+      return json
+    },
+    onSuccess: () => {
+      toast.success("Website deleted successfully!")
+    },
+    onError: (_error: unknown) => {
+      toast.error(
+        _error instanceof Error ? _error.message : "An error occurred.",
+      )
+    },
+  })
+
+  const onSubmit = async (values: z.infer<typeof schema>) => {
+    if (values.purge !== "permanently delete") {
+      toast.error("Please type 'permanently delete' to confirm.")
+      return
+    }
+    await mutation.mutateAsync(values)
+  }
+
+  const [open, setOpen] = useState(false)
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button
+          className="text-destructive absolute top-1/2 right-3 aspect-square size-6 -translate-y-1/2 transform p-0"
+          variant="outline"
+        >
+          <Trash2 />
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle className="text-destructive">
+            DESTRUCTIVE ACTION
+          </DialogTitle>
         </DialogHeader>
         <ZodHookForm
           schema={schema}
