@@ -242,21 +242,45 @@ export const ZodHookForm = ({
                     <FormLabel className="sr-only">{formField.name}</FormLabel>
                   )}
 
-                  {["email", "password", "text"].includes(formField.type) && (
-                    <FormControl>
-                      <Input
-                        {...formField}
-                        {...field}
-                        value={
-                          field.value as
-                            | string
-                            | number
-                            | readonly string[]
-                            | undefined
-                        }
-                      />
-                    </FormControl>
-                  )}
+                  {["email", "password", "text"].includes(formField.type) &&
+                    (formField.prefix ? (
+                      <div className="flex items-center">
+                        <FormLabel className="text-muted-foreground/75 -mr-2 flex h-9 cursor-text items-center rounded-l-md border border-r-0 pt-0.5 pl-2">
+                          {formField.prefix
+                            .replace("http://", "")
+                            .replace("https://", "")}
+                          /
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            className="rounded-l-none border-l-0 focus-visible:ring-0"
+                            {...formField}
+                            {...field}
+                            value={
+                              field.value as
+                                | string
+                                | number
+                                | readonly string[]
+                                | undefined
+                            }
+                          />
+                        </FormControl>
+                      </div>
+                    ) : (
+                      <FormControl>
+                        <Input
+                          {...formField}
+                          {...field}
+                          value={
+                            field.value as
+                              | string
+                              | number
+                              | readonly string[]
+                              | undefined
+                          }
+                        />
+                      </FormControl>
+                    ))}
 
                   {formField.type === "file" && (
                     <>

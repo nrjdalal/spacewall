@@ -81,8 +81,10 @@ const DialogAddWebsite = () => {
       default: "",
     }),
     slug: z.string().min(1).max(128).field({
-      label: "Website",
+      label: "Slug",
+      description: "Can change or add custom domain later.",
       default: "",
+      prefix: process.env.NEXT_PUBLIC_SITE_URL,
     }),
   }) as z.ZodObject<z.ZodRawShape>
 
