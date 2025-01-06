@@ -47,6 +47,7 @@ export const Block = (props: Props) => {
     }),
     image: z.string().field({
       type: "file",
+      accept: "image/*",
       label: "Image (optional)",
       default: props.meta?.image || "",
       prefix: process.env.NEXT_PUBLIC_CDN_URL + "/",

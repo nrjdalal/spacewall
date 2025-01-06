@@ -25,6 +25,7 @@ const Block = (props: Props) => {
       })
       .field({
         type: "file",
+        accept: "image/*",
         label: "Image",
         default: props.meta?.image || "",
         prefix: process.env.NEXT_PUBLIC_CDN_URL + "/",

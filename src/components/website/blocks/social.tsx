@@ -38,6 +38,7 @@ const Block = (props: Props) => {
       }),
     logo: z.string().field({
       type: "file",
+      accept: "image/*",
       label: "Logo (optional)",
       default: props.meta?.logo || "",
       prefix: process.env.NEXT_PUBLIC_CDN_URL + "/",
