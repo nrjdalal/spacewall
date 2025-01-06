@@ -360,6 +360,7 @@ const DialogEditSlug = (data: { id: string; slug: string }) => {
     slug: z.string().min(2).field({
       label: "Slug",
       default: data.slug,
+      prefix: process.env.NEXT_PUBLIC_SITE_URL,
     }),
   }) as z.ZodObject<z.ZodRawShape>
 
@@ -400,7 +401,11 @@ const DialogEditSlug = (data: { id: string; slug: string }) => {
           <Pencil />
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent
+        onOpenAutoFocus={(e) => {
+          e.preventDefault()
+        }}
+      >
         <DialogHeader>
           <DialogTitle>Manage Slug</DialogTitle>
         </DialogHeader>
@@ -518,7 +523,11 @@ const DialogEditHeader = (data: {
           <Pencil />
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent
+        onOpenAutoFocus={(e) => {
+          e.preventDefault()
+        }}
+      >
         <DialogHeader>
           <DialogTitle>Manage Header</DialogTitle>
         </DialogHeader>
@@ -581,7 +590,12 @@ const DialogAddBlock = (data: { id: string }) => {
       <DialogTrigger asChild>
         <Button className="w-full">Add Block</Button>
       </DialogTrigger>
-      <DialogContent className="lg:max-w-screen-lg">
+      <DialogContent
+        className="lg:max-w-screen-lg"
+        onOpenAutoFocus={(e) => {
+          e.preventDefault()
+        }}
+      >
         <DialogHeader>
           <DialogTitle>Blocks</DialogTitle>
           <DialogDescription>Add blocks to your website.</DialogDescription>

@@ -82,9 +82,9 @@ const DialogAddWebsite = () => {
     }),
     slug: z.string().min(1).max(128).field({
       label: "Slug",
-      description: "Can change or add custom domain later.",
-      default: "",
+      description: "You can change or add custom domain later.",
       prefix: process.env.NEXT_PUBLIC_SITE_URL,
+      default: "",
     }),
   }) as z.ZodObject<z.ZodRawShape>
 
@@ -127,7 +127,11 @@ const DialogAddWebsite = () => {
       <DialogTrigger asChild>
         <Button className="w-full">Add Website</Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent
+        onOpenAutoFocus={(e) => {
+          e.preventDefault()
+        }}
+      >
         <DialogHeader>
           <DialogTitle>New Website</DialogTitle>
         </DialogHeader>
@@ -199,11 +203,13 @@ const DeleteWebsite = ({ id }: { id: string }) => {
           <Trash2 />
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent
+        onOpenAutoFocus={(e) => {
+          e.preventDefault()
+        }}
+      >
         <DialogHeader>
-          <DialogTitle className="text-destructive">
-            DESTRUCTIVE ACTION
-          </DialogTitle>
+          <DialogTitle className="text-destructive">Delete Website</DialogTitle>
         </DialogHeader>
         <ZodHookForm
           schema={schema}

@@ -1,1 +1,2 @@
 - disabled prefetch websites in sidebar applications
+- decreased accessibility with onOpenAutoFocus
