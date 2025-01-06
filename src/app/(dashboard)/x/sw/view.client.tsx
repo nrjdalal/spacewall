@@ -175,7 +175,11 @@ const GetUserInfo = ({
             <h1 className="mb-2 font-semibold underline">Websites</h1>
             <div className="flex flex-col">
               {userInfo.data.websites.map((website) => (
-                <Link key={website.id} href={`/x/website/${website.id}`}>
+                <Link
+                  key={website.id}
+                  href={`/x/website/${website.id}`}
+                  target="_blank"
+                >
                   • /{website.slug}
                 </Link>
               ))}
