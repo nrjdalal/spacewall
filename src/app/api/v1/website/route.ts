@@ -7,7 +7,7 @@ import {
   S3Client,
 } from "@aws-sdk/client-s3"
 import slugify from "@sindresorhus/slugify"
-import { and, desc, eq, sql } from "drizzle-orm"
+import { and, count, desc, eq, sql } from "drizzle-orm"
 
 export async function GET(request: Request) {
   const { id } = Object.fromEntries(new URL(request.url).searchParams.entries())
@@ -62,14 +62,46 @@ export async function PUT(request: Request) {
     })
   }
 
-  const data = await request.json()
+  const websitesCount = await db
+    .select({ count: count() })
+    .from(websites)
+    .where(eq(websites.userId, session.user?.id as string))
 
+  if (websitesCount[0].count >= 3) {
+    return Response.json(
+      {
+        status: 403,
+        message: "Only 3 websites are allowed in free tier",
+      },
+      { status: 403 },
+    )
+  }
+
+  const data = await request.json()
   data.slug = slugify(data.slug)
 
-  await db.insert(websites).values({
-    userId: session.user?.id as string,
-    ...data,
-  })
+  try {
+    await db.insert(websites).values({
+      userId: session.user?.id as string,
+      ...data,
+    })
+  } catch (e: unknown) {
+    if (
+      e instanceof Error &&
+      (e as { constraint_name?: string }).constraint_name ===
+        "website_slug_unique"
+    ) {
+      return Response.json(
+        {
+          status: 409,
+          message: "Website already exists",
+        },
+        {
+          status: 409,
+        },
+      )
+    }
+  }
 
   return Response.json({
     status: 200,

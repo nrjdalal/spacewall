@@ -15,6 +15,7 @@ import { useMutation, useQuery } from "@tanstack/react-query"
 import { Loader2 } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
+import { toast } from "sonner"
 import { z } from "zod"
 
 export default function Page() {
@@ -88,8 +89,24 @@ const DialogAddWebsite = () => {
         method: "PUT",
         body: JSON.stringify(values),
       })
-      if (!response.ok) throw new Error("Something went wrong!")
-      return await response.json()
+
+      const json = await response.json()
+
+      if (response.status !== 200) {
+        if (json?.message) {
+          throw new Error(json.message)
+        }
+        throw new Error("An error occurred.")
+      }
+      return json
+    },
+    onSuccess: () => {
+      toast.success("Website created successfully!")
+    },
+    onError: (_error: unknown) => {
+      toast.error(
+        _error instanceof Error ? _error.message : "An error occurred.",
+      )
     },
   })
 
@@ -113,11 +130,6 @@ const DialogAddWebsite = () => {
           schema={schema}
           onSubmit={onSubmit}
           invalidate={["websites"]}
-          message={{
-            loading: "Creating website. Don't close the tab!",
-            success: "Website created.",
-            error: "Website name taken.",
-          }}
         />
       </DialogContent>
     </Dialog>
