@@ -121,11 +121,11 @@ export const BlockEditor = ({ name, schema, data }: EditorProps) => {
         valuesCopy[key] = JSON.parse(valuesCopy[key]).value
       })
       await queryClient.cancelQueries({
-        queryKey: ["website"],
+        queryKey: [`website-${data.websiteId}`],
       })
-      const prev = queryClient.getQueryData(["website"])
+      const prev = queryClient.getQueryData([`website-${data.websiteId}`])
       queryClient.setQueryData(
-        ["website"],
+        [`website-${data.websiteId}`],
         (prev: {
           blocks: {
             id: string
@@ -154,7 +154,7 @@ export const BlockEditor = ({ name, schema, data }: EditorProps) => {
       return { prev }
     },
     onError: (error, variables, context) => {
-      queryClient.setQueryData(["website"], context?.prev)
+      queryClient.setQueryData([`website-${data.websiteId}`], context?.prev)
     },
   })
 
@@ -180,11 +180,11 @@ export const BlockEditor = ({ name, schema, data }: EditorProps) => {
     },
     onMutate: async () => {
       await queryClient.cancelQueries({
-        queryKey: ["website"],
+        queryKey: [`website-${data.websiteId}`],
       })
-      const prev = queryClient.getQueryData(["website"])
+      const prev = queryClient.getQueryData([`website-${data.websiteId}`])
       queryClient.setQueryData(
-        ["website"],
+        [`website-${data.websiteId}`],
         (prev: {
           blocks: {
             id: string
@@ -202,11 +202,11 @@ export const BlockEditor = ({ name, schema, data }: EditorProps) => {
       return { prev }
     },
     onError: (error, variables, context) => {
-      queryClient.setQueryData(["website"], context?.prev)
+      queryClient.setQueryData([`website-${data.websiteId}`], context?.prev)
     },
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["website"],
+        queryKey: [`website-${data.websiteId}`],
       })
     },
   })
@@ -228,11 +228,11 @@ export const BlockEditor = ({ name, schema, data }: EditorProps) => {
     },
     onMutate: async () => {
       await queryClient.cancelQueries({
-        queryKey: ["website"],
+        queryKey: [`website-${data.websiteId}`],
       })
-      const prev = queryClient.getQueryData(["website"])
+      const prev = queryClient.getQueryData([`website-${data.websiteId}`])
       queryClient.setQueryData(
-        ["website"],
+        [`website-${data.websiteId}`],
         (prev: {
           blocks: {
             id: string
@@ -258,11 +258,11 @@ export const BlockEditor = ({ name, schema, data }: EditorProps) => {
       return { prev }
     },
     onError: (error, variables, context) => {
-      queryClient.setQueryData(["website"], context?.prev)
+      queryClient.setQueryData([`website-${data.websiteId}`], context?.prev)
     },
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["website"],
+        queryKey: [`website-${data.websiteId}`],
       })
     },
   })
@@ -282,7 +282,7 @@ export const BlockEditor = ({ name, schema, data }: EditorProps) => {
             <ZodHookForm
               schema={schema}
               onSubmit={onSubmit}
-              invalidate={["website"]}
+              invalidate={[`website-${data.websiteId}`]}
               message={{
                 loading: "Updating block. Don't close the tab!",
                 success: "Block updated.",

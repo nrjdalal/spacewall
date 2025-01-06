@@ -94,17 +94,17 @@ export default function Page() {
       }[]
     }) => {
       await queryClient.cancelQueries({
-        queryKey: ["website"],
+        queryKey: [`website-${data.id}`],
       })
-      const prev = queryClient.getQueryData(["website"])
-      queryClient.setQueryData(["website"], {
+      const prev = queryClient.getQueryData([`website-${data.id}`])
+      queryClient.setQueryData([`website-${data.id}`], {
         ...(prev || {}),
         blocks: values.blocks,
       })
       return { prev }
     },
     onError: (err, newData, context) => {
-      queryClient.setQueryData(["website"], context?.prev)
+      queryClient.setQueryData([`website-${data.id}`], context?.prev)
     },
   })
 
@@ -377,7 +377,7 @@ const DialogEditSlug = (data: { id: string; slug: string }) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["website"],
+        queryKey: [`website-${data.id}`],
       })
     },
   })
@@ -483,10 +483,10 @@ const DialogEditHeader = (data: {
         valuesCopy[key] = JSON.parse(valuesCopy[key]).value
       })
       await queryClient.cancelQueries({
-        queryKey: ["website"],
+        queryKey: [`website-${data.id}`],
       })
-      const prev = queryClient.getQueryData(["website"])
-      queryClient.setQueryData(["website"], {
+      const prev = queryClient.getQueryData([`website-${data.id}`])
+      queryClient.setQueryData([`website-${data.id}`], {
         ...(prev || {}),
         ...valuesCopy,
       })
@@ -494,7 +494,7 @@ const DialogEditHeader = (data: {
       return { prev }
     },
     onError: (error, variables, context) => {
-      queryClient.setQueryData(["website"], context?.prev)
+      queryClient.setQueryData([`website-${data.id}`], context?.prev)
     },
   })
 
@@ -522,7 +522,7 @@ const DialogEditHeader = (data: {
         <ZodHookForm
           schema={schema}
           onSubmit={onSubmit}
-          invalidate={["website"]}
+          invalidate={[`website-${data.id}`]}
           message={{
             loading: "Updating header. Don't close the tab!",
             success: "Header updated.",
@@ -555,9 +555,9 @@ const DialogAddBlock = (data: { id: string }) => {
       })
       return await res.json()
     },
-    onSuccess: () => {
+    onSuccess: ({ data: { id } }) => {
       queryClient.invalidateQueries({
-        queryKey: ["website"],
+        queryKey: [`website-${id}`],
       })
     },
   })

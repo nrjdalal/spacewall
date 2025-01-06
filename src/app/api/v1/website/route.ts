@@ -248,7 +248,56 @@ export async function DELETE(request: Request) {
     })
   }
 
-  const { websiteId, block } = await request.json()
+  const { websiteId, block, purge } = await request.json()
+
+  const s3Client = new S3Client({
+    region: process.env.S3_REGION as string,
+    endpoint: process.env.S3_ENDPOINT as string,
+    credentials: {
+      accessKeyId: process.env.S3_ACCESS_KEY_ID as string,
+      secretAccessKey: process.env.S3_SECRET_ACCESS_KEY as string,
+    },
+  })
+
+  if (purge && purge === "permanently delete") {
+    await db
+      .delete(websites)
+      .where(
+        and(
+          eq(websites.id, websiteId),
+          eq(websites.userId, session.user?.id as string),
+        ),
+      )
+
+    const { bucket, prefix } = {
+      bucket: process.env.S3_BUCKET_NAME as string,
+      prefix: "website/" + websiteId,
+    }
+
+    const listCommand = new ListObjectsV2Command({
+      Bucket: bucket,
+      Prefix: prefix,
+    })
+
+    const listResponse = await s3Client.send(listCommand)
+
+    if (listResponse.Contents) {
+      const deleteCommand = new DeleteObjectsCommand({
+        Bucket: bucket,
+        Delete: {
+          Objects: listResponse.Contents.map((content) => ({
+            Key: content.Key,
+          })),
+        },
+      })
+      await s3Client.send(deleteCommand)
+    }
+
+    return Response.json({
+      status: 200,
+      message: "OK",
+    })
+  }
 
   await db
     .update(websites)
@@ -265,15 +314,6 @@ export async function DELETE(request: Request) {
         eq(websites.userId, session.user?.id as string),
       ),
     )
-
-  const s3Client = new S3Client({
-    region: process.env.S3_REGION as string,
-    endpoint: process.env.S3_ENDPOINT as string,
-    credentials: {
-      accessKeyId: process.env.S3_ACCESS_KEY_ID as string,
-      secretAccessKey: process.env.S3_SECRET_ACCESS_KEY as string,
-    },
-  })
 
   const { bucket, prefix } = {
     bucket: process.env.S3_BUCKET_NAME as string,
