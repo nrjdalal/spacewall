@@ -371,7 +371,7 @@ export const ZodHookForm = ({
                           className="text-destructive absolute right-2 bottom-2 aspect-square size-6 p-0"
                           onClick={() => {
                             setFileState({})
-                            form.setValue(formField.name, "")
+                            form.setValue(formField.name, formField.default)
                           }}
                           variant="outline"
                         >
