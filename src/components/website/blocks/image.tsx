@@ -4,18 +4,25 @@ import { BlockContent, BlockEditor } from "@/components/website/block-manager"
 import { cn } from "@/lib/utils"
 import { z } from "zod"
 
-interface Props {
-  websiteId: string
-  id: string
-  type: string
-  active: boolean
-  meta?: {
-    image?: string
-    title?: string
-  }
-}
+const Schema = z.object({
+  websiteId: z.string(),
+  id: z.string(),
+  type: z.string(),
+  active: z.boolean(),
+  meta: z
+    .object({
+      image: z
+        .string()
+        .optional()
+        .describe(JSON.stringify({ storage: true })),
+      title: z.string().optional(),
+    })
+    .optional(),
+})
 
-const Block = (props: Props) => {
+type Schema = z.infer<typeof Schema>
+
+const Block = (props: Schema) => {
   const name = "Image Block"
   const schema = z.object({
     image: z
@@ -44,7 +51,7 @@ const Block = (props: Props) => {
   )
 }
 
-const View = (props: Props) => {
+const View = (props: Schema) => {
   return (
     <>
       {props.meta?.image ? (
@@ -69,4 +76,8 @@ const View = (props: Props) => {
   )
 }
 
-export const { Block: ImageBlock, View: ImageView } = { Block, View }
+export const {
+  Schema: ImageSchema,
+  Block: ImageBlock,
+  View: ImageView,
+} = { Schema, Block, View }

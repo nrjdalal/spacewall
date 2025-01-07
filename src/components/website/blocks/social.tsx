@@ -15,18 +15,25 @@ import Link from "next/link"
 import { createElement } from "react"
 import { z } from "zod"
 
-interface Props {
-  websiteId: string
-  id: string
-  type: string
-  active: boolean
-  meta?: {
-    href?: string
-    logo?: string
-  }
-}
+const Schema = z.object({
+  websiteId: z.string(),
+  id: z.string(),
+  type: z.string(),
+  active: z.boolean(),
+  meta: z
+    .object({
+      href: z.string().optional(),
+      logo: z
+        .string()
+        .optional()
+        .describe(JSON.stringify({ storage: true })),
+    })
+    .optional(),
+})
 
-const Block = (props: Props) => {
+type Schema = z.infer<typeof Schema>
+
+const Block = (props: Schema) => {
   const name = "Social"
   const schema = z.object({
     href: z
@@ -53,7 +60,7 @@ const Block = (props: Props) => {
   )
 }
 
-const View = (props: Props) => {
+const View = (props: Schema) => {
   const Logos = {
     "bsky.app": SiBluesky,
     "facebook.com": SiFacebook,
@@ -110,4 +117,8 @@ const View = (props: Props) => {
   )
 }
 
-export const { Block: SocialBlock, View: SocialView } = { Block, View }
+export const {
+  Schema: SocialSchema,
+  Block: SocialBlock,
+  View: SocialView,
+} = { Schema, Block, View }

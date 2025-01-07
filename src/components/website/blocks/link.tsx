@@ -29,7 +29,10 @@ const Schema = z.object({
     .object({
       title: z.string().optional(),
       href: z.string().optional(),
-      image: z.string().optional().describe("s3://image"),
+      image: z
+        .string()
+        .optional()
+        .describe(JSON.stringify({ storage: true })),
       description: z.string().optional(),
     })
     .optional(),
