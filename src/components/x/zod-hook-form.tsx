@@ -27,7 +27,7 @@ import { cn, createChecksum } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useQueryClient } from "@tanstack/react-query"
 import Compressor from "compressorjs"
-import { File, Loader2 } from "lucide-react"
+import { File, Loader2, Trash2 } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
@@ -46,6 +46,7 @@ const formFieldSchema = z
     placeholder: z.string().optional(),
     prefix: z.string().optional(),
     keyprefix: z.string().optional(),
+    isMultiple: z.string().optional(),
   })
   .passthrough()
   .superRefine((data) => {
@@ -109,7 +110,7 @@ export const ZodHookForm = ({
     ),
   })
 
-  const { fileState, handleFilePreview } = useFileUpload()
+  const { handleFilePreview, fileState, setFileState } = useFileUpload()
 
   const submit = async (values: z.infer<typeof schema>) => {
     const uploadPromises = Object.keys(fileState).map(async (key) => {
@@ -288,14 +289,16 @@ export const ZodHookForm = ({
                         <Input
                           className={cn("hidden", formField.className)}
                           {...formField}
-                          onChange={(event) =>
+                          multiple={formField.isMultiple ? true : undefined}
+                          onChange={(event) => {
                             handleFilePreview({
                               event,
                               key: formField.name,
                               setValue: form.setValue,
                               keyprefix: formField.keyprefix ?? "",
                             })
-                          }
+                            event.target.value = ""
+                          }}
                         />
                       </FormControl>
                       <FormLabel
@@ -338,6 +341,13 @@ export const ZodHookForm = ({
                                 Drag & drop here
                               </div>
                             ))}
+                          {fileState[formField.name]?.size && (
+                            <div className="absolute -bottom-1.5 left-1/2 flex w-full -translate-x-1/2 transform justify-center">
+                              <span className="bg-background text-muted-foreground rounded-sm border px-1 text-xs uppercase">
+                                {fileState[formField.name]?.size}
+                              </span>
+                            </div>
+                          )}
                           {typeof fileState[formField.name]?.preview ===
                             "string" && (
                             <img
@@ -353,15 +363,33 @@ export const ZodHookForm = ({
                                 <File className="size-12 stroke-1" />
                               </div>
                             )}
-                          {fileState[formField.name]?.size && (
-                            <div className="absolute -bottom-1.5 left-1/2 flex w-full -translate-x-1/2 transform justify-center">
-                              <span className="bg-background text-muted-foreground rounded-sm border px-1 text-xs uppercase">
-                                {fileState[formField.name]?.size}
-                              </span>
-                            </div>
-                          )}
                         </div>
                       </FormLabel>
+                      {fileState[formField.name]?.preview ? (
+                        <Button
+                          type="button"
+                          className="text-destructive absolute right-2 bottom-2 aspect-square size-6 p-0"
+                          onClick={() => {
+                            setFileState({})
+                            form.setValue(formField.name, "")
+                          }}
+                          variant="outline"
+                        >
+                          <Trash2 />
+                        </Button>
+                      ) : formField.default ? (
+                        <Button
+                          type="button"
+                          className="text-destructive absolute right-2 bottom-2 aspect-square size-6 p-0"
+                          onClick={() => {
+                            formField.default = ""
+                            form.setValue(formField.name, "")
+                          }}
+                          variant="outline"
+                        >
+                          <Trash2 />
+                        </Button>
+                      ) : null}
                     </>
                   )}
 

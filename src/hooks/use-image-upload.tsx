@@ -14,7 +14,7 @@ type FileUploadState = {
 type FileUploadStateMap = Record<string, FileUploadState>
 
 export function useFileUpload() {
-  const [fileState, setfileState] = useState<FileUploadStateMap>({})
+  const [fileState, setFileState] = useState<FileUploadStateMap>({})
 
   const handleFilePreview = useCallback(
     async ({
@@ -28,6 +28,8 @@ export function useFileUpload() {
       setValue: (field: string, value: string) => void
       keyprefix?: string
     }) => {
+      console.log("handleFilePreview")
+
       const uploadKey =
         keyprefix + ((key && key + "/v" + Date.now()) || generateId())
 
@@ -48,7 +50,7 @@ export function useFileUpload() {
         const reader = new FileReader()
         reader.onload = () => {
           if (reader.result) {
-            setfileState((prev) => ({
+            setFileState((prev) => ({
               ...prev,
               [key]: {
                 ...prev[key],
@@ -64,7 +66,7 @@ export function useFileUpload() {
         }
         reader.readAsDataURL(file)
       } else {
-        setfileState((prev) => ({
+        setFileState((prev) => ({
           ...prev,
           [key]: {
             ...prev[key],
@@ -170,5 +172,5 @@ export function useFileUpload() {
   //   [customKey],
   // )
 
-  return { fileState, handleFilePreview }
+  return { handleFilePreview, fileState, setFileState }
 }
