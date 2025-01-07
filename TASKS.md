@@ -1,17 +1,18 @@
+# High Priority
+
 - [ ] build an landing page
+- [ ] payment pages
+- [ ] s3 cleanup on removal of images
+
+# Medium Priority
+
 - [ ] 5-6 new blocks
-- [ ] delete s3 files on block deletion
-- [ ] secure deletion api, make identifying asset server side logic instead of client side, so users can't delete others assets
-- [ ] optimistic add block, optimistic delete
-- [ ] deletion for cover and if any image is added
-- [ ] multiple websites
+- [ ] error handling
+- [ ] multi image upload
+
+# Low Priority
+
+- [ ] auto link logos (semi done)
 - [ ] example in add block instead of naming
-- [ ] updated dashboard
+- [ ] update dashboard
 - [ ] usage example or better onboarding
-
-## ongoing by @nrjdalal
-
-- [ ] auto link logos
-- [ ] block active state switcher
-- [ ] file type during add like accept image/\*
-- [ ] social block, below header
