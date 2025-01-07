@@ -194,18 +194,18 @@ export async function PATCH(request: Request) {
     })
   }
 
-  if (block) {
+  if (block.meta) {
     const schema = availableBlocks.find((b) => b.type === block.type)?.schema
 
     if (schema) {
       const fields = zodMetaParser(schema)
 
-      const metaStorageFields = Object.keys(fields.meta).filter(
-        (key) =>
+      const metaStorageFields = Object.keys(fields.meta).filter((key) => {
+        return (
           (fields.meta as Record<string, { _meta: { storage: boolean } }>)[key]
-            ._meta.storage &&
-          (block.meta[key] === null || block.meta[key] === ""),
-      )
+            ._meta.storage && !block.meta[key]
+        )
+      })
       const cleanupKeys = metaStorageFields.map(
         (key) => `website/${websiteId}/blocks/${block.id}/${block.type}/${key}`,
       )
