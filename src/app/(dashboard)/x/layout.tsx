@@ -15,7 +15,6 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { cn } from "@/lib/utils"
 import { getSession } from "next-auth/react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -55,30 +54,28 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <div className="-ml-1 flex items-center gap-2">
             <Breadcrumb className="ml-1">
               <BreadcrumbList className="text-xs sm:gap-0.5">
-                <BreadcrumbItem
-                  key="/x"
-                  className={cn(
-                    pathname.split("/").length === 2 && "font-medium",
-                  )}
-                >
-                  {pathname.split("/").length === 2 ? (
-                    <BreadcrumbPage className="font-medium">
-                      dashboard
-                    </BreadcrumbPage>
-                  ) : (
-                    <BreadcrumbLink asChild>
-                      <Link href={"/x"}>dashboard</Link>
-                    </BreadcrumbLink>
-                  )}
-                </BreadcrumbItem>
-                {pathname.split("/")[2] && <BreadcrumbSeparator />}
-                {pathname.split("/")[2] && (
-                  <BreadcrumbItem>
-                    <BreadcrumbPage className="font-medium">
-                      {pathname.split("/")[2].replace(/-/g, " ")}
-                    </BreadcrumbPage>
-                  </BreadcrumbItem>
-                )}
+                {pathname.split("/").map((segment, index, array) => {
+                  const href = `/${array.slice(1, index + 1).join("/")}`
+                  const isLast = index === array.length - 1
+                  return (
+                    <div key={href} className="flex items-center">
+                      {index > 1 && <BreadcrumbSeparator />}
+                      <BreadcrumbItem>
+                        {isLast ? (
+                          <BreadcrumbPage className="font-medium">
+                            {segment.replace(/-/g, " ")}
+                          </BreadcrumbPage>
+                        ) : (
+                          <BreadcrumbLink asChild>
+                            <Link href={href}>
+                              {segment.replace(/-/g, " ")}
+                            </Link>
+                          </BreadcrumbLink>
+                        )}
+                      </BreadcrumbItem>
+                    </div>
+                  )
+                })}
               </BreadcrumbList>
             </Breadcrumb>
           </div>
