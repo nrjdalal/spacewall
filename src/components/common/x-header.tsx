@@ -18,8 +18,8 @@ export default function XHeader({
       <div className={cn("mx-auto max-w-screen-lg px-5", className)}>
         <div className="flex items-center gap-1">
           {back && (
-            <Link href={back}>
-              <ChevronLeft className="size-4" />
+            <Link className="-ml-1" href={back}>
+              <ChevronLeft className="size-4.5" />
             </Link>
           )}
           <h1 className="font-medium lg:text-lg">{title}</h1>
