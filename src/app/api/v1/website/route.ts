@@ -1,3 +1,4 @@
+import { availableBlocks } from "@/components/website/index"
 import { db, websites } from "@/db"
 import { auth } from "@/lib/auth"
 import { generateId } from "@/lib/utils"
@@ -8,6 +9,7 @@ import {
 } from "@aws-sdk/client-s3"
 import slugify from "@sindresorhus/slugify"
 import { and, count, desc, eq, sql } from "drizzle-orm"
+import { zodMetaParser } from "zod-meta-parser"
 
 export async function GET(request: Request) {
   const { id } = Object.fromEntries(new URL(request.url).searchParams.entries())
@@ -190,6 +192,64 @@ export async function PATCH(request: Request) {
       status: 200,
       message: "OK",
     })
+  }
+
+  if (block) {
+    const schema = availableBlocks.find((b) => b.type === block.type)?.schema
+
+    if (schema) {
+      const fields = zodMetaParser(schema)
+
+      const metaStorageFields = Object.keys(fields.meta).filter(
+        (key) =>
+          (fields.meta as Record<string, { _meta: { storage: boolean } }>)[key]
+            ._meta.storage &&
+          (block.meta[key] === null || block.meta[key] === ""),
+      )
+      const cleanupKeys = metaStorageFields.map(
+        (key) => `website/${websiteId}/blocks/${block.id}/${block.type}/${key}`,
+      )
+
+      const s3Client = new S3Client({
+        region: process.env.S3_REGION as string,
+        endpoint: process.env.S3_ENDPOINT as string,
+        credentials: {
+          accessKeyId: process.env.S3_ACCESS_KEY_ID as string,
+          secretAccessKey: process.env.S3_SECRET_ACCESS_KEY as string,
+        },
+      })
+
+      const { bucket, prefix } = {
+        bucket: process.env.S3_BUCKET_NAME as string,
+        prefix:
+          "website/" + websiteId + "/blocks/" + block.id + "/" + block.type,
+      }
+
+      const listCommand = new ListObjectsV2Command({
+        Bucket: bucket,
+        Prefix: prefix,
+      })
+
+      const listResponse = await s3Client.send(listCommand)
+
+      if (listResponse.Contents) {
+        const deleteKeys = listResponse.Contents.map(
+          (content) => content.Key,
+        ).filter((key) => cleanupKeys.some((k) => key?.startsWith(k)))
+
+        if (deleteKeys.length) {
+          const deleteCommand = new DeleteObjectsCommand({
+            Bucket: bucket,
+            Delete: {
+              Objects: deleteKeys.map((key) => ({ Key: key })),
+            },
+          })
+          await s3Client.send(deleteCommand)
+        }
+      }
+    } else {
+      console.error("Error: Cleaning up storage!")
+    }
   }
 
   if (typeof block.active === "boolean") {
