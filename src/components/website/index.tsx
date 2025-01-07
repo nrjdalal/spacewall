@@ -1,11 +1,13 @@
 import { Camera, Link, Origami } from "lucide-react"
 import dynamic from "next/dynamic"
+import { LinkSchema } from "./blocks/link"
 
 export const availableBlocks = [
   {
     type: "link",
     title: "Link",
     icon: Link,
+    schema: LinkSchema,
     component: dynamic(() =>
       import("./blocks/link").then((mod) => mod.LinkBlock),
     ),

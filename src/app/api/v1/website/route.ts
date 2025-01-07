@@ -1,6 +1,7 @@
+import { availableBlocks } from "@/components/website/index"
 import { db, websites } from "@/db"
 import { auth } from "@/lib/auth"
-import { generateId } from "@/lib/utils"
+import { generateId, parseZodDescription } from "@/lib/utils"
 import {
   DeleteObjectsCommand,
   ListObjectsV2Command,
@@ -190,6 +191,12 @@ export async function PATCH(request: Request) {
       status: 200,
       message: "OK",
     })
+  }
+
+  if (block) {
+    const schema = availableBlocks.find((b) => b.type === block.type)?.schema
+    const schemaParsed = parseZodDescription(schema)
+    console.log(schemaParsed)
   }
 
   if (typeof block.active === "boolean") {

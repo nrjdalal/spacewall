@@ -6,9 +6,11 @@ import { cn } from "@/lib/utils"
 import {
   SiBluesky,
   SiFacebook,
+  SiGithub,
   SiGmail,
   SiInstagram,
   SiNpm,
+  SiX,
   SiYoutube,
 } from "@icons-pack/react-simple-icons"
 import { LinkIcon } from "lucide-react"
@@ -16,20 +18,24 @@ import Link from "next/link"
 import { createElement } from "react"
 import { z } from "zod"
 
-interface Props {
-  websiteId: string
-  id: string
-  type: string
-  active: boolean
-  meta?: {
-    title?: string
-    href?: string
-    image?: string
-    description?: string
-  }
-}
+type Schema = z.infer<typeof Schema>
 
-export const Block = (props: Props) => {
+const Schema = z.object({
+  websiteId: z.string(),
+  id: z.string(),
+  type: z.string(),
+  active: z.boolean(),
+  meta: z
+    .object({
+      title: z.string().optional(),
+      href: z.string().optional(),
+      image: z.string().optional().describe("s3://image"),
+      description: z.string().optional(),
+    })
+    .optional(),
+})
+
+export const Block = (props: Schema) => {
   const name = "Link Block"
   const schema = z.object({
     href: z
@@ -70,15 +76,15 @@ export const Block = (props: Props) => {
   )
 }
 
-const View = (props: Props) => {
+const View = (props: Schema) => {
   const Logos = {
     "bsky.app": SiBluesky,
     "facebook.com": SiFacebook,
-    "github.com": Icons.Github,
+    "github.com": SiGithub,
     "gmail.com": SiGmail,
     "instagram.com": SiInstagram,
     "npmjs.com": SiNpm,
-    "x.com": Icons.X,
+    "x.com": SiX,
     "youtube.com": SiYoutube,
     "linkedin.com": Icons.Linkedin,
   }
@@ -150,4 +156,8 @@ const View = (props: Props) => {
   )
 }
 
-export const { Block: LinkBlock, View: LinkView } = { Block, View }
+export const {
+  Schema: LinkSchema,
+  Block: LinkBlock,
+  View: LinkView,
+} = { Schema, Block, View }

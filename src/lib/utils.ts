@@ -2,6 +2,7 @@ import { clsx, type ClassValue } from "clsx"
 import { DateArg, formatDistanceToNow } from "date-fns"
 import { customAlphabet } from "nanoid"
 import { twMerge } from "tailwind-merge"
+import { z } from "zod"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -52,4 +53,14 @@ export function generateId({
 
 export function redirect(url: string, base: URL) {
   return Response.redirect(new URL(url, base))
+}
+
+export const parseZodDescription = (schema: z.ZodObject<z.ZodRawShape>) => {
+  const data = [
+    ...Object.entries(schema?.shape).map(([key, value]) => ({
+      [key]: value._def.type,
+    })),
+  ]
+
+  return data
 }
