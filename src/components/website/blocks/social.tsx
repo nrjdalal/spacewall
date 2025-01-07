@@ -3,11 +3,15 @@
 import { Icons } from "@/assets/icons"
 import { BlockContent, BlockEditor } from "@/components/website/block-manager"
 import {
+  SiApplemusic,
   SiBluesky,
   SiFacebook,
+  SiGithub,
   SiGmail,
   SiInstagram,
   SiNpm,
+  SiSpotify,
+  SiTiktok,
   SiYoutube,
 } from "@icons-pack/react-simple-icons"
 import { LinkIcon } from "lucide-react"
@@ -64,19 +68,22 @@ const View = (props: Schema) => {
   const Logos = {
     "bsky.app": SiBluesky,
     "facebook.com": SiFacebook,
-    "github.com": Icons.Github,
+    "github.com": SiGithub,
     "gmail.com": SiGmail,
     "instagram.com": SiInstagram,
     "npmjs.com": SiNpm,
     "x.com": Icons.X,
     "youtube.com": SiYoutube,
     "linkedin.com": Icons.Linkedin,
+    "music.apple.com": SiApplemusic,
+    "spotify.com": SiSpotify,
+    "tiktok.com": SiTiktok,
   }
 
   return (
     <>
       {props.meta?.href ? (
-        <Link href={props.meta.href} target="_blank">
+        <Link href={props.meta.href} className="my-2" target="_blank">
           {props.meta?.logo ? (
             <img
               className="h-8 w-8 rounded-full object-cover object-center"
