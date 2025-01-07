@@ -185,8 +185,9 @@ export default function Page() {
   return (
     <>
       <XHeader
+        back="/x/website"
         title="Website"
-        description="Creating a website has never been easier"
+        description="Manage your website."
       />
       <ContentRoot>
         <Content className="space-y-5 pb-32">
