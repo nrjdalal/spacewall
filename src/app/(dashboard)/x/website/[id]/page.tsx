@@ -358,11 +358,14 @@ export default function Page() {
 
 const DialogEditSlug = (data: { id: string; slug: string }) => {
   const schema = z.object({
-    slug: z.string().min(2).field({
-      label: "Slug",
-      default: data.slug,
-      prefix: process.env.NEXT_PUBLIC_SITE_URL,
-    }),
+    slug: z
+      .string()
+      .min(2)
+      .field({
+        label: "Slug",
+        default: data.slug,
+        prefix: process.env.NEXT_PUBLIC_SITE_URL + "/",
+      }),
   }) as z.ZodObject<z.ZodRawShape>
 
   const queryClient = useQueryClient()

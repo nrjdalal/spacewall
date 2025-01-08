@@ -80,12 +80,16 @@ const DialogAddWebsite = () => {
       label: "Title",
       default: "",
     }),
-    slug: z.string().min(1).max(128).field({
-      label: "Slug",
-      description: "You can change or add custom domain later.",
-      prefix: process.env.NEXT_PUBLIC_SITE_URL,
-      default: "",
-    }),
+    slug: z
+      .string()
+      .min(1)
+      .max(128)
+      .field({
+        label: "Slug",
+        description: "You can change or add custom domain later.",
+        prefix: process.env.NEXT_PUBLIC_SITE_URL + "/",
+        default: "",
+      }),
   }) as z.ZodObject<z.ZodRawShape>
 
   const mutuation = useMutation({
