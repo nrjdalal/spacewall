@@ -82,12 +82,14 @@ export const ZodHookForm = ({
   invalidate = [],
   disabled = false,
   message,
+  submitText = "Submit",
 }: {
   className?: string
   schema: z.ZodObject<z.ZodRawShape>
   onSubmit?: (values: z.infer<typeof schema>) => Promise<void> | void
   invalidate?: string[]
   disabled?: boolean
+  submitText?: string
   message?: {
     loading: string
     success: string
@@ -250,7 +252,6 @@ export const ZodHookForm = ({
                           {formField.prefix
                             .replace("http://", "")
                             .replace("https://", "")}
-                          /
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -463,7 +464,7 @@ export const ZodHookForm = ({
           {form.formState.isSubmitting ? (
             <Loader2 className="animate-spin" />
           ) : (
-            "Submit"
+            submitText
           )}
         </Button>
       </form>
