@@ -14,6 +14,7 @@ import { Separator } from "@/components/ui/separator"
 import { ZodHookForm } from "@/components/x/zod-hook-form"
 import { SiApple } from "@icons-pack/react-simple-icons"
 import { Crown, ExternalLink, Mail, Phone } from "lucide-react"
+import Image from "next/image"
 import Link from "next/link"
 import { z } from "zod"
 
@@ -89,7 +90,7 @@ export default function Page() {
 
       <div className="right-0 hidden w-96 lg:block">
         <div className="bg-sidebar my-48 w-full max-w-96 space-y-10 rounded-md border p-5">
-          <h1 className="font-medium">Payment Details</h1>
+          <h1 className="font-medium">Complete Your Purchase</h1>
           <ZodHookForm
             schema={z.object({
               fullname: z.string().field({
@@ -108,6 +109,37 @@ export default function Page() {
             })}
             submitText="Pay $999"
           />
+          <div className="-mt-6 grid place-items-center space-y-2">
+            <h2 className="font-semibold">Guaranteed safe & secure payment</h2>
+            <div className="flex gap-2">
+              {[
+                "https://raw.githubusercontent.com/aaronfagan/svg-credit-card-payment-icons/main/flat-rounded/amex.svg",
+                "https://raw.githubusercontent.com/aaronfagan/svg-credit-card-payment-icons/main/flat-rounded/discover.svg",
+                "https://raw.githubusercontent.com/aaronfagan/svg-credit-card-payment-icons/main/flat-rounded/mastercard.svg",
+                "https://raw.githubusercontent.com/aaronfagan/svg-credit-card-payment-icons/main/flat-rounded/paypal.svg",
+                "https://raw.githubusercontent.com/aaronfagan/svg-credit-card-payment-icons/main/flat-rounded/visa.svg",
+              ].map((src, i) => (
+                <Image
+                  className="border-border/50 rounded-sm border"
+                  key={i}
+                  alt={
+                    src.includes("mastercard")
+                      ? "Mastercard"
+                      : src.includes("visa")
+                        ? "Visa"
+                        : src.includes("amex")
+                          ? "American Express"
+                          : src.includes("discover")
+                            ? "Discover"
+                            : "PayPal"
+                  }
+                  src={src}
+                  height={25}
+                  width={40}
+                />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -120,11 +152,15 @@ const PaymentMobile = () => {
       <DialogTrigger asChild>
         <Button className="w-full">Pay $999</Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent
+        onOpenAutoFocus={(e) => {
+          e.preventDefault()
+        }}
+      >
         <DialogHeader className="sr-only">
           <DialogTitle>Payment Details</DialogTitle>
         </DialogHeader>
-        <h1 className="mb-6 font-medium">Payment Details</h1>
+        <h1 className="mb-6 font-medium">Complete Your Purchase</h1>
         <ZodHookForm
           schema={z.object({
             fullname: z.string().field({
@@ -143,6 +179,37 @@ const PaymentMobile = () => {
           })}
           submitText="Pay $999"
         />
+        <div className="grid place-items-center space-y-2">
+          <h2 className="font-semibold">Guaranteed safe & secure payment</h2>
+          <div className="flex gap-2">
+            {[
+              "https://raw.githubusercontent.com/aaronfagan/svg-credit-card-payment-icons/main/flat-rounded/amex.svg",
+              "https://raw.githubusercontent.com/aaronfagan/svg-credit-card-payment-icons/main/flat-rounded/discover.svg",
+              "https://raw.githubusercontent.com/aaronfagan/svg-credit-card-payment-icons/main/flat-rounded/mastercard.svg",
+              "https://raw.githubusercontent.com/aaronfagan/svg-credit-card-payment-icons/main/flat-rounded/paypal.svg",
+              "https://raw.githubusercontent.com/aaronfagan/svg-credit-card-payment-icons/main/flat-rounded/visa.svg",
+            ].map((src, i) => (
+              <Image
+                className="border-border/50 rounded-sm border"
+                key={i}
+                alt={
+                  src.includes("mastercard")
+                    ? "Mastercard"
+                    : src.includes("visa")
+                      ? "Visa"
+                      : src.includes("amex")
+                        ? "American Express"
+                        : src.includes("discover")
+                          ? "Discover"
+                          : "PayPal"
+                }
+                src={src}
+                height={25}
+                width={40}
+              />
+            ))}
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   )
