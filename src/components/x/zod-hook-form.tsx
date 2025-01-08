@@ -250,7 +250,6 @@ export const ZodHookForm = ({
                           {formField.prefix
                             .replace("http://", "")
                             .replace("https://", "")}
-                          /
                         </FormLabel>
                         <FormControl>
                           <Input

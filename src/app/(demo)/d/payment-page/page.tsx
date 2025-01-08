@@ -11,7 +11,7 @@ import { z } from "zod"
 
 export default function Page() {
   return (
-    <div className="mx-auto grid max-w-screen-xl p-5 pt-0 lg:grid-cols-12">
+    <div className="mx-auto grid max-w-screen-xl grid-cols-1 p-5 pt-0 lg:grid-cols-12">
       <div className="mr-5 space-y-5 p-5 md:col-span-7">
         {/* header */}
         <div className="flex w-full items-center gap-2">
@@ -19,7 +19,7 @@ export default function Page() {
           <h1 className="mt-1 text-xl font-medium">Apple</h1>
         </div>
 
-        <Separator />
+        <Separator className="mb-12" />
 
         <h1 className="text-lg font-medium">iPhone 16 Pro</h1>
         <img
@@ -34,7 +34,7 @@ export default function Page() {
           15 Pro and iPhone 15 Pro Max, and was announced on September 14, 2025.
         </p>
 
-        <Separator className="mt-24" />
+        <Separator className="mt-12" />
 
         <div className="text-muted-foreground text-xs">
           You agree to share information entered on this page with Apple (owner
@@ -55,11 +55,12 @@ export default function Page() {
 
         <Separator />
 
-        <div className="space-y-3">
-          <Link href="/" className="flex items-center text-3xl select-none">
-            Space
-            <Crown className="mb-px size-7" />
-            all
+        <div className="flex flex-col space-y-2">
+          <Link
+            href="/"
+            className="flex items-center gap-2 text-xl select-none"
+          >
+            <Crown className="mb-px size-7" /> SpaceWalll
           </Link>
 
           <p className="flex gap-1 text-sm">
@@ -79,15 +80,16 @@ export default function Page() {
         <ZodHookForm
           schema={z.object({
             fullname: z.string().field({
-              label: "Full Name",
+              placeholder: "Full Name",
               default: "",
             }),
             email: z.string().field({
-              label: "Email",
+              placeholder: "Email",
               default: "",
             }),
             phone: z.string().field({
-              label: "Phone",
+              placeholder: " Phone",
+              prefix: "+91",
               default: "",
             }),
           })}
