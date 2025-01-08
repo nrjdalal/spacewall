@@ -12,7 +12,7 @@ import { z } from "zod"
 export default function Page() {
   return (
     <div className="mx-auto grid max-w-screen-xl grid-cols-1 p-5 pt-0 lg:grid-cols-12">
-      <div className="mr-5 space-y-5 p-5 lg:col-span-8">
+      <div className="space-y-5 py-5 lg:col-span-8">
         {/* header */}
         <div className="flex w-full items-center gap-2">
           <SiApple className="size-8" />
@@ -63,7 +63,7 @@ export default function Page() {
             <Crown className="mb-px size-5" /> SpaceWalll
           </Link>
 
-          <p className="text-muted-foreground flex gap-1 text-sm">
+          <p className="text-muted-foreground flex flex-wrap gap-1 text-sm">
             Want to create page like this? Visit{" "}
             <span className="flex items-center gap-1 text-blue-500">
               SpaceWall Payment Pages
@@ -74,8 +74,8 @@ export default function Page() {
         </div>
       </div>
       {/* payment info */}
-      <div className="flex h-min justify-center lg:col-span-4 lg:mt-48">
-        <div className="bg-sidebar w-full max-w-96 space-y-10 rounded-md border p-5">
+      <div className="flex h-min lg:col-span-4 lg:mt-48 lg:justify-center">
+        <div className="bg-sidebar my-10 w-full space-y-10 rounded-md border p-5 sm:max-w-96">
           <h1 className="font-medium">Payment Details</h1>
           <ZodHookForm
             schema={z.object({
