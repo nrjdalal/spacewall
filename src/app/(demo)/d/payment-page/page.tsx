@@ -19,7 +19,7 @@ import { z } from "zod"
 
 export default function Page() {
   return (
-    <div className="relative mx-auto flex max-w-screen-lg flex-wrap gap-5 p-5 pt-0">
+    <div className="relative mx-auto flex max-w-screen-lg flex-wrap gap-5 p-5 pt-0 pb-24">
       <div className="w-full space-y-5 py-5 lg:w-xl">
         {/* header */}
         <div className="flex w-full items-center gap-2">
