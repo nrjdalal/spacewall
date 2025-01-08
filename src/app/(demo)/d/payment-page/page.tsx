@@ -2,6 +2,14 @@
 
 "use client"
 
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import { Separator } from "@/components/ui/separator"
 import { ZodHookForm } from "@/components/x/zod-hook-form"
 import { SiApple } from "@icons-pack/react-simple-icons"
@@ -11,8 +19,8 @@ import { z } from "zod"
 
 export default function Page() {
   return (
-    <div className="mx-auto grid max-w-screen-xl grid-cols-1 p-5 pt-0 lg:grid-cols-12">
-      <div className="space-y-5 py-5 lg:col-span-8">
+    <div className="relative mx-auto flex max-w-screen-lg flex-wrap gap-5 p-5 pt-0">
+      <div className="w-full space-y-5 py-5 lg:w-xl">
         {/* header */}
         <div className="flex w-full items-center gap-2">
           <SiApple className="size-8" />
@@ -74,8 +82,13 @@ export default function Page() {
         </div>
       </div>
       {/* payment info */}
-      <div className="flex h-min lg:col-span-4 lg:mt-48 lg:justify-center">
-        <div className="bg-sidebar my-10 w-full space-y-10 rounded-md border p-5 sm:max-w-96">
+
+      <div className="bg-background/90 fixed bottom-0 left-0 w-screen border-t px-5 pt-5 pb-10 lg:hidden">
+        <PaymentMobile />
+      </div>
+
+      <div className="right-0 hidden w-96 lg:block">
+        <div className="bg-sidebar my-48 w-full max-w-96 space-y-10 rounded-md border p-5">
           <h1 className="font-medium">Payment Details</h1>
           <ZodHookForm
             schema={z.object({
@@ -98,5 +111,39 @@ export default function Page() {
         </div>
       </div>
     </div>
+  )
+}
+
+const PaymentMobile = () => {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button className="w-full">Pay $999</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader className="sr-only">
+          <DialogTitle>Payment Details</DialogTitle>
+        </DialogHeader>
+        <h1 className="mb-6 font-medium">Payment Details</h1>
+        <ZodHookForm
+          schema={z.object({
+            fullname: z.string().field({
+              placeholder: "Full Name",
+              default: "",
+            }),
+            email: z.string().field({
+              placeholder: "Email",
+              default: "",
+            }),
+            phone: z.string().field({
+              placeholder: " Phone",
+              prefix: "+91",
+              default: "",
+            }),
+          })}
+          submitText="Pay $999"
+        />
+      </DialogContent>
+    </Dialog>
   )
 }
