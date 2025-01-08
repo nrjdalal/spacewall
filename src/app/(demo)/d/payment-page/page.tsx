@@ -43,7 +43,7 @@ export default function Page() {
 
         <div className="space-y-3">
           <h1 className="font-medium">Contact Us</h1>
-          <div className="space-y-2">
+          <div className="text-muted-foreground space-y-2">
             <p className="flex items-center gap-2 text-sm">
               <Mail className="size-5" /> support@apple.com
             </p>
@@ -58,12 +58,12 @@ export default function Page() {
         <div className="flex flex-col space-y-2">
           <Link
             href="/"
-            className="flex items-center gap-2 text-xl select-none"
+            className="flex items-center gap-1 text-lg select-none"
           >
-            <Crown className="mb-px size-7" /> SpaceWalll
+            <Crown className="mb-px size-5" /> SpaceWalll
           </Link>
 
-          <p className="flex gap-1 text-sm">
+          <p className="text-muted-foreground flex gap-1 text-sm">
             Want to create page like this? Visit{" "}
             <span className="flex items-center gap-1 text-blue-500">
               SpaceWall Payment Pages
