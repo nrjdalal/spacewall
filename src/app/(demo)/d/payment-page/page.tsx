@@ -93,6 +93,7 @@ export default function Page() {
               default: "",
             }),
           })}
+          submitText="Pay $999"
         />
       </div>
     </div>
