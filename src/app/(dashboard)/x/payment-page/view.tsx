@@ -34,11 +34,21 @@ export default function PaymentPageView({
         <SiApple />
       </div>
 
-      <section className="space-y-3 p-3">
+      <section
+        className={cn("min-h-dvh space-y-3 p-3", preview && "min-h-171.75")}
+      >
         <h1 className="font-medium">{data.title || "Untitled"}</h1>
 
         {data.image ? (
-          <img className="rounded-md" src={data.image} alt="" />
+          <img
+            className="rounded-md"
+            src={
+              data.image.startsWith("data:")
+                ? data.image
+                : process.env.NEXT_PUBLIC_CDN_URL + "/" + data.image
+            }
+            alt=""
+          />
         ) : (
           <div className="bg-muted-foreground/25 flex aspect-square items-center justify-center rounded-md border">
             <Camera className="text-muted-foreground/50" />

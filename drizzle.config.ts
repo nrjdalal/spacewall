@@ -6,5 +6,5 @@ export default defineConfig({
     url: process.env.POSTGRES_URL!,
   },
   schema: "./src/db",
-  out: "./src/db/drizzle",
+  out: "./src/db/migrations",
 })

@@ -1,1 +1,0 @@
-ALTER TABLE "website" ALTER COLUMN "title" DROP DEFAULT;

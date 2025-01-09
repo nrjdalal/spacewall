@@ -11,7 +11,10 @@ const schema = z.object({
   slug: z.string().nonempty(),
   name: z.string().nonempty(),
   title: z.string().nullable(),
-  image: z.string().nullable(),
+  image: z
+    .string()
+    .nullable()
+    .describe(JSON.stringify({ storage: true })),
   description: z.string().nullable(),
   // non-schema fields
   userId: z.string().nonempty(),
