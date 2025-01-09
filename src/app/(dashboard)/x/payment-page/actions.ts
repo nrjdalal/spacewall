@@ -48,9 +48,7 @@ export const getPaymentPages = async () => {
     .orderBy(desc(paymentPages.updatedAt))
 }
 
-export const getPaymentPage = async (
-  data: Partial<PaymentPage> & Pick<PaymentPage, "id">,
-) => {
+export const getPaymentPage = async (data: Pick<PaymentPage, "id">) => {
   const { userId } = await withSession(data)
   return (
     await db

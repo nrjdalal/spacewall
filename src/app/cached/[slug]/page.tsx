@@ -1,8 +1,6 @@
-import { db, paymentPages } from "@/db"
-import { eq } from "drizzle-orm"
+import { getPaymentPage } from "./actions"
 
 export const revalidate = 60
-export const dynamicParams = true
 
 export default async function Page({
   params,
@@ -11,10 +9,9 @@ export default async function Page({
 }) {
   const slug = (await params).slug
 
-  const [paymentPage] = await db
-    .select()
-    .from(paymentPages)
-    .where(eq(paymentPages.slug, slug))
+  const paymentPage = await getPaymentPage({
+    slug,
+  })
 
   return <pre className="p-5">{JSON.stringify(paymentPage, null, 2)}</pre>
 }
