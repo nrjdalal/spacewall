@@ -80,7 +80,7 @@ export const updatePaymentPage = async (
     .returning({
       slug: paymentPages.slug,
     })
-  revalidatePath(`/test/${result[0].slug}`)
+  revalidatePath(`/payment-page/${result[0].slug}`)
   return true
 }
 

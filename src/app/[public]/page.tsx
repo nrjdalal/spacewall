@@ -1,12 +1,8 @@
 import { Button } from "@/components/ui/button"
 import WebsiteView from "@/components/views/website"
-import { db, websites } from "@/db"
-import { and, eq } from "drizzle-orm"
+import { humanTime } from "@/lib/utils"
 import { ChevronRight, Crown } from "lucide-react"
 import Link from "next/link"
-
-export const revalidate = 60
-export const dynamicParams = true
 
 export default async function Page({
   params,
@@ -15,29 +11,16 @@ export default async function Page({
 }) {
   const slug = (await params).public
 
-  const website = (
-    await db
-      .select()
-      .from(websites)
-      .where(and(eq(websites.slug, slug)))
-  )[0] as {
-    id: string
-    image: string
-    title: string
-    description: string
-    cover: string
-    blocks: {
-      id: string
-      active: boolean
-      type: string
-      meta?: {
-        url?: string
-        title?: string
-        description?: string
-        image?: string
-      }
-    }[]
-  }
+  const website = await (
+    await fetch(
+      `${process.env.NEXT_PUBLIC_SITE_URL}/api/public/website?slug=${slug}`,
+      {
+        next: {
+          revalidate: Infinity,
+        },
+      },
+    )
+  ).json()
 
   if (!website?.id) {
     return (
@@ -74,7 +57,16 @@ export default async function Page({
     )
   }
 
-  website.blocks = website.blocks?.filter((block) => block.active)
+  website.blocks = website.blocks?.filter(
+    (block: { active: boolean }) => block.active,
+  )
 
-  return <WebsiteView data={website} />
+  return (
+    <>
+      <WebsiteView data={website} />
+      <p className="text-muted-foreground py-5 text-center text-xs">
+        Last updated {humanTime(website.time)}
+      </p>
+    </>
+  )
 }
