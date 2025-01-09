@@ -5,6 +5,7 @@ import { type PaymentPage } from "@/app/(dashboard)/x/payment-page/actions"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { SiApple } from "@icons-pack/react-simple-icons"
+import { Camera } from "lucide-react"
 
 {
   /* <main
@@ -34,30 +35,21 @@ export default function PaymentPageView({
       </div>
 
       <section className="space-y-3 p-3">
-        <div className="space-y-3">
-          <h1 className="font-medium">{data.title ?? "Untitled"}</h1>
-          <img
-            className="rounded-md"
-            src="https://www.apple.com/v/iphone-16-pro/d/images/overview/apple-intelligence/apple_intelligence_endframe__ksa4clua0duu_xlarge.jpg"
-            alt=""
-          />
-        </div>
-        <div>
-          <p className="text-muted-foreground text-sm">
-            iPhone 16 Pro is built for Apple Intelligence, the personal
-            intelligence system that helps you write, express yourself and get
-            things done effortlessly. With groundbreaking privacy protections,
-            it gives you peace of mind that no one else can access your data —
-            not even Apple.
-          </p>
-          <p className="text-muted-foreground text-sm">
-            iPhone 16 Pro is built for Apple Intelligence, the personal
-            intelligence system that helps you write, express yourself and get
-            things done effortlessly. With groundbreaking privacy protections,
-            it gives you peace of mind that no one else can access your data —
-            not even Apple.
-          </p>
-        </div>
+        <h1 className="font-medium">{data.title || "Untitled"}</h1>
+
+        {data.image ? (
+          <img className="rounded-md" src={data.image} alt="" />
+        ) : (
+          <div className="bg-muted-foreground/25 flex aspect-square items-center justify-center rounded-md border">
+            <Camera className="text-muted-foreground/50" />
+          </div>
+        )}
+
+        {data.description && (
+          <div className="text-muted-foreground text-sm">
+            {data.description}
+          </div>
+        )}
       </section>
 
       <div className="bg-sidebar sticky bottom-0 h-18 w-full border-t p-3 @sm:hidden">

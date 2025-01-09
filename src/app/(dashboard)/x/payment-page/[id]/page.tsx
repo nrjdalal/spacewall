@@ -37,6 +37,11 @@ export default function Page() {
       label: "Title",
       default: data?.title ?? "",
     }),
+    description: z.string().field({
+      type: "textarea",
+      label: "Description",
+      default: data?.description ?? "",
+    }),
   }) as z.ZodObject<z.ZodRawShape>
 
   const mutuation = useMutation({
@@ -46,6 +51,7 @@ export default function Page() {
         name: values.name,
         slug: values.slug,
         title: values.title,
+        description: values.description,
       })
     },
     onSuccess: () => {
@@ -81,11 +87,13 @@ export default function Page() {
       />
       <ContentRoot>
         <Content className="space-y-5 pb-32">
-          <ZodHookForm
-            schema={schema}
-            onSubmit={onSubmit}
-            submitText="Save Changes"
-          />
+          <div className="bg-sidebar rounded-md border p-5 py-10">
+            <ZodHookForm
+              schema={schema}
+              onSubmit={onSubmit}
+              submitText="Save Changes"
+            />
+          </div>
         </Content>
         <ContentPreview>
           {data && <PaymentPageView data={data} />}

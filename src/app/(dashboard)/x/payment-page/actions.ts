@@ -2,7 +2,7 @@
 
 import { db, paymentPages } from "@/db"
 import { auth } from "@/lib/auth"
-import { and, eq } from "drizzle-orm"
+import { and, desc, eq } from "drizzle-orm"
 import { z } from "zod"
 import { fromError } from "zod-validation-error"
 
@@ -11,24 +11,27 @@ const schema = z.object({
   slug: z.string().nonempty(),
   name: z.string().nonempty(),
   title: z.string().nullable(),
-  // required for deletion confirmation
+  image: z.string().nullable(),
+  description: z.string().nullable(),
+  // non-schema fields
+  userId: z.string().nonempty(),
   purge: z.literal("permanently delete").optional(),
 })
 
-const withSession = async <T>(
-  data?: T,
-  validator?: z.ZodType<T>,
-): Promise<{ userId: string; data?: T }> => {
-  if (data && validator) {
+const withSession = async <T>(data?: T): Promise<{ userId: string }> => {
+  if (data) {
+    const validator = schema.partial()
     const result = validator.safeParse(data)
     if (!result.success) {
       throw new Error(fromError(result.error).toString())
     }
   }
+
   const session = await auth()
   if (!session) {
     throw new Error("Unauthorized")
   }
+
   return { userId: session.user.id }
 }
 
@@ -38,10 +41,13 @@ export const getPaymentPages = async () => {
     .select()
     .from(paymentPages)
     .where(eq(paymentPages.userId, userId))
+    .orderBy(desc(paymentPages.updatedAt))
 }
 
-export const getPaymentPage = async (data: Pick<PaymentPage, "id">) => {
-  const { userId } = await withSession(data, schema.pick({ id: true }))
+export const getPaymentPage = async (
+  data: Partial<PaymentPage> & Pick<PaymentPage, "id">,
+) => {
+  const { userId } = await withSession(data)
   return (
     await db
       .select()
@@ -53,31 +59,18 @@ export const getPaymentPage = async (data: Pick<PaymentPage, "id">) => {
 export const createPaymentPage = async (
   data: Pick<PaymentPage, "slug" | "name">,
 ) => {
-  const { userId } = await withSession(
-    data,
-    schema.pick({ slug: true, name: true }),
-  )
+  const { userId } = await withSession(data)
   return await db.insert(paymentPages).values({
     userId,
-    ...data,
+    slug: data.slug,
+    name: data.name,
   })
 }
 
 export const updatePaymentPage = async (
-  data: Pick<PaymentPage, "id" | "slug" | "name" | "title">,
+  data: Partial<PaymentPage> & Pick<PaymentPage, "id">,
 ) => {
-  const { userId } = await withSession(
-    data,
-    schema.pick({ id: true, slug: true, name: true, title: true }),
-  )
-  try {
-    await db
-      .update(paymentPages)
-      .set(data)
-      .where(and(eq(paymentPages.id, data.id), eq(paymentPages.userId, userId)))
-  } catch (error) {
-    console.log(error)
-  }
+  const { userId } = await withSession(data)
   return await db
     .update(paymentPages)
     .set(data)
@@ -85,12 +78,9 @@ export const updatePaymentPage = async (
 }
 
 export const deletePaymentPage = async (
-  data: Pick<PaymentPage, "id" | "purge">,
+  data: Partial<PaymentPage> & Pick<PaymentPage, "id">,
 ) => {
-  const { userId } = await withSession(
-    data,
-    schema.pick({ id: true, purge: true }),
-  )
+  const { userId } = await withSession(data)
   return await db
     .delete(paymentPages)
     .where(and(eq(paymentPages.id, data.id), eq(paymentPages.userId, userId)))
