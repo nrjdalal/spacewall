@@ -1,0 +1,1 @@
+ALTER TABLE "paymentPage" ADD COLUMN "title" text;
