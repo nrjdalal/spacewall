@@ -1,7 +1,7 @@
 import { db, paymentPages } from "@/db"
 import { eq } from "drizzle-orm"
 
-export const revalidate = 60 * 5
+export const revalidate = 60
 export const dynamicParams = true
 
 export default async function Page({
