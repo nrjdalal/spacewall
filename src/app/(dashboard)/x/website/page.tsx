@@ -38,7 +38,8 @@ export default function Page() {
     return (
       <div className="flex h-full w-full items-center justify-center">
         <p>
-          An error occurred while fetching your website. Please try again later.
+          An error occurred while fetching your websites. Please try again
+          later.
         </p>
       </div>
     )
@@ -129,7 +130,7 @@ const DialogAddWebsite = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="w-full">Add Website</Button>
+        <Button className="w-full">New Website</Button>
       </DialogTrigger>
       <DialogContent
         onOpenAutoFocus={(e) => {

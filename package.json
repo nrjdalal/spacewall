@@ -63,7 +63,8 @@
     "sonner": "^1.7.1",
     "tailwind-merge": "^2.6.0",
     "zod": "^3.24.1",
-    "zod-meta-parser": "^0.0.2"
+    "zod-meta-parser": "^0.0.2",
+    "zod-validation-error": "^3.4.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.6.1",

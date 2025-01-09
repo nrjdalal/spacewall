@@ -1,5 +1,10 @@
 "use client"
 
+import {
+  createPaymentPage,
+  deletePaymentPage,
+  getPaymentPages,
+} from "@/app/(dashboard)/x/payment-page/actions"
 import XHeader from "@/components/common/x-header"
 import { Button } from "@/components/ui/button"
 import {
@@ -20,11 +25,9 @@ import { z } from "zod"
 
 export default function Page() {
   const { data, isError, isLoading } = useQuery({
-    queryKey: ["websites"],
+    queryKey: ["payment-pages"],
     queryFn: async () => {
-      const response = await fetch("/api/v1/website")
-      if (!response.ok) throw new Error("Something went wrong!")
-      return (await response.json()).data
+      return await getPaymentPages()
     },
   })
 
@@ -38,7 +41,8 @@ export default function Page() {
     return (
       <div className="flex h-full w-full items-center justify-center">
         <p>
-          An error occurred while fetching your website. Please try again later.
+          An error occurred while fetching your payment pages. Please try again
+          later.
         </p>
       </div>
     )
@@ -46,22 +50,22 @@ export default function Page() {
   return (
     <>
       <XHeader
-        title="Websites"
-        description="Create and manage your websites."
+        title="Payment Pages"
+        description="Create and manage your payment pages."
       />
       <ContentRoot>
         <Content className="space-y-5">
           <DialogAddWebsite />
 
-          {data.map((website: { id: string; title: string; slug: string }) => (
+          {data?.map((website: { id: string; name: string; slug: string }) => (
             <div key={website.id} className="relative">
               <DeleteWebsite id={website.id} />
               <Link
-                href={`/x/website/${website.id}`}
+                href={`/x/payment-page/${website.id}`}
                 className="bg-sidebar z-0 flex h-14 flex-col items-center justify-center rounded-md border text-sm"
                 prefetch={false}
               >
-                <span>{website.title ?? "Untitled"}</span>
+                <span>{website.name ?? "Untitled"}</span>
                 <span className="text-muted-foreground text-xs">
                   spacewall.me/{website.slug}
                 </span>
@@ -76,42 +80,38 @@ export default function Page() {
 
 const DialogAddWebsite = () => {
   const schema = z.object({
-    title: z.string().min(1).max(128).field({
-      label: "Title",
-      default: "",
-    }),
-    slug: z.string().min(1).max(128).field({
-      label: "Slug",
-      description: "You can change or add custom domain later.",
-      prefix: process.env.NEXT_PUBLIC_SITE_URL,
+    slug: z
+      .string()
+      .min(1)
+      .max(128)
+      .field({
+        label: "Slug",
+        description: "You can change or add custom domain later.",
+        prefix: process.env.NEXT_PUBLIC_SITE_URL + "/pp-",
+        default: "",
+      }),
+    name: z.string().min(1).max(128).field({
+      label: "Name",
+      description:
+        "For your reference. This will not be visible to your customers.",
       default: "",
     }),
   }) as z.ZodObject<z.ZodRawShape>
 
   const mutuation = useMutation({
     mutationFn: async (values: z.infer<typeof schema>) => {
-      const response = await fetch("/api/v1/website", {
-        method: "PUT",
-        body: JSON.stringify(values),
+      const response = await createPaymentPage({
+        slug: values.slug,
+        name: values.name,
       })
 
-      const json = await response.json()
-
-      if (response.status !== 200) {
-        if (json?.message) {
-          throw new Error(json.message)
-        }
-        throw new Error("An error occurred.")
-      }
-      return json
+      return response
     },
     onSuccess: () => {
-      toast.success("Website created successfully!")
+      toast.success("Payment page created successfully!")
     },
-    onError: (_error: unknown) => {
-      toast.error(
-        _error instanceof Error ? _error.message : "An error occurred.",
-      )
+    onError: (error: unknown) => {
+      toast.error(error instanceof Error ? error.message : "Unknown error.")
     },
   })
 
@@ -125,7 +125,7 @@ const DialogAddWebsite = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="w-full">Add Website</Button>
+        <Button className="w-full">New Payment Page</Button>
       </DialogTrigger>
       <DialogContent
         onOpenAutoFocus={(e) => {
@@ -133,12 +133,13 @@ const DialogAddWebsite = () => {
         }}
       >
         <DialogHeader>
-          <DialogTitle>New Website</DialogTitle>
+          <DialogTitle>New Payment Page</DialogTitle>
         </DialogHeader>
         <ZodHookForm
           schema={schema}
           onSubmit={onSubmit}
-          invalidate={["websites"]}
+          submitText="Create"
+          invalidate={["payment-pages"]}
         />
       </DialogContent>
     </Dialog>
@@ -155,31 +156,16 @@ const DeleteWebsite = ({ id }: { id: string }) => {
 
   const mutation = useMutation({
     mutationFn: async (values: z.infer<typeof schema>) => {
-      const response = await fetch(`/api/v1/website`, {
-        method: "DELETE",
-        body: JSON.stringify({
-          websiteId: id,
-          ...values,
-        }),
+      return await deletePaymentPage({
+        id,
+        purge: values.purge,
       })
-
-      const json = await response.json()
-
-      if (response.status !== 200) {
-        if (json?.message) {
-          throw new Error(json.message)
-        }
-        throw new Error("An error occurred.")
-      }
-      return json
     },
     onSuccess: () => {
-      toast.success("Website deleted successfully!")
+      toast.success("Payment page deleted successfully!")
     },
-    onError: (_error: unknown) => {
-      toast.error(
-        _error instanceof Error ? _error.message : "An error occurred.",
-      )
+    onError: (error: unknown) => {
+      toast.error(error instanceof Error ? error.message : "Unknown error.")
     },
   })
 
@@ -189,6 +175,7 @@ const DeleteWebsite = ({ id }: { id: string }) => {
       return
     }
     await mutation.mutateAsync(values)
+    setOpen(false)
   }
 
   const [open, setOpen] = useState(false)
@@ -214,7 +201,7 @@ const DeleteWebsite = ({ id }: { id: string }) => {
         <ZodHookForm
           schema={schema}
           onSubmit={onSubmit}
-          invalidate={["websites"]}
+          invalidate={["payment-pages"]}
         />
       </DialogContent>
     </Dialog>

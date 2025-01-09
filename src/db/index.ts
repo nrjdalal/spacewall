@@ -6,6 +6,7 @@ import {
   users,
   verificationTokens,
 } from "@/db/v1/auth"
+import { paymentPages } from "@/db/v1/payment-page"
 import { websites } from "@/db/v1/website"
 import { drizzle, type PostgresJsDatabase } from "drizzle-orm/postgres-js"
 import postgres from "postgres"
@@ -50,5 +51,6 @@ export {
   sessions,
   users,
   verificationTokens,
+  paymentPages,
   websites,
 }

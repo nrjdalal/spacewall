@@ -10,7 +10,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { useQueryClient } from "@tanstack/react-query"
-import { Home, Sparkle, type LucideIcon } from "lucide-react"
+import { DollarSign, Home, Sparkle, type LucideIcon } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useEffect } from "react"
@@ -25,6 +25,11 @@ const applications = [
       queryKey: "website",
       apiRoute: "/api/v1/website",
     },
+  },
+  {
+    title: "Payment Pages",
+    url: "/x/payment-page",
+    icon: DollarSign,
   },
 ] as {
   title: string
