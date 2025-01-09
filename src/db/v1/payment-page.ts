@@ -12,6 +12,8 @@ export const paymentPages = pgTable("paymentPage", {
   slug: text("slug").notNull().unique(),
   name: text("name").notNull(),
   title: text("title"),
+  image: text("image"),
+  description: text("description"),
   createdAt: timestamp("createdAt").defaultNow(),
   updatedAt: timestamp("updatedAt").$onUpdateFn(() => new Date()),
 })
