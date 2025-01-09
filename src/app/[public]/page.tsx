@@ -5,6 +5,9 @@ import { and, eq } from "drizzle-orm"
 import { ChevronRight, Crown } from "lucide-react"
 import Link from "next/link"
 
+export const revalidate = 60
+export const dynamicParams = true
+
 export default async function Page({
   params,
 }: {
