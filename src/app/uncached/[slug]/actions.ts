@@ -4,11 +4,14 @@ import { db, paymentPages } from "@/db"
 import { desc, eq } from "drizzle-orm"
 
 export const getPaymentPage = async ({ slug }: { slug: string }) => {
-  return (
-    await db
-      .select()
-      .from(paymentPages)
-      .where(eq(paymentPages.slug, slug))
-      .orderBy(desc(paymentPages.updatedAt))
-  )[0]
+  return {
+    time: new Date(),
+    ...(
+      await db
+        .select()
+        .from(paymentPages)
+        .where(eq(paymentPages.slug, slug))
+        .orderBy(desc(paymentPages.updatedAt))
+    )[0],
+  }
 }
