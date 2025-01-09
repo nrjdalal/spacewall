@@ -3,6 +3,8 @@
 import { db, paymentPages } from "@/db"
 import { auth } from "@/lib/auth"
 import { and, desc, eq } from "drizzle-orm"
+import { revalidatePath } from "next/cache"
+import { cache } from "react"
 import { z } from "zod"
 import { fromError } from "zod-validation-error"
 
@@ -47,17 +49,19 @@ export const getPaymentPages = async () => {
     .orderBy(desc(paymentPages.updatedAt))
 }
 
-export const getPaymentPage = async (
-  data: Partial<PaymentPage> & Pick<PaymentPage, "id">,
-) => {
-  const { userId } = await withSession(data)
-  return (
-    await db
-      .select()
-      .from(paymentPages)
-      .where(and(eq(paymentPages.id, data.id), eq(paymentPages.userId, userId)))
-  )[0]
-}
+export const getPaymentPage = cache(
+  async (data: Partial<PaymentPage> & Pick<PaymentPage, "id">) => {
+    const { userId } = await withSession(data)
+    return (
+      await db
+        .select()
+        .from(paymentPages)
+        .where(
+          and(eq(paymentPages.id, data.id), eq(paymentPages.userId, userId)),
+        )
+    )[0]
+  },
+)
 
 export const createPaymentPage = async (
   data: Pick<PaymentPage, "slug" | "name">,
@@ -74,10 +78,15 @@ export const updatePaymentPage = async (
   data: Partial<PaymentPage> & Pick<PaymentPage, "id">,
 ) => {
   const { userId } = await withSession(data)
-  return await db
+  const result = await db
     .update(paymentPages)
     .set(data)
     .where(and(eq(paymentPages.id, data.id), eq(paymentPages.userId, userId)))
+    .returning({
+      slug: paymentPages.slug,
+    })
+  revalidatePath(`/test/${result[0].slug}`)
+  return true
 }
 
 export const deletePaymentPage = async (
