@@ -28,21 +28,17 @@ export default function Page() {
     },
   })
 
-  if (isLoading)
+  if (isLoading || isError) {
     return (
       <div className="flex h-full w-full items-center justify-center">
-        <Loader2 className="animate-spin" />
+        {isLoading ? (
+          <Loader2 className="animate-spin" />
+        ) : (
+          <p>An error occurred. Please try again later.</p>
+        )}
       </div>
     )
-  if (isError)
-    return (
-      <div className="flex h-full w-full items-center justify-center">
-        <p>
-          An error occurred while fetching your websites. Please try again
-          later.
-        </p>
-      </div>
-    )
+  }
 
   return (
     <>
