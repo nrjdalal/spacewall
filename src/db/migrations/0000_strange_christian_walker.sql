@@ -26,6 +26,19 @@ CREATE TABLE "authenticator" (
 	CONSTRAINT "authenticator_credentialID_unique" UNIQUE("credentialID")
 );
 --> statement-breakpoint
+CREATE TABLE "paymentPage" (
+	"id" text PRIMARY KEY NOT NULL,
+	"userId" text NOT NULL,
+	"slug" text NOT NULL,
+	"name" text NOT NULL,
+	"title" text,
+	"image" text,
+	"description" text,
+	"createdAt" timestamp DEFAULT now(),
+	"updatedAt" timestamp,
+	CONSTRAINT "paymentPage_slug_unique" UNIQUE("slug")
+);
+--> statement-breakpoint
 CREATE TABLE "session" (
 	"sessionToken" text PRIMARY KEY NOT NULL,
 	"userId" text NOT NULL,
@@ -54,7 +67,7 @@ CREATE TABLE "website" (
 	"id" text PRIMARY KEY NOT NULL,
 	"userId" text NOT NULL,
 	"slug" text NOT NULL,
-	"title" text DEFAULT '' NOT NULL,
+	"title" text NOT NULL,
 	"description" text DEFAULT '' NOT NULL,
 	"cover" text DEFAULT '' NOT NULL,
 	"image" text DEFAULT '' NOT NULL,
@@ -66,5 +79,6 @@ CREATE TABLE "website" (
 --> statement-breakpoint
 ALTER TABLE "account" ADD CONSTRAINT "account_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "authenticator" ADD CONSTRAINT "authenticator_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "paymentPage" ADD CONSTRAINT "paymentPage_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "session" ADD CONSTRAINT "session_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "website" ADD CONSTRAINT "website_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;

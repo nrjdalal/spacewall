@@ -13,6 +13,7 @@ import { Loader2 } from "lucide-react"
 import { useParams } from "next/navigation"
 import { toast } from "sonner"
 import { z } from "zod"
+import { zodMetaParser } from "zod-meta-parser"
 
 export default function Page() {
   const { id } = useParams() as { id: string }
@@ -37,21 +38,45 @@ export default function Page() {
       label: "Title",
       default: data?.title ?? "",
     }),
+    image: z.string().field({
+      type: "file",
+      label: "Preview Image",
+      default: data?.image ?? "",
+      accept: "image/*",
+      prefix: process.env.NEXT_PUBLIC_CDN_URL + "/",
+      keyprefix: `payment-page/${id}/`,
+    }),
     description: z.string().field({
       type: "textarea",
       label: "Description",
       default: data?.description ?? "",
+      rows: 7,
     }),
   }) as z.ZodObject<z.ZodRawShape>
 
   const mutuation = useMutation({
     mutationFn: async (values: z.infer<typeof schema>) => {
+      const fields = zodMetaParser(schema)
+      const fileFields = Object.keys(fields).filter(
+        (key) => fields[key]._meta.type === "file",
+      )
+      values = fileFields.reduce((acc, key) => {
+        if (typeof values[key] === "string") {
+          try {
+            const parsed = JSON.parse(values[key])
+            if (parsed.key) {
+              acc[key] = parsed.key
+            }
+          } catch {
+            acc[key] = values[key]
+          }
+        }
+        return acc
+      }, values)
+
       return await updatePaymentPage({
         id,
-        name: values.name,
-        slug: values.slug,
-        title: values.title,
-        description: values.description,
+        ...values,
       })
     },
     onSuccess: () => {
