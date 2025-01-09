@@ -1,6 +1,5 @@
 import { users } from "@/db"
 import { generateId } from "@/lib/utils"
-import { sql } from "drizzle-orm"
 import { pgTable, text, timestamp } from "drizzle-orm/pg-core"
 
 export const paymentPages = pgTable("paymentPage", {
@@ -14,5 +13,5 @@ export const paymentPages = pgTable("paymentPage", {
   name: text("name").notNull(),
   title: text("title"),
   createdAt: timestamp("createdAt").defaultNow(),
-  updatedAt: timestamp("updatedAt").$onUpdateFn(() => sql`now()`),
+  updatedAt: timestamp("updatedAt").$onUpdateFn(() => new Date()),
 })

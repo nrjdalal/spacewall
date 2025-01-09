@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client"
 
+import { type PaymentPage } from "@/app/(dashboard)/x/payment-page/actions"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { SiApple } from "@icons-pack/react-simple-icons"
@@ -16,8 +17,10 @@ import { SiApple } from "@icons-pack/react-simple-icons"
 
 export default function PaymentPageView({
   preview = true,
+  data,
 }: {
   preview?: boolean
+  data: PaymentPage
 }) {
   return (
     <main
@@ -32,7 +35,7 @@ export default function PaymentPageView({
 
       <section className="space-y-3 p-3">
         <div className="space-y-3">
-          <h1>Buy iPhone 16 Pro</h1>
+          <h1 className="font-medium">{data.title ?? "Untitled"}</h1>
           <img
             className="rounded-md"
             src="https://www.apple.com/v/iphone-16-pro/d/images/overview/apple-intelligence/apple_intelligence_endframe__ksa4clua0duu_xlarge.jpg"
