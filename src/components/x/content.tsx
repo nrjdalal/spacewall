@@ -48,7 +48,7 @@ const ContentPreview = React.forwardRef<
         height={812}
       />
     </div>
-    <div className="fixed mt-19.5 h-171.5 w-84 overflow-hidden rounded-b-4xl">
+    <div className="fixed mt-19.5 h-171.75 w-84 overflow-hidden rounded-b-4xl">
       <ScrollArea className="h-full w-full">{children}</ScrollArea>
     </div>
   </aside>

@@ -1,5 +1,10 @@
 "use client"
 
+import {
+  createPaymentPage,
+  deletePaymentPage,
+  getPaymentPages,
+} from "@/app/(dashboard)/x/payment-page/actions"
 import XHeader from "@/components/common/x-header"
 import { Button } from "@/components/ui/button"
 import {
@@ -17,11 +22,6 @@ import Link from "next/link"
 import { useState } from "react"
 import { toast } from "sonner"
 import { z } from "zod"
-import {
-  createPaymentPage,
-  deletePaymentPage,
-  getPaymentPages,
-} from "./actions"
 
 export default function Page() {
   const { data, isError, isLoading } = useQuery({
