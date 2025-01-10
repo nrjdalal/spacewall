@@ -9,6 +9,7 @@ import {
 } from "@aws-sdk/client-s3"
 import slugify from "@sindresorhus/slugify"
 import { and, count, desc, eq, sql } from "drizzle-orm"
+import { revalidatePath } from "next/cache"
 import { zodMetaParser } from "zod-meta-parser"
 
 export async function GET(request: Request) {
@@ -34,6 +35,8 @@ export async function GET(request: Request) {
       .from(websites)
       .where(eq(websites.userId, session.user?.id as string))
       .orderBy(desc(websites.updatedAt))
+
+    revalidatePath(`/${res[0].slug}`)
 
     return Response.json({
       status: 200,
@@ -93,10 +96,17 @@ export async function PUT(request: Request) {
   data.slug = slugify(data.slug)
 
   try {
-    await db.insert(websites).values({
-      userId: session.user?.id as string,
-      ...data,
-    })
+    const [{ slug }] = await db
+      .insert(websites)
+      .values({
+        userId: session.user?.id as string,
+        ...data,
+      })
+      .returning({
+        slug: websites.slug,
+      })
+
+    revalidatePath(`/${slug}`)
   } catch (e: unknown) {
     if (
       e instanceof Error &&
@@ -148,7 +158,11 @@ export async function POST(request: Request) {
         eq(websites.userId, session.user?.id as string),
       ),
     )
-    .returning()
+    .returning({
+      slug: websites.slug,
+    })
+
+  revalidatePath(`/${res[0].slug}`)
 
   return Response.json({
     status: 200,
@@ -178,7 +192,7 @@ export async function PATCH(request: Request) {
 
     website.updatedAt = new Date()
 
-    await db
+    const [{ slug }] = await db
       .update(websites)
       .set(website)
       .where(
@@ -187,6 +201,11 @@ export async function PATCH(request: Request) {
           eq(websites.userId, session.user?.id as string),
         ),
       )
+      .returning({
+        slug: websites.slug,
+      })
+
+    revalidatePath(`/${slug}`)
 
     return Response.json({
       status: 200,
@@ -253,7 +272,7 @@ export async function PATCH(request: Request) {
   }
 
   if (typeof block.active === "boolean") {
-    await db
+    const [{ slug }] = await db
       .update(websites)
       .set({
         blocks: sql`
@@ -275,10 +294,15 @@ export async function PATCH(request: Request) {
           eq(websites.userId, session.user?.id as string),
         ),
       )
+      .returning({
+        slug: websites.slug,
+      })
+
+    revalidatePath(`/${slug}`)
   }
 
   if (block.meta) {
-    await db
+    const [{ slug }] = await db
       .update(websites)
       .set({
         blocks: sql`
@@ -300,6 +324,11 @@ export async function PATCH(request: Request) {
           eq(websites.userId, session.user?.id as string),
         ),
       )
+      .returning({
+        slug: websites.slug,
+      })
+
+    revalidatePath(`/${slug}`)
   }
 
   return Response.json({
@@ -330,7 +359,7 @@ export async function DELETE(request: Request) {
   })
 
   if (purge && purge === "permanently delete") {
-    await db
+    const [{ slug }] = await db
       .delete(websites)
       .where(
         and(
@@ -338,6 +367,11 @@ export async function DELETE(request: Request) {
           eq(websites.userId, session.user?.id as string),
         ),
       )
+      .returning({
+        slug: websites.slug,
+      })
+
+    revalidatePath(`/${slug}`)
 
     const { bucket, prefix } = {
       bucket: process.env.S3_BUCKET_NAME as string,
@@ -369,7 +403,7 @@ export async function DELETE(request: Request) {
     })
   }
 
-  await db
+  const [{ slug }] = await db
     .update(websites)
     .set({
       blocks: sql`(
@@ -384,6 +418,11 @@ export async function DELETE(request: Request) {
         eq(websites.userId, session.user?.id as string),
       ),
     )
+    .returning({
+      slug: websites.slug,
+    })
+
+  revalidatePath(`/${slug}`)
 
   const { bucket, prefix } = {
     bucket: process.env.S3_BUCKET_NAME as string,

@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button"
 import WebsiteView from "@/components/views/website"
-import { humanTime } from "@/lib/utils"
 import { ChevronRight, Crown } from "lucide-react"
 import Link from "next/link"
 
@@ -61,12 +60,5 @@ export default async function Page({
     (block: { active: boolean }) => block.active,
   )
 
-  return (
-    <>
-      <WebsiteView data={website} />
-      <p className="text-muted-foreground py-5 text-center text-xs">
-        Last updated {humanTime(website.time)}
-      </p>
-    </>
-  )
+  return <WebsiteView data={website} />
 }
