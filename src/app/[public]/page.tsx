@@ -3,6 +3,12 @@ import WebsiteView from "@/components/views/website"
 import { ChevronRight, Crown } from "lucide-react"
 import Link from "next/link"
 
+export const dynamicParams = true
+
+export async function generateStaticParams() {
+  return [{ slug: "spacewall" }]
+}
+
 export default async function Page({
   params,
 }: {
