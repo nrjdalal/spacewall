@@ -6,15 +6,15 @@ import Link from "next/link"
 export const dynamicParams = true
 
 export async function generateStaticParams() {
-  return [{ slug: "spacewall" }]
+  return []
 }
 
 export default async function Page({
   params,
 }: {
-  params: Promise<{ public: string }>
+  params: Promise<{ slug: string }>
 }) {
-  const slug = (await params).public
+  const slug = (await params).slug
 
   const website = await (
     await fetch(
