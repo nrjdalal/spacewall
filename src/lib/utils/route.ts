@@ -2,6 +2,19 @@ import { auth } from "@/lib/auth"
 import { type Session } from "next-auth"
 import { z } from "zod"
 
+// import { redis } from "@/db"
+// import { Ratelimit } from "@upstash/ratelimit"
+
+// const ratelimit = new Ratelimit({
+//   redis: redis,
+//   limiter: Ratelimit.slidingWindow(1, "5s"),
+//   prefix: "ratelimit:",
+// })
+
+// const ip = request.ip ?? "127.0.0.1"
+// const { remaining } = await ratelimit.limit(ip)
+// if (remaining === 0) throw new Error("Rate limit exceeded")
+
 // Declare the global augmentation for the Request interface
 declare global {
   interface Request {
