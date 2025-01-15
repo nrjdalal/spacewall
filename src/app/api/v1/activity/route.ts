@@ -1,5 +1,5 @@
 import { db, users } from "@/db"
-import { secure } from "@/lib/route-utils" // Import the new handlers
+import { secure } from "@/lib/utils/route"
 import { eq } from "drizzle-orm"
 
 export const GET = secure(async (request, userId) => {
