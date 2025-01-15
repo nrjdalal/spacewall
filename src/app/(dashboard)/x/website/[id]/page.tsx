@@ -571,9 +571,9 @@ const DialogAddBlock = (data: { id: string }) => {
       })
       return await res.json()
     },
-    onSuccess: ({ data: { id } }) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [`website-${id}`],
+        queryKey: [`website-${data.id}`],
       })
     },
   })
