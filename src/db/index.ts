@@ -8,8 +8,14 @@ import {
 } from "@/db/v1/auth"
 import { paymentPages } from "@/db/v1/payment-page"
 import { websites } from "@/db/v1/website"
+import { Redis } from "@upstash/redis"
 import { drizzle, type PostgresJsDatabase } from "drizzle-orm/postgres-js"
 import postgres from "postgres"
+
+const redis = new Redis({
+  url: process.env.REDIS_URL!,
+  token: process.env.REDIS_TOKEN!,
+})
 
 declare global {
   // eslint-disable-next-line
@@ -46,6 +52,7 @@ if (process.env.NODE_ENV === "production") {
 
 export {
   db,
+  redis,
   accounts,
   authenticators,
   sessions,
