@@ -36,8 +36,6 @@ export async function GET(request: Request) {
       .where(eq(websites.userId, session.user?.id as string))
       .orderBy(desc(websites.updatedAt))
 
-    revalidatePath(`/${res[0].slug}`)
-
     return Response.json({
       status: 200,
       data: res,
