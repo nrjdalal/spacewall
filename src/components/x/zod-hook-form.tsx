@@ -247,7 +247,7 @@ export const ZodHookForm = ({
 
                   {["email", "password", "text"].includes(formField.type) &&
                     (formField.prefix ? (
-                      <div className="flex items-center">
+                      <div className="bg-sidebar flex items-center">
                         <FormLabel className="text-muted-foreground/75 -mr-2 flex h-9 cursor-text items-center rounded-l-md border border-r-0 pt-0.5 pl-2">
                           {formField.prefix
                             .replace("http://", "")
@@ -255,7 +255,10 @@ export const ZodHookForm = ({
                         </FormLabel>
                         <FormControl>
                           <Input
-                            className="rounded-l-none border-l-0 focus-visible:ring-0"
+                            className={cn(
+                              "z-0 rounded-l-none border-l-0 focus-visible:ring-0",
+                              formField.className,
+                            )}
                             {...formField}
                             {...field}
                             value={
@@ -271,6 +274,7 @@ export const ZodHookForm = ({
                     ) : (
                       <FormControl>
                         <Input
+                          className={cn("bg-sidebar", formField.className)}
                           {...formField}
                           {...field}
                           value={
@@ -288,7 +292,7 @@ export const ZodHookForm = ({
                     <>
                       <FormControl>
                         <Input
-                          className={cn("hidden", formField.className)}
+                          className="hidden"
                           {...formField}
                           multiple={formField.isMultiple ? true : undefined}
                           onChange={(event) => {
@@ -334,7 +338,7 @@ export const ZodHookForm = ({
                                 className="aspect-square h-full w-full object-contain object-center"
                               />
                             ) : (
-                              <div className="text-muted-foreground flex h-full w-full items-center justify-center text-center">
+                              <div className="text-muted-foreground bg-sidebar flex h-full w-full items-center justify-center text-center">
                                 Select a file
                                 <br />
                                 or
@@ -429,6 +433,7 @@ export const ZodHookForm = ({
                   {formField.type === "textarea" && (
                     <FormControl>
                       <Textarea
+                        className={cn("bg-sidebar", formField.className)}
                         {...formField}
                         {...field}
                         value={

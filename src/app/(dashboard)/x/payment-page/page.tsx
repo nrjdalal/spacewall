@@ -89,7 +89,7 @@ const DialogAddWebsite = () => {
       .field({
         label: "Slug",
         description: "You can change or add custom domain later.",
-        prefix: process.env.NEXT_PUBLIC_SITE_URL + "/",
+        prefix: process.env.NEXT_PUBLIC_SITE_URL + "/p/",
         default: "",
       }),
     title: z.string().min(1).max(128).field({
