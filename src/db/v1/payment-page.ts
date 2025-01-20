@@ -10,7 +10,6 @@ export const paymentPages = pgTable("paymentPage", {
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   slug: text("slug").notNull().unique(),
-  name: text("name").notNull(),
   title: text("title"),
   image: text("image"),
   description: text("description"),
