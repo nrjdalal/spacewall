@@ -108,13 +108,11 @@ export default function Page() {
       />
       <ContentRoot>
         <Content className="space-y-5 pb-32">
-          <div className="bg-sidebar rounded-md border p-5 py-10">
-            <ZodHookForm
-              schema={schema}
-              onSubmit={onSubmit}
-              submitText="Save Changes"
-            />
-          </div>
+          <ZodHookForm
+            schema={schema}
+            onSubmit={onSubmit}
+            submitText="Save Changes"
+          />
         </Content>
         <ContentPreview>
           {data && <PaymentPageView data={data} />}

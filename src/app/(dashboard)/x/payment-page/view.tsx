@@ -17,8 +17,8 @@ export default function PaymentPageView({
   return (
     <main
       className={cn(
-        "bg-background @container relative mx-auto min-h-dvh max-w-screen-lg @md:flex",
-        preview && "min-h-171.75",
+        "bg-background @container relative mx-auto flex min-h-dvh max-w-screen-lg",
+        preview && "block min-h-171.75",
       )}
     >
       <section
