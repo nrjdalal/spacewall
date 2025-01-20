@@ -17,8 +17,8 @@ export default function PaymentPageView({
   return (
     <main
       className={cn(
-        "bg-background @container relative mx-auto flex min-h-dvh max-w-screen-lg",
-        preview && "block min-h-171.75",
+        "bg-background relative mx-auto min-h-dvh max-w-screen-lg md:flex",
+        preview && "min-h-171.75 md:block",
       )}
     >
       <section
@@ -62,9 +62,16 @@ export default function PaymentPageView({
         )}
       </section>
 
-      <div className={cn("hidden min-w-96 md:block")}></div>
+      <div className={cn("hidden min-w-96 md:block", preview && "md:hidden")}>
+        Checkout form
+      </div>
 
-      <div className="bg-sidebar sticky bottom-0 h-18 w-full border-t p-3 @md:hidden">
+      <div
+        className={cn(
+          "bg-sidebar sticky bottom-0 h-18 w-full border-t p-3 md:hidden",
+          preview && "md:block",
+        )}
+      >
         <Button className="w-full rounded-full">Complete Your Purchase</Button>
       </div>
     </main>
