@@ -1,0 +1,1 @@
+ALTER TABLE "paymentPage" DROP COLUMN "name";

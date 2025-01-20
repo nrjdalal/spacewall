@@ -57,21 +57,23 @@ export default function Page() {
         <Content className="space-y-5">
           <DialogAddWebsite />
 
-          {data?.map((website: { id: string; name: string; slug: string }) => (
-            <div key={website.id} className="relative">
-              <DeleteWebsite id={website.id} />
-              <Link
-                href={`/x/payment-page/${website.id}`}
-                className="bg-sidebar z-0 flex h-14 flex-col items-center justify-center rounded-md border text-sm"
-                prefetch={false}
-              >
-                <span>{website.name ?? "Untitled"}</span>
-                <span className="text-muted-foreground text-xs">
-                  spacewall.me/{website.slug}
-                </span>
-              </Link>
-            </div>
-          ))}
+          {data?.map(
+            (website: { id: string; slug: string; title: string | null }) => (
+              <div key={website.id} className="relative">
+                <DeleteWebsite id={website.id} />
+                <Link
+                  href={`/x/payment-page/${website.id}`}
+                  className="bg-sidebar z-0 flex h-14 flex-col items-center justify-center rounded-md border text-sm"
+                  prefetch={false}
+                >
+                  <span>{website.title ?? "Untitled"}</span>
+                  <span className="text-muted-foreground text-xs">
+                    spacewall.me/p/{website.slug}
+                  </span>
+                </Link>
+              </div>
+            ),
+          )}
         </Content>
       </ContentRoot>
     </>
@@ -87,13 +89,11 @@ const DialogAddWebsite = () => {
       .field({
         label: "Slug",
         description: "You can change or add custom domain later.",
-        prefix: process.env.NEXT_PUBLIC_SITE_URL + "/pp-",
+        prefix: process.env.NEXT_PUBLIC_SITE_URL + "/",
         default: "",
       }),
-    name: z.string().min(1).max(128).field({
-      label: "Name",
-      description:
-        "For your reference. This will not be visible to your customers.",
+    title: z.string().min(1).max(128).field({
+      label: "Title",
       default: "",
     }),
   }) as z.ZodObject<z.ZodRawShape>
@@ -102,7 +102,7 @@ const DialogAddWebsite = () => {
     mutationFn: async (values: z.infer<typeof schema>) => {
       const response = await createPaymentPage({
         slug: values.slug,
-        name: values.name,
+        title: values.title,
       })
 
       return response

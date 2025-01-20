@@ -8,6 +8,13 @@
       "when": 1736415333854,
       "tag": "0000_strange_christian_walker",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1737378351812,
+      "tag": "0001_smiling_thundra",
+      "breakpoints": true
     }
   ]
 }
