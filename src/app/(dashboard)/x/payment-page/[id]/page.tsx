@@ -30,10 +30,6 @@ export default function Page() {
       label: "Slug",
       default: data?.slug,
     }),
-    name: z.string().field({
-      label: "Name",
-      default: data?.name,
-    }),
     title: z.string().field({
       label: "Title",
       default: data?.title ?? "",

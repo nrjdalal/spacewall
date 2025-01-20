@@ -2,6 +2,7 @@
 
 import { db, paymentPages } from "@/db"
 import { auth } from "@/lib/auth"
+import slugify from "@sindresorhus/slugify"
 import { and, desc, eq } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
@@ -10,7 +11,6 @@ import { fromError } from "zod-validation-error"
 const schema = z.object({
   id: z.string().nonempty(),
   slug: z.string().nonempty(),
-  name: z.string().nonempty(),
   title: z.string().nullable(),
   image: z
     .string()
@@ -59,13 +59,16 @@ export const getPaymentPage = async (data: Pick<PaymentPage, "id">) => {
 }
 
 export const createPaymentPage = async (
-  data: Pick<PaymentPage, "slug" | "name">,
+  data: Pick<PaymentPage, "slug" | "title">,
 ) => {
   const { userId } = await withSession(data)
+
+  data.slug = slugify(data.slug!)
+
   return await db.insert(paymentPages).values({
     userId,
     slug: data.slug,
-    name: data.name,
+    title: data.title,
   })
 }
 
@@ -73,6 +76,9 @@ export const updatePaymentPage = async (
   data: Partial<PaymentPage> & Pick<PaymentPage, "id">,
 ) => {
   const { userId } = await withSession(data)
+
+  data.slug = slugify(data.slug!)
+
   const result = await db
     .update(paymentPages)
     .set(data)
@@ -80,7 +86,7 @@ export const updatePaymentPage = async (
     .returning({
       slug: paymentPages.slug,
     })
-  revalidatePath(`/payment-page/${result[0].slug}`)
+  revalidatePath(`/p/${result[0].slug}`)
   return true
 }
 

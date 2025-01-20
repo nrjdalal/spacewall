@@ -7,15 +7,6 @@ import { cn } from "@/lib/utils"
 import { SiApple } from "@icons-pack/react-simple-icons"
 import { Camera } from "lucide-react"
 
-{
-  /* <main
-      className={cn(
-        "bg-background relative mx-auto min-h-dvh max-w-screen-sm pb-24 sm:pt-3",
-        preview && "min-h-171 sm:pt-0",
-      )}
-    > */
-}
-
 export default function PaymentPageView({
   preview = true,
   data,
@@ -26,17 +17,20 @@ export default function PaymentPageView({
   return (
     <main
       className={cn(
-        "bg-background @container relative mx-auto min-h-dvh",
+        "bg-background @container relative mx-auto min-h-dvh max-w-screen-lg @md:flex",
         preview && "min-h-171.75",
       )}
     >
-      <div className="bg-sidebar flex h-14 w-full items-center gap-1.5 border-b px-3">
-        <SiApple />
-      </div>
-
       <section
-        className={cn("min-h-dvh space-y-3 p-3", preview && "min-h-171.75")}
+        className={cn(
+          "min-h-dvh space-y-3 p-3 pt-0",
+          preview && "min-h-171.75",
+        )}
       >
+        <div className="flex h-14 w-full items-center gap-1.5 border-b px-3">
+          <SiApple />
+        </div>
+
         <h1 className="font-medium">{data.title || "Untitled"}</h1>
 
         {data.image ? (
@@ -50,7 +44,13 @@ export default function PaymentPageView({
             alt=""
           />
         ) : (
-          <div className="bg-muted-foreground/25 flex aspect-square items-center justify-center rounded-md border">
+          <div
+            className={cn(
+              "hidden",
+              preview &&
+                "bg-muted-foreground/25 flex aspect-square items-center justify-center rounded-md border",
+            )}
+          >
             <Camera className="text-muted-foreground/50" />
           </div>
         )}
@@ -62,7 +62,9 @@ export default function PaymentPageView({
         )}
       </section>
 
-      <div className="bg-sidebar sticky bottom-0 h-18 w-full border-t p-3 @sm:hidden">
+      <div className={cn("hidden min-w-96 md:block")}></div>
+
+      <div className="bg-sidebar sticky bottom-0 h-18 w-full border-t p-3 @md:hidden">
         <Button className="w-full rounded-full">Complete Your Purchase</Button>
       </div>
     </main>
