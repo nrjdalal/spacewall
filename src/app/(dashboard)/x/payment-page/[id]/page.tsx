@@ -6,17 +6,29 @@ import {
 } from "@/app/(dashboard)/x/payment-page/actions"
 import PaymentPageView from "@/app/(dashboard)/x/payment-page/view"
 import XHeader from "@/components/common/x-header"
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import { Content, ContentPreview, ContentRoot } from "@/components/x/content"
 import { ZodHookForm } from "@/components/x/zod-hook-form"
-import { useMutation, useQuery } from "@tanstack/react-query"
-import { Loader2 } from "lucide-react"
+import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { ExternalLink, Loader2, Pencil, Share2 } from "lucide-react"
+import Link from "next/link"
 import { useParams } from "next/navigation"
+import { useState } from "react"
 import { toast } from "sonner"
 import { z } from "zod"
 import { zodMetaParser } from "zod-meta-parser"
 
 export default function Page() {
   const { id } = useParams() as { id: string }
+  const [, copy] = useCopyToClipboard()
 
   const { data, isError, isLoading } = useQuery({
     queryKey: [`payment-page-${id}`],
@@ -26,10 +38,6 @@ export default function Page() {
   })
 
   const schema = z.object({
-    slug: z.string().field({
-      label: "Slug",
-      default: data?.slug,
-    }),
     title: z.string().field({
       label: "Title",
       default: data?.title ?? "",
@@ -99,6 +107,16 @@ export default function Page() {
     await mutuation.mutateAsync(values)
   }
 
+  const handleCopy = (text: string) => () => {
+    copy(text)
+      .then(() => {
+        console.log("Copied!", { text })
+      })
+      .catch((error) => {
+        console.error("Failed to copy!", error)
+      })
+  }
+
   return (
     <>
       <XHeader
@@ -108,6 +126,42 @@ export default function Page() {
       />
       <ContentRoot>
         <Content className="space-y-5 pb-32">
+          {/* SHARE PAYMENT PAGE */}
+          <section className="flex flex-wrap justify-between gap-2">
+            <div className="bg-sidebar flex h-9 items-center gap-2 rounded-md border pr-2 pl-3 text-sm">
+              <p>
+                <span className="text-muted-foreground">
+                  {process.env.NEXT_PUBLIC_SITE_URL?.split("//")[1]}/
+                </span>
+                {data?.slug}
+              </p>
+
+              {data?.id && data?.slug && (
+                <DialogEditSlug id={data.id} slug={data.slug} />
+              )}
+            </div>
+            <div className="ml-auto flex sm:gap-2">
+              <Link href={"/p/" + data?.slug} target="_blank">
+                <Button
+                  className="bg-sidebar rounded-r-none border-r-0 sm:rounded-md sm:border-r"
+                  variant="outline"
+                >
+                  <ExternalLink />
+                </Button>
+              </Link>
+              <Button
+                className="bg-sidebar rounded-l-none sm:rounded-md"
+                variant="outline"
+                onClick={handleCopy(
+                  process.env.NEXT_PUBLIC_SITE_URL + "/p/" + data?.slug,
+                )}
+              >
+                <Share2 className="sm:hidden" />
+                <span className="hidden sm:block">Share</span>
+              </Button>
+            </div>
+          </section>
+
           <ZodHookForm
             schema={schema}
             onSubmit={onSubmit}
@@ -119,5 +173,64 @@ export default function Page() {
         </ContentPreview>
       </ContentRoot>
     </>
+  )
+}
+
+const DialogEditSlug = (data: { id: string; slug: string }) => {
+  const schema = z.object({
+    slug: z
+      .string()
+      .min(2)
+      .field({
+        label: "Slug",
+        default: data.slug,
+        prefix: process.env.NEXT_PUBLIC_SITE_URL + "/p/",
+      }),
+  }) as z.ZodObject<z.ZodRawShape>
+
+  const queryClient = useQueryClient()
+
+  const mutation = useMutation({
+    mutationFn: async (values: z.infer<typeof schema>) => {
+      return await updatePaymentPage({
+        id: data.id,
+        slug: values.slug,
+      })
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [`payment-page-${data.id}`],
+      })
+    },
+  })
+
+  const onSubmit = async (values: z.infer<typeof schema>) => {
+    await mutation.mutateAsync(values)
+    setOpen(false)
+  }
+
+  const [open, setOpen] = useState(false)
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button
+          className="text-foreground/65 aspect-square size-6 p-0"
+          variant="outline"
+        >
+          <Pencil />
+        </Button>
+      </DialogTrigger>
+      <DialogContent
+        onOpenAutoFocus={(e) => {
+          e.preventDefault()
+        }}
+      >
+        <DialogHeader>
+          <DialogTitle>Manage Slug</DialogTitle>
+        </DialogHeader>
+        <ZodHookForm schema={schema} onSubmit={onSubmit} />
+      </DialogContent>
+    </Dialog>
   )
 }
