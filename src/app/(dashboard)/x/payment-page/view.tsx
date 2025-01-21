@@ -62,9 +62,7 @@ export default function PaymentPageView({
         )}
       </section>
 
-      <div className={cn("hidden min-w-96 md:block", preview && "md:hidden")}>
-        Checkout form
-      </div>
+      <div className={cn("hidden min-w-96 md:block", preview && "md:hidden")} />
 
       <div
         className={cn(
