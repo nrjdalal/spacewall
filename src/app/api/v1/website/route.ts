@@ -94,16 +94,6 @@ export async function PUT(request: Request) {
     }
   }
 
-  if (websitesCount[0].count >= 3) {
-    return Response.json(
-      {
-        status: 403,
-        message: "Only 3 websites are allowed in free tier",
-      },
-      { status: 403 },
-    )
-  }
-
   const data = await request.json()
   data.slug = slugify(data.slug)
 
