@@ -80,6 +80,20 @@ export async function PUT(request: Request) {
     .from(websites)
     .where(eq(websites.userId, session.user?.id as string))
 
+  const adminUsers = process.env.SW_ADMINS!.split(",")
+
+  if (!adminUsers.includes(session.user?.email as string)) {
+    if (websitesCount[0].count >= 3) {
+      return Response.json(
+        {
+          status: 403,
+          message: "Only 3 websites are allowed in free tier",
+        },
+        { status: 403 },
+      )
+    }
+  }
+
   if (websitesCount[0].count >= 3) {
     return Response.json(
       {
