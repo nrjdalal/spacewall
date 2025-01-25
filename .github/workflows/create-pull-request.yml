@@ -25,10 +25,17 @@ jobs:
       - name: Check for ignored changes
         id: check_changes
         run: |
-          IGNORED_PATHS=("README.md")
+          # List of ignored paths
+          IGNORED_PATHS=(".github" "README.md")
+
+          # Get list of changed files
           CHANGED_FILES=$(git diff --name-only origin/main...${{ github.ref_name }})
           echo "Changed files: $CHANGED_FILES"
+
+          # Initialize flag to track if all changes are in ignored paths
           ALL_IGNORED=true
+
+          # Check each changed file
           for FILE in $CHANGED_FILES; do
             MATCH=false
             for IGNORED_PATH in "${IGNORED_PATHS[@]}"; do
@@ -42,6 +49,8 @@ jobs:
               break
             fi
           done
+
+          # Set environment variable based on whether all changes are in ignored paths
           if [ "$ALL_IGNORED" = true ]; then
             echo "All changes are in ignored paths. Skipping build and pull request creation."
             echo "skip_build_and_pr=true" >> $GITHUB_ENV
@@ -49,39 +58,31 @@ jobs:
             echo "skip_build_and_pr=false" >> $GITHUB_ENV
           fi
 
-      # - name: Cache dependencies
-      #   if: env.skip_build_and_pr == 'false'
-      #   uses: actions/cache@v4
-      #   with:
-      #     path: |
-      #       ~/.bun
-      #       ${{ github.workspace }}/.next/cache
-      #     key: ${{ runner.os }}-nextjs-${{ hashFiles('**/bun.lock') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-nextjs-${{ hashFiles('**/bun.lock') }}-
+      - name: Cache dependencies
+        if: env.skip_build_and_pr == 'false'
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.bun
+            ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/bun.lock') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/bun.lock') }}-
 
-      # - name: Setup Bun
-      #   if: env.skip_build_and_pr == 'false'
-      #   uses: oven-sh/setup-bun@v2
-      #   with:
-      #     bun-version: latest
+      - name: Setup Bun
+        if: env.skip_build_and_pr == 'false'
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
 
-      # - name: Test build
-      #   if: env.skip_build_and_pr == 'false'
-      #   run: bun i && bun run next build
+      - name: Test build
+        if: env.skip_build_and_pr == 'false'
+        run: bun i && bun run next build
+
       - name: Get commit count
         id: get_commit_count
         if: env.skip_build_and_pr == 'false'
         run: echo "commit_count=$(git rev-list --count HEAD ^origin/main)" >> $GITHUB_ENV
-
-      - name: Create temporary branch
-        id: create_temp_branch
-        if: env.skip_build_and_pr == 'false'
-        run: |
-          TEMP_BRANCH="temp-${GITHUB_SHA:0:7}"
-          git checkout -b $TEMP_BRANCH ${{ github.sha }}
-          git push origin $TEMP_BRANCH
-          echo "TEMP_BRANCH=$TEMP_BRANCH" >> $GITHUB_ENV
 
       - name: Create pull request
         if: env.skip_build_and_pr == 'false'
@@ -91,7 +92,7 @@ jobs:
           commit-message: branch `${{ github.ref_name }}` pushed ${{ env.commit_count }} commits
           committer: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
           author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
-          branch: ${{ env.TEMP_BRANCH }}
+          branch: ${{ github.ref }}
           base: main
           title: branch `${{ github.ref_name }}` wants to merge ${{ env.commit_count }} commits into `main`
           body: |
