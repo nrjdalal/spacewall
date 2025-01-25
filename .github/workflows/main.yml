@@ -47,7 +47,7 @@ jobs:
           commit-message: "Changes from branch ${{ github.ref_name }}"
           committer: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
           author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
-          branch: ${{ github.ref_name }}
+          branch: ${{ github.ref }}
           base: main
           title: "Changes from branch ${{ github.ref_name }}"
           body: |
