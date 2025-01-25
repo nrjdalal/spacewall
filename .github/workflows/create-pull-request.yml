@@ -1,4 +1,4 @@
-name: Create Pull Request on Successful Run
+name: create-pull-request
 
 on:
   push:
