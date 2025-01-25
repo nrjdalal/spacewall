@@ -1,0 +1,94 @@
+name: create-pull-request
+
+on:
+  push:
+    branches-ignore:
+      - main
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  create-pull-request:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Check for ignored changes
+        id: check_changes
+        run: |
+          # List of ignored paths
+          IGNORED_PATHS=(".github" "README.md")
+
+          # Get list of changed files
+          CHANGED_FILES=$(git diff --name-only origin/main...${{ github.ref_name }})
+          echo "Changed files: $CHANGED_FILES"
+
+          # Initialize flag to track if all changes are in ignored paths
+          ALL_IGNORED=true
+
+          # Check each changed file
+          for FILE in $CHANGED_FILES; do
+            MATCH=false
+            for IGNORED_PATH in "${IGNORED_PATHS[@]}"; do
+              if [[ $FILE == $IGNORED_PATH* ]]; then
+                MATCH=true
+                break
+              fi
+            done
+            if [ "$MATCH" = false ]; then
+              ALL_IGNORED=false
+              break
+            fi
+          done
+
+          # Set environment variable based on whether all changes are in ignored paths
+          if [ "$ALL_IGNORED" = true ]; then
+            echo "All changes are in ignored paths. Skipping build and pull request creation."
+            echo "skip_build_and_pr=true" >> $GITHUB_ENV
+          else
+            echo "skip_build_and_pr=false" >> $GITHUB_ENV
+          fi
+
+      - name: Cache dependencies
+        if: env.skip_build_and_pr == 'false'
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.bun
+            ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/bun.lock') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/bun.lock') }}-
+
+      - name: Setup Bun
+        if: env.skip_build_and_pr == 'false'
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Test build
+        if: env.skip_build_and_pr == 'false'
+        run: bun i && bun run next build
+
+      - name: Create pull request
+        if: env.skip_build_and_pr == 'false'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "${{ github.ref_name }} branch changes"
+          committer: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+          author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+          branch: ${{ github.ref }}
+          base: main
+          title: "${{ github.ref_name }} branch changes"
+          body: |
+            This pull request was created automatically by GitHub Actions.
