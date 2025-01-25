@@ -12,22 +12,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Set up Git
+      - name: Configure Git
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
-      - name: Setup Bun
+      - name: Setup Bun Environment
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
 
-      - name: Cache dependencies
+      - name: Cache Dependencies
         uses: actions/cache@v4
         with:
           path: |
@@ -37,14 +37,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/bun.lock') }}-
 
-      - name: Test build
-        run: bun i && bun run next build
+      - name: Test Build
+        run: bun install && bun run next build
 
-      - name: Get commit count
+      - name: Get Commit Count
         id: get_commit_count
         run: echo "commit_count=$(git rev-list --count HEAD ^origin/main)" >> $GITHUB_OUTPUT
 
-      - name: Create pull request
+      - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
