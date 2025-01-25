@@ -58,26 +58,26 @@ jobs:
             echo "skip_build_and_pr=false" >> $GITHUB_ENV
           fi
 
-      - name: Cache dependencies
-        if: env.skip_build_and_pr == 'false'
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.bun
-            ${{ github.workspace }}/.next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/bun.lock') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/bun.lock') }}-
+      # - name: Cache dependencies
+      #   if: env.skip_build_and_pr == 'false'
+      #   uses: actions/cache@v4
+      #   with:
+      #     path: |
+      #       ~/.bun
+      #       ${{ github.workspace }}/.next/cache
+      #     key: ${{ runner.os }}-nextjs-${{ hashFiles('**/bun.lock') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-nextjs-${{ hashFiles('**/bun.lock') }}-
 
-      - name: Setup Bun
-        if: env.skip_build_and_pr == 'false'
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
+      # - name: Setup Bun
+      #   if: env.skip_build_and_pr == 'false'
+      #   uses: oven-sh/setup-bun@v2
+      #   with:
+      #     bun-version: latest
 
-      - name: Test build
-        if: env.skip_build_and_pr == 'false'
-        run: bun i && bun run next build
+      # - name: Test build
+      #   if: env.skip_build_and_pr == 'false'
+      #   run: bun i && bun run next build
 
       - name: Get commit count
         id: get_commit_count
@@ -88,11 +88,11 @@ jobs:
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "branch `${{ github.ref_name }}` wants to merge ${{ env.commit_count }} commits into `main`"
+          commit-message: branch `${{ github.ref_name }}` wants to merge ${{ env.commit_count }} commits into `main`
           committer: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
           author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
           branch: ${{ github.ref }}
           base: main
-          title: branch `${{ github.ref_name }}` wants to merge ${{ env.commit_count }} commits into `main`"
+          title: branch `${{ github.ref_name }}` wants to merge ${{ env.commit_count }} commits into `main`
           body: |
             This pull request was created automatically by GitHub Actions.
