@@ -89,7 +89,7 @@ jobs:
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: branch `${{ github.ref_name }}` pushed ${{ env.commit_count }} commits
+          commit-message: branch `${{ github.ref_name }}` wants to merge ${{ env.commit_count }} commits into `main`
           committer: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
           author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
           branch: ${{ github.ref }}

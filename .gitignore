@@ -45,5 +45,5 @@ next-env.d.ts
 .sst
 sst-env.d.ts
 
-# custom dirs
+# custom
 /test
