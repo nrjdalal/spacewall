@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.ref }}
-          fetch-depth: 2 # Ensure we have enough history for comparison
+          fetch-depth: 0 # Fetch all history to ensure we have enough data for comparison
 
       - name: Set up Git
         run: |
@@ -28,7 +28,29 @@ jobs:
         with:
           bun-version: latest
 
+      - name: Fetch all branches
+        run: git fetch --all
+
+      - name: Check for changes in .github or README.md
+        id: check_changes
+        run: |
+          # Check for changes between the current branch and main branch
+          if git merge-base --is-ancestor origin/main ${{ github.ref_name }}; then
+            CHANGED_FILES=$(git diff --name-only origin/main...${{ github.ref_name }})
+          else
+            # Fallback to check for changes from the last commit on the current branch
+            CHANGED_FILES=$(git diff --name-only HEAD~1)
+          fi
+          echo "Changed files: $CHANGED_FILES"
+          if echo "$CHANGED_FILES" | grep -qE '^\.github|README\.md'; then
+            echo "Changes detected in .github or README.md. Skipping build and pull request creation."
+            echo "skip_build_and_pr=true" >> $GITHUB_ENV
+          else
+            echo "skip_build_and_pr=false" >> $GITHUB_ENV
+          fi
+
       - name: Cache dependencies
+        if: env.skip_build_and_pr == 'false'
         uses: actions/cache@v4
         with:
           path: |
@@ -37,21 +59,6 @@ jobs:
           key: ${{ runner.os }}-nextjs-${{ hashFiles('**/bun.lock') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/bun.lock') }}-
-
-      - name: Fetch all branches
-        run: git fetch --all
-
-      - name: Check for changes in .github or README.md
-        id: check_changes
-        run: |
-          CHANGED_FILES=$(git diff --name-only origin/main...${{ github.ref_name }})
-          echo "Changed files: $CHANGED_FILES"
-          if echo "$CHANGED_FILES" | grep -qE '^\.github|README\.md'; then
-            echo "Changes detected in .github or README.md. Skipping build and pull request creation."
-            echo "skip_build_and_pr=true" >> $GITHUB_ENV
-          else
-            echo "skip_build_and_pr=false" >> $GITHUB_ENV
-          fi
 
       - name: Test build
         if: env.skip_build_and_pr == 'false'
