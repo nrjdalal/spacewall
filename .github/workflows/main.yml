@@ -44,11 +44,11 @@ jobs:
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "Changes from branch ${{ github.ref_name }}"
+          commit-message: "${{ github.ref_name }} branch changes"
           committer: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
           author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
           branch: ${{ github.ref }}
           base: main
-          title: "Changes from branch ${{ github.ref_name }}"
+          title: "${{ github.ref_name }} branch changes"
           body: |
             This pull request was created automatically by GitHub Actions.
