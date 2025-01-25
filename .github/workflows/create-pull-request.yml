@@ -25,7 +25,7 @@ jobs:
       - name: Check for ignored changes
         id: check_changes
         run: |
-          IGNORED_PATHS=(".github" "README.md")
+          IGNORED_PATHS=("README.md")
           CHANGED_FILES=$(git diff --name-only origin/main...${{ github.ref_name }})
           echo "Changed files: $CHANGED_FILES"
           ALL_IGNORED=true
