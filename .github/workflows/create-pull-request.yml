@@ -79,7 +79,7 @@ jobs:
         id: create_temp_branch
         if: env.skip_build_and_pr == 'false'
         run: |
-          TEMP_BRANCH="temp/${GITHUB_SHA:0:7}"
+          TEMP_BRANCH="temp-${GITHUB_SHA:0:7}"
           echo "TEMP_BRANCH=$TEMP_BRANCH" >> $GITHUB_ENV
           git checkout -b $TEMP_BRANCH
 
