@@ -79,16 +79,20 @@ jobs:
         if: env.skip_build_and_pr == 'false'
         run: bun i && bun run next build
 
+      - name: Get commit count
+        id: get_commit_count
+        run: echo "commit_count=$(git rev-list --count HEAD ^origin/main)" >> $GITHUB_ENV
+
       - name: Create pull request
         if: env.skip_build_and_pr == 'false'
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "branch ${{ github.ref_name }} wants to push ${{ fromJson(toJson(github.event.commits)).length }} commits to main"
+          commit-message: "branch `${{ github.ref_name }}` wants to merge ${{ env.commit_count }} commits into `main`"
           committer: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
           author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
           branch: ${{ github.ref }}
           base: main
-          title: "branch ${{ github.ref_name }} wants to push ${{ fromJson(toJson(github.event.commits)).length }} commits to main"
+          title: branch `${{ github.ref_name }}` wants to merge ${{ env.commit_count }} commits into `main`"
           body: |
             This pull request was created automatically by GitHub Actions.
