@@ -47,7 +47,7 @@ jobs:
           commit-message: "Automated pull request"
           committer: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
           author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
-          branch: auto-pr-${{ github.sha }}
+          branch: ${{ github.ref }}
           base: main
           title: "Automated Pull Request"
           body: |
