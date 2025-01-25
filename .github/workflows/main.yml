@@ -40,15 +40,6 @@ jobs:
       # - name: Test build
       #   run: bun i && bun run next build
 
-      - name: Get commit messages
-        id: commits
-        run: |
-          branch_name=${GITHUB_REF#refs/heads/}
-          commits=$(git log --format='%H %s' origin/main..origin/$branch_name)
-          echo "commits<<EOF" >> $GITHUB_ENV
-          echo "$commits" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-
       - name: Create pull request
         uses: peter-evans/create-pull-request@v7
         with:
@@ -61,6 +52,3 @@ jobs:
           title: "Changes from branch ${{ github.ref_name }}"
           body: |
             This pull request was created automatically by GitHub Actions.
-
-            Commits:
-            ${{ steps.commits.outputs.commits }}
