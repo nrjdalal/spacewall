@@ -47,12 +47,11 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: branch `${{ github.ref_name }}` wants to merge ${{ steps.get_commit_count.outputs.commit_count }} commits into `main`
-          committer: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
-          author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
-          branch: ${{ github.ref }}
           base: main
+          branch: ${{ github.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
+          committer: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
           title: branch `${{ github.ref_name }}` wants to merge ${{ steps.get_commit_count.outputs.commit_count }} commits into `main`
-          body: |
-            This pull request was created automatically by GitHub Actions.
+          commit-message: branch `${{ github.ref_name }}` wants to merge ${{ steps.get_commit_count.outputs.commit_count }} commits into `main`
+          body: This pull request was created automatically by GitHub Actions. It will merge ${{ steps.get_commit_count.outputs.commit_count }} commits into `main`.
