@@ -43,7 +43,8 @@ jobs:
       - name: Get commit messages
         id: commits
         run: |
-          commits=$(git log --format='%H %s' origin/main..${{ github.ref }})
+          branch_name=${GITHUB_REF#refs/heads/}
+          commits=$(git log --format='%H %s' origin/main..origin/$branch_name)
           echo "commits=$commits" >> $GITHUB_ENV
 
       - name: Create pull request
