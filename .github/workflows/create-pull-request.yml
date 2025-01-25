@@ -22,44 +22,12 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
-      - name: Check for ignored changes
-        id: check_changes
-        run: |
-          # List of ignored paths
-          IGNORED_PATHS=(".github" "README.md")
-
-          # Get list of changed files
-          CHANGED_FILES=$(git diff --name-only origin/main...${{ github.ref_name }})
-          echo "Changed files: $CHANGED_FILES"
-
-          # Initialize flag to track if all changes are in ignored paths
-          ALL_IGNORED=true
-
-          # Check each changed file
-          for FILE in $CHANGED_FILES; do
-            MATCH=false
-            for IGNORED_PATH in "${IGNORED_PATHS[@]}"; do
-              if [[ $FILE == $IGNORED_PATH* ]]; then
-                MATCH=true
-                break
-              fi
-            done
-            if [ "$MATCH" = false ]; then
-              ALL_IGNORED=false
-              break
-            fi
-          done
-
-          # Set environment variable based on whether all changes are in ignored paths
-          if [ "$ALL_IGNORED" = true ]; then
-            echo "All changes are in ignored paths. Skipping build and pull request creation."
-            echo "skip_build_and_pr=true" >> $GITHUB_OUTPUT
-          else
-            echo "skip_build_and_pr=false" >> $GITHUB_OUTPUT
-          fi
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
 
       - name: Cache dependencies
-        if: steps.check_changes.outputs.skip_build_and_pr == 'false'
         uses: actions/cache@v4
         with:
           path: |
@@ -69,23 +37,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/bun.lock') }}-
 
-      - name: Setup Bun
-        if: steps.check_changes.outputs.skip_build_and_pr == 'false'
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-
       - name: Test build
-        if: steps.check_changes.outputs.skip_build_and_pr == 'false'
         run: bun i && bun run next build
 
       - name: Get commit count
         id: get_commit_count
-        if: steps.check_changes.outputs.skip_build_and_pr == 'false'
         run: echo "commit_count=$(git rev-list --count HEAD ^origin/main)" >> $GITHUB_OUTPUT
 
       - name: Create pull request
-        if: steps.check_changes.outputs.skip_build_and_pr == 'false'
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
