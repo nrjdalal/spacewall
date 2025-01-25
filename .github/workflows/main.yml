@@ -23,9 +23,6 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
-      - name: Fetch all branches
-        run: git fetch --all
-
       - name: Check for ignored changes
         id: check_changes
         run: |
