@@ -58,6 +58,16 @@ jobs:
             echo "skip_build_and_pr=false" >> $GITHUB_ENV
           fi
 
+      - name: Close existing pull request
+        if: env.skip_build_and_pr == 'false'
+        run: |
+          existing_pr=$(gh pr list --head "${{ github.ref }}" --json number -q '.[].number')
+          if [ -n "$existing_pr" ]; then
+            gh pr close "$existing_pr" --delete-branch
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Cache dependencies
         if: env.skip_build_and_pr == 'false'
         uses: actions/cache@v4
