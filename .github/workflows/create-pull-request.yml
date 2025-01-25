@@ -53,13 +53,13 @@ jobs:
           # Set environment variable based on whether all changes are in ignored paths
           if [ "$ALL_IGNORED" = true ]; then
             echo "All changes are in ignored paths. Skipping build and pull request creation."
-            echo "skip_build_and_pr=true" >> $GITHUB_ENV
+            echo "skip_build_and_pr=true" >> $GITHUB_OUTPUT
           else
-            echo "skip_build_and_pr=false" >> $GITHUB_ENV
+            echo "skip_build_and_pr=false" >> $GITHUB_OUTPUT
           fi
 
       - name: Cache dependencies
-        if: env.skip_build_and_pr == 'false'
+        if: steps.check_changes.outputs.skip_build_and_pr == 'false'
         uses: actions/cache@v4
         with:
           path: |
@@ -70,30 +70,30 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('**/bun.lock') }}-
 
       - name: Setup Bun
-        if: env.skip_build_and_pr == 'false'
+        if: steps.check_changes.outputs.skip_build_and_pr == 'false'
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
 
       - name: Test build
-        if: env.skip_build_and_pr == 'false'
+        if: steps.check_changes.outputs.skip_build_and_pr == 'false'
         run: bun i && bun run next build
 
       - name: Get commit count
         id: get_commit_count
-        if: env.skip_build_and_pr == 'false'
-        run: echo "commit_count=$(git rev-list --count HEAD ^origin/main)" >> $GITHUB_ENV
+        if: steps.check_changes.outputs.skip_build_and_pr == 'false'
+        run: echo "commit_count=$(git rev-list --count HEAD ^origin/main)" >> $GITHUB_OUTPUT
 
       - name: Create pull request
-        if: env.skip_build_and_pr == 'false'
+        if: steps.check_changes.outputs.skip_build_and_pr == 'false'
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: branch `${{ github.ref_name }}` wants to merge ${{ env.commit_count }} commits into `main`
+          commit-message: branch `${{ github.ref_name }}` wants to merge ${{ steps.get_commit_count.outputs.commit_count }} commits into `main`
           committer: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
           author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
           branch: ${{ github.ref }}
           base: main
-          title: branch `${{ github.ref_name }}` wants to merge ${{ env.commit_count }} commits into `main`
+          title: branch `${{ github.ref_name }}` wants to merge ${{ steps.get_commit_count.outputs.commit_count }} commits into `main`
           body: |
             This pull request was created automatically by GitHub Actions.
