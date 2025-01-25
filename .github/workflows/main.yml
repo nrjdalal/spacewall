@@ -45,7 +45,9 @@ jobs:
         run: |
           branch_name=${GITHUB_REF#refs/heads/}
           commits=$(git log --format='%H %s' origin/main..origin/$branch_name)
-          echo "commits=$commits" >> $GITHUB_ENV
+          echo "commits<<EOF" >> $GITHUB_ENV
+          echo "$commits" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       - name: Create pull request
         uses: peter-evans/create-pull-request@v7
