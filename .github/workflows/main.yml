@@ -5,6 +5,8 @@ on:
     branches-ignore:
       - main
 
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
 jobs:
   create-pull-request:
     runs-on: ubuntu-latest
@@ -40,13 +42,3 @@ jobs:
 
       - name: Create pull request
         uses: peter-evans/create-pull-request@v7
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "Automated pull request"
-          committer: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
-          author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
-          branch: auto-pr-${{ github.sha }}
-          base: main
-          title: "Automated Pull Request"
-          body: |
-            This pull request was created automatically by GitHub Actions.
