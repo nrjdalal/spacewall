@@ -81,7 +81,7 @@ jobs:
         run: |
           TEMP_BRANCH="temp-${GITHUB_SHA:0:7}"
           echo "TEMP_BRANCH=$TEMP_BRANCH" >> $GITHUB_ENV
-          git checkout -b $TEMP_BRANCH
+          git checkout -b $TEMP_BRANCH ${{ github.sha }}
 
       - name: Push temporary branch
         if: env.skip_build_and_pr == 'false'
