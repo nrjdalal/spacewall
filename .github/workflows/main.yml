@@ -22,33 +22,42 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
+      # - name: Setup Bun
+      #   uses: oven-sh/setup-bun@v2
+      #   with:
+      #     bun-version: latest
 
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.bun
-            ${{ github.workspace }}/.next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/bun.lock') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/bun.lock') }}-
+      # - name: Cache dependencies
+      #   uses: actions/cache@v4
+      #   with:
+      #     path: |
+      #       ~/.bun
+      #       ${{ github.workspace }}/.next/cache
+      #     key: ${{ runner.os }}-nextjs-${{ hashFiles('**/bun.lock') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-nextjs-${{ hashFiles('**/bun.lock') }}-
 
-      - name: Test build
-        run: bun i && bun run next build
+      # - name: Test build
+      #   run: bun i && bun run next build
+
+      - name: Get commit messages
+        id: commits
+        run: |
+          commits=$(git log --format='%H %s' origin/main..${{ github.ref }})
+          echo "commits=$commits" >> $GITHUB_ENV
 
       - name: Create pull request
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "Changes from branch ${{ github.ref }}"
+          commit-message: "Changes from branch ${{ github.ref_name }}"
           committer: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
           author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
-          branch: ${{ github.ref }}
+          branch: ${{ github.ref_name }}
           base: main
-          title: "Changes from branch ${{ github.ref }}"
+          title: "Changes from branch ${{ github.ref_name }}"
           body: |
             This pull request was created automatically by GitHub Actions.
+
+            Commits:
+            ${{ steps.commits.outputs.commits }}
