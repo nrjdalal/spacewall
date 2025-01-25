@@ -40,16 +40,6 @@ jobs:
       - name: Test build
         run: bun i && bun run next build
 
-      - name: Show current branch
-        run: |
-          echo "Current ref: ${{ github.ref }}"
-          git branch -a
-
-      - name: Debug Git status
-        run: |
-          git status
-          git log -1
-
       - name: Create pull request
         uses: peter-evans/create-pull-request@v7
         with:
