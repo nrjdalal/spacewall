@@ -22,25 +22,39 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
-      # - name: Setup Bun
-      #   uses: oven-sh/setup-bun@v2
-      #   with:
-      #     bun-version: latest
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
 
-      # - name: Cache dependencies
-      #   uses: actions/cache@v4
-      #   with:
-      #     path: |
-      #       ~/.bun
-      #       ${{ github.workspace }}/.next/cache
-      #     key: ${{ runner.os }}-nextjs-${{ hashFiles('**/bun.lock') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-nextjs-${{ hashFiles('**/bun.lock') }}-
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.bun
+            ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/bun.lock') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/bun.lock') }}-
 
-      # - name: Test build
-      #   run: bun i && bun run next build
+      - name: Check for changes in .github or README.md
+        id: check_changes
+        run: |
+          CHANGED_FILES=$(git diff --name-only HEAD~1)
+          echo "Changed files: $CHANGED_FILES"
+          if echo "$CHANGED_FILES" | grep -qE '^\.github|README\.md'; then
+            echo "Changes detected in .github or README.md. Skipping build and pull request creation."
+            echo "skip_build_and_pr=true" >> $GITHUB_ENV
+          else
+            echo "skip_build_and_pr=false" >> $GITHUB_ENV
+          fi
+
+      - name: Test build
+        if: env.skip_build_and_pr == 'false'
+        run: bun i && bun run next build
 
       - name: Create pull request
+        if: env.skip_build_and_pr == 'false'
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
