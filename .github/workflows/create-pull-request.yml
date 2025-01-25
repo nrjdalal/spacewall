@@ -81,6 +81,7 @@ jobs:
 
       - name: Get commit count
         id: get_commit_count
+        if: env.skip_build_and_pr == 'false'
         run: echo "commit_count=$(git rev-list --count HEAD ^origin/main)" >> $GITHUB_ENV
 
       - name: Create pull request
