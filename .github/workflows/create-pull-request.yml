@@ -69,7 +69,6 @@ jobs:
       # - name: Test build
       #   if: env.skip_build_and_pr == 'false'
       #   run: bun i && bun run next build
-
       - name: Get commit count
         id: get_commit_count
         if: env.skip_build_and_pr == 'false'
@@ -80,10 +79,9 @@ jobs:
         if: env.skip_build_and_pr == 'false'
         run: |
           TEMP_BRANCH="temp-${GITHUB_SHA:0:7}"
-          echo "TEMP_BRANCH=$TEMP_BRANCH" >> $GITHUB_ENV
-          git checkout ${{ github.ref_name }}
-          git checkout -b $TEMP_BRANCH
+          git checkout -b $TEMP_BRANCH ${{ github.sha }}
           git push origin $TEMP_BRANCH
+          echo "TEMP_BRANCH=$TEMP_BRANCH" >> $GITHUB_ENV
 
       - name: Create pull request
         if: env.skip_build_and_pr == 'false'
