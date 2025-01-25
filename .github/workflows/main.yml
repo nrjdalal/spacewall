@@ -29,18 +29,38 @@ jobs:
       - name: Check for ignored changes
         id: check_changes
         run: |
-          IGNORED_PATHS=("README.md")
+          # List of ignored paths
+          IGNORED_PATHS=(".github" "README.md")
+
+          # Get list of changed files
           CHANGED_FILES=$(git diff --name-only origin/main...${{ github.ref_name }})
           echo "Changed files: $CHANGED_FILES"
 
-          for IGNORED_PATH in "${IGNORED_PATHS[@]}"; do
-            if echo "$CHANGED_FILES" | grep -qE "^$IGNORED_PATH"; then
-              echo "Changes detected in $IGNORED_PATH. Skipping build and pull request creation."
-              echo "skip_build_and_pr=true" >> $GITHUB_ENV
-              exit 0
+          # Initialize flag to track if all changes are in ignored paths
+          ALL_IGNORED=true
+
+          # Check each changed file
+          for FILE in $CHANGED_FILES; do
+            MATCH=false
+            for IGNORED_PATH in "${IGNORED_PATHS[@]}"; do
+              if [[ $FILE == $IGNORED_PATH* ]]; then
+                MATCH=true
+                break
+              fi
+            done
+            if [ "$MATCH" = false ]; then
+              ALL_IGNORED=false
+              break
             fi
           done
-          echo "skip_build_and_pr=false" >> $GITHUB_ENV
+
+          # Set environment variable based on whether all changes are in ignored paths
+          if [ "$ALL_IGNORED" = true ]; then
+            echo "All changes are in ignored paths. Skipping build and pull request creation."
+            echo "skip_build_and_pr=true" >> $GITHUB_ENV
+          else
+            echo "skip_build_and_pr=false" >> $GITHUB_ENV
+          fi
 
       - name: Setup Bun
         if: env.skip_build_and_pr == 'false'
