@@ -4,17 +4,16 @@
   "private": true,
   "scripts": {
     "build": "bash scripts/build.sh",
-    "db-push:prod": "bun --env-file=.env.production-db drizzle-kit push",
     "db-push": "bun --env-file=.env.development drizzle-kit push && bun --env-file=.env.development drizzle-kit generate",
-    "db-studio:prod": "bun --env-file=.env.production-db drizzle-kit studio",
+    "db-push:prod": "bun --env-file=.env.production-db drizzle-kit push",
     "db-studio": "bun --env-file=.env.development drizzle-kit studio",
+    "db-studio:prod": "bun --env-file=.env.production-db drizzle-kit studio",
     "deploy:dev": "bun --env-file=.env.development sst deploy --stage dev",
     "deploy:prod": "bun --env-file=.env.production sst deploy --stage prod",
     "dev": "next dev",
     "prepare": "if [ -z \"$VERCEL_ENV\" ]; then simple-git-hooks; fi",
     "update": "ncu --interactive --format group"
   },
-  "packageManager": "bun@1.2.0",
   "simple-git-hooks": {
     "pre-commit": "bash scripts/pre-commit.sh",
     "commit-msg": "bunx commitlint --edit $1"
@@ -95,5 +94,6 @@
     "tailwindcss": "^4.0.0",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5"
-  }
+  },
+  "packageManager": "bun@1.2.0"
 }
