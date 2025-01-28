@@ -55,4 +55,4 @@ const ContentPreview = React.forwardRef<
 ))
 ContentPreview.displayName = "ContentPreview"
 
-export { ContentRoot, Content, ContentPreview }
+export { Content, ContentPreview, ContentRoot }

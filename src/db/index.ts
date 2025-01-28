@@ -51,13 +51,13 @@ if (process.env.NODE_ENV === "production") {
 }
 
 export {
-  db,
-  redis,
   accounts,
   authenticators,
+  db,
+  paymentPages,
+  redis,
   sessions,
   users,
   verificationTokens,
-  paymentPages,
   websites,
 }

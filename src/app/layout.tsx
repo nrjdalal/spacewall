@@ -1,8 +1,8 @@
-import "./new-globals.css"
 import Providers from "@/app/providers"
 import { fontMono, fontSans } from "@/assets/fonts"
 import { cn } from "@/lib/utils"
 import type { Metadata } from "next"
+import "./new-globals.css"
 
 export const metadata: Metadata = {
   title: "SpaceWall",
