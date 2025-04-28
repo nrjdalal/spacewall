@@ -1,4 +1,4 @@
-import { DollarSign, Sparkle } from "lucide-react"
+import { Sparkle } from "lucide-react"
 import Link from "next/link"
 
 export default function Stats() {
@@ -12,13 +12,13 @@ export default function Stats() {
           <Sparkle />
           <h2 className="font-medium">Websites</h2>
         </Link>
-        <Link
+        {/* <Link
           href="/x/payment-page"
           className="bg-sidebar space-y-5 rounded-md border p-5"
         >
           <DollarSign />
           <h2 className="font-medium">Payment Pages</h2>
-        </Link>
+        </Link> */}
       </div>
     </div>
   )
