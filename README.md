@@ -1,21 +1,5 @@
-## competitor's profile examples
+# 🚀 Spacewall – A Modern Link-in-Bio Builder
 
-linktr.ee
+Spacewall is an open-source, Linktree-like website builder that lets creators and businesses craft their own link-in-bio pages. It’s built for speed, flexibility, and a smooth user experience – including **drag-and-drop blocks**, **optimistic UI updates** and **edge caching via CloudFront**.
 
-- 3. https://linktr.ee/selenagomez
-- 6. https://linktr.ee/arianagrande
-- 16. https://linktr.ee/neymarjr
-- 25. https://linktr.ee/demilovato
-
-komi.io
-
-- 5. https://therock.komi.io
-
-## shadcn UI overrides
-
-- removed className shadow-\* -> button, dropdown menu, input
-- Sidebar
-  - SIDEBAR_WIDTH_MOBILE = 16rem
-  - sidebarMenuButtonVariants - removed ! from group-data-[collapsible=icon]:p-2
-  - SheetContent - added ! to w-(--sidebar-width)
-- removed animate-out -> dialog
+![Spacewall Demo Image](./public/demo.png)
