@@ -88,7 +88,7 @@
     "npm-check-updates": "^17.1.14",
     "prettier": "^3.4.2",
     "prettier-plugin-organize-imports": "^4.1.0",
-    "prettier-plugin-tailwindcss": "^0.6.11",
+    "prettier-plugin-tailwindcss": "^0.7.0",
     "simple-git-hooks": "^2.11.1",
     "sort-package-json": "^2.14.0",
     "sst": "^3.6.17",
