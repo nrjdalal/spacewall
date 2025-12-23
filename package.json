@@ -72,7 +72,7 @@
   },
   "devDependencies": {
     "@commitlint/cli": "^19.6.1",
-    "@commitlint/config-conventional": "^19.6.0",
+    "@commitlint/config-conventional": "^20.0.0",
     "@eslint/eslintrc": "^3",
     "@pulumi/pulumi": "^3.147.0",
     "@tailwindcss/postcss": "^4.0.0",
