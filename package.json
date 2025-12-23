@@ -71,7 +71,7 @@
     "zod-validation-error": "^3.4.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "^19.6.1",
+    "@commitlint/cli": "^20.0.0",
     "@commitlint/config-conventional": "^19.6.0",
     "@eslint/eslintrc": "^3",
     "@pulumi/pulumi": "^3.147.0",
